@@ -57,9 +57,9 @@ module Windows
       hkey = get_hive_name(path)
 
       hive = {
-        "HKEY_LOCAL_MACHINE" => Win32::Registry::HKEY_LOCAL_MACHINE,
-        "HKEY_USERS" => Win32::Registry::HKEY_USERS,
-        "HKEY_CURRENT_USER" => Win32::Registry::HKEY_CURRENT_USER
+        "HKEY_LOCAL_MACHINE" => ::Win32::Registry::HKEY_LOCAL_MACHINE,
+        "HKEY_USERS" => ::Win32::Registry::HKEY_USERS,
+        "HKEY_CURRENT_USER" => ::Win32::Registry::HKEY_CURRENT_USER
         }[hkey]
 
       unless hive
@@ -73,7 +73,7 @@ module Windows
 
     def unload_hive(path)
       hive = get_hive(path)
-      if hive == Win32::Registry::HKEY_USERS
+      if hive == ::Win32::Registry::HKEY_USERS
         reg_path = path.split("\\")
         priv = Chef::WindowsPrivileged.new
         begin
@@ -93,7 +93,7 @@ module Windows
         create_key(path)
       end
 
-      hive.send(mode, key_name, Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
+      hive.send(mode, key_name, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
         changed_something = false
         values.each do |k,val|
           key = "#{k}" #wtf. avoid "can't modify frozen string" in win32/registry.rb
@@ -108,7 +108,7 @@ module Windows
             if type.nil?
               reg[key] = val
             else
-              reg[key, Win32::Registry::REG_BINARY] = val
+              reg[key, ::Win32::Registry::REG_BINARY] = val
             end
 
             ensure_hive_unloaded(hive_loaded)
@@ -125,7 +125,7 @@ module Windows
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key = reg_path.join("\\")
 
-      hive.open(key, Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
+      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
         begin
           return reg[value]
         rescue
@@ -139,7 +139,7 @@ module Windows
     def get_values(path)
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key = reg_path.join("\\")
-      hive.open(key, Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
+      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
         values = []
         begin
         reg.each_value do |name, type, data|
@@ -157,7 +157,7 @@ module Windows
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key = reg_path.join("\\")
       Chef::Log.debug("Deleting values in #{path}")
-      hive.open(key, Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
+      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
         values.each_key { |key|
           name = "#{key}"
           Chef::Log.debug("Deleting value #{name} in #{path}")
@@ -184,7 +184,7 @@ module Windows
         Chef::Log.debug("Native Constant #{@@native_registry_constant}")
         Chef::Log.debug("Hive #{hive}")
 
-        hive.open(key, Win32::Registry::KEY_READ | @@native_registry_constant) do | reg |
+        hive.open(key, ::Win32::Registry::KEY_READ | @@native_registry_constant) do | reg |
           begin
             rtn_value = reg[value]
             return true
@@ -214,7 +214,7 @@ module Windows
       end
 
       begin
-        hive.open(key, Win32::Registry::Constants::KEY_READ | @@native_registry_constant )
+        hive.open(key, ::Win32::Registry::Constants::KEY_READ | @@native_registry_constant )
         return true
       rescue
         return false
@@ -258,7 +258,7 @@ module Windows
     end
 
     def is_user_hive?(hive)
-      if hive == Win32::Registry::HKEY_USERS
+      if hive == ::Win32::Registry::HKEY_USERS
         return true
       else
         return true
