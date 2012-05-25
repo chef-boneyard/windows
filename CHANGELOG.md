@@ -7,6 +7,17 @@
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 * Support all types of registry keys with `type` parameter in `windows_registry`.
 
+## v1.3.0:
+
+* [COOK-1323] - Update for changes in Chef 0.10.10.
+  - Setting file mode doesn't make sense on Windows (package provider
+  - and reboot_handler recipe)
+  - Prefix ::Win32 to avoid namespace collision with Chef::Win32
+  - (registry_helper library)
+  - Use chef_gem instead of gem_package so gems get installed correctly
+    under the Ruby environment Chef runs in (reboot_handler recipe,
+    zipfile provider)
+
 ## v1.2.12:
 
 * [COOK-1037] - specify version for rubyzip gem
