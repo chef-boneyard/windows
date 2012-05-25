@@ -6,6 +6,8 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 Requirements
 ============
 
+Version 1.3.0+ of this cookbook requires Chef 0.10.10.
+
 Platform
 --------
 
@@ -32,27 +34,30 @@ windows\_auto\_run
 ------------------
 
 ### Actions
+
 - :create: Create an item to be run at login
 - :remove: Remove an item that was previously setup to run at login
 
 ### Attribute Parameters
+
 - :name: Name attribute. The name of the value to be stored in the registry
 - :program: The program to be run at login
 - :args: The arguments for the program
 
 ### Examples
 
-  # Run BGInfo at login
-  windows_auto_run 'BGINFO' do
-    program "C:/Sysinternals/bginfo.exe"
-    args "\"C:/Sysinternals/Config.bgi\" /NOLICPROMPT /TIMER:0"
-    not_if { Registry.value_exists?(AUTO_RUN_KEY, 'BGINFO') }
-    action :create
-  end
+    # Run BGInfo at login
+    windows_auto_run 'BGINFO' do
+      program "C:/Sysinternals/bginfo.exe"
+      args "\"C:/Sysinternals/Config.bgi\" /NOLICPROMPT /TIMER:0"
+      not_if { Registry.value_exists?(AUTO_RUN_KEY, 'BGINFO') }
+      action :create
+    end
 
 
 windows\_batch
 --------------
+
 Execute a batch script using the cmd.exe interpreter (much like the script resources for bash, csh, powershell, perl, python and ruby). A temporary file is created and executed like other script resources, rather than run inline. By their nature, Script resources are not idempotent, as they are completely up to the user's imagination. Use the `not_if` or `only_if` meta parameters to guard the resource for idempotence.
 
 ### Actions
@@ -86,7 +91,6 @@ Execute a batch script using the cmd.exe interpreter (much like the script resou
       echo %WINDIR%
       EOH
     end
-
 
 windows\_feature
 ----------------
@@ -134,8 +138,6 @@ For more information on Roles, Role Services and Features see the [Microsoft Tec
         action :remove
       end
     end
-
-    #
 
 windows\_package
 ----------------
@@ -231,10 +233,12 @@ windows\_reboot
 Sets required data in the node's run_state to notify `WindowsRebootHandler` a reboot is requested.  If Chef run completes successfully a reboot will occur if the `WindowsRebootHandler` is properly registered as a report handler.  As an action of `:request` will cause a node to reboot every Chef run, this resource is usually notified by other resources...ie restart node after a package is installed (see example below).
 
 ### Actions
+
 - :request: requests a reboot at completion of successful Cher run.  requires `WindowsRebootHandler` to be registered as a report handler.
 - :cancel: remove reboot request from node.run_state.  this will cancel *ALL* previously requested reboots as this is a binary state.
 
 ### Attribute Parameters
+
 - :timeout: Name attribute. timeout delay in seconds to wait before proceeding with the requested reboot. default is 60 seconds
 - :reason: comment on the reason for the reboot. default is 'Opscode Chef initiated reboot'
 
@@ -259,6 +263,8 @@ windows\_registry
 -----------------
 
 Creates and modifies Windows registry keys.
+
+*Change in v1.3.0: The Win32 classes use `::Win32` to avoid namespace conflict with `Chef::Win32` (introduced in Chef 0.10.10).*
 
 ### Actions
 
@@ -299,14 +305,15 @@ Creates and modifies Windows registry keys.
     Registry.key_exists?('HKLM\SOFTWARE\Microsoft')
     BgInfo = Registry.get_value('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run','BGINFO')
 
-
 windows\_path
 -------------
 
 ### Actions
+
 - :add: Add an item to the system path
 
 ### Attribute Parameters
+
 - :path: Name attribute. The name of the value to add to the system path
 
 ### Examples
@@ -365,12 +372,16 @@ Required reboots are a necessary evil of configuring and managing Windows nodes.
 Usage
 =====
 
-Just place an explicit dependency on this cookbook (using depends in the cookbook's metadata.rb) from any cookbook where you would like to use the Windows-specific resources/providers that ship with this cookbook.
+Place an explicit dependency on this cookbook (using depends in the cookbook's metadata.rb) from any cookbook where you would like to use the Windows-specific resources/providers that ship with this cookbook.
+
+    depends "windows"
 
 default
 -------
 
 Convenience recipe that installs supporting gems for many of the resources/providers that ship with this cookbook.
+
+*Change in v1.3.0: Uses chef_gem instead of gem_package to ensure gem installation in Chef 0.10.10.*
 
 reboot\_handler
 --------------
