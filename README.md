@@ -174,6 +174,7 @@ For maximum flexibility the `source` attribute supports both remote and local in
 - installer_type: They type of windows installation package. valid values are: :msi, :inno, :nsis, :wise, :installshield, :custom.  If this value is not provided, the provider will do it's best to identify the installer type through introspection of the file.
 - checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
 - options: Additional options to pass the underlying installation command
+- timeout: set a timeout for the package download (default 600 seconds)
 
 ### Examples
 
