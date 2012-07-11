@@ -7,6 +7,12 @@
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 * Support all types of registry keys with `type` parameter in `windows_registry`.
 
+## v1.3.2:
+
+* [COOK-1033] - remove the `libraries/ruby_19_patches.rb` file which
+  causes havoc on non-Windows systems.
+* [COOK-811] - add a timeout parameter attribute for `windows_package`
+
 ## v1.3.0:
 
 * [COOK-1323] - Update for changes in Chef 0.10.10.
