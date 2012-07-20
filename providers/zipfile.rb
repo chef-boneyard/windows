@@ -22,6 +22,8 @@
 
 include Windows::Helper
 
+require 'find'
+
 action :unzip do
   ensure_rubyzip_gem_installed
   Chef::Log.debug("unzip #{@new_resource.source} => #{@new_resource.path} (overwrite=#{@new_resource.overwrite})")
@@ -37,6 +39,42 @@ action :unzip do
     end
   end
   @new_resource.updated_by_last_action(true)
+end
+
+action :zip do
+  ensure_rubyzip_gem_installed
+  Chef::Log.debug("zip #{@new_resource.source} => #{@new_resource.path} (overwrite=#{@new_resource.overwrite})")
+
+  if @new_resource.overwrite == false && ::File.exists?(@new_resource.path)
+    Chef::Log.info("file #{@new_resource.path} already exists and overwrite is set to false, exiting")
+  else
+    # delete the archive if it already exists, because we are recreating it.
+    if ::File.exists?(@new_resource.path)
+      ::File.unlink(@new_resource.path)
+    end
+    # Only supporting compression of a single directory (recursively).
+    if ::File.directory?(@new_resource.source)
+      z = Zip::ZipFile.new(@new_resource.path, true)
+      unless @new_resource.source =~ /\/$/
+        @new_resource.source << '\\'
+      end
+      Find.find(@new_resource.source) do |f|
+        f = f.downcase.gsub(/\\/, '/')
+        source = @new_resource.source.downcase.gsub(/\\/, '/')
+        # ignore the root directory.
+        next if f == source
+        # strip the root directory from the filename before adding it to the zipfile.
+        zip_fname = f.sub(/#{source}/, '')
+        zip_fname.gsub!(/\//, '\\') 
+        f = f.downcase.gsub(/\//, '\\')
+        Chef::Log.debug("adding #{zip_fname} to archive, sourcefile is: #{f}")
+        z.add(zip_fname, f)
+      end
+      z.close
+    else
+      Chef::Log.info("Single directory must be specified for compression, and #{@new_resource.source} does not meet that criteria.")
+    end
+  end
 end
 
 private
