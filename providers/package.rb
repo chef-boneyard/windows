@@ -131,7 +131,7 @@ def remove_package(name, version)
       "#{uninstall_string} /qn"
     else
       uninstall_string.gsub!('"','')
-      "start /wait /d\"#{::File.dirname(uninstall_string)}\" #{::File.basename(uninstall_string)}#{expand_options(@new_resource.options)} /S"
+      "start \"\" /wait /d\"#{::File.dirname(uninstall_string)}\" #{::File.basename(uninstall_string)}#{expand_options(@new_resource.options)} /S"
     end
   end
   Chef::Log.info("Removing #{@new_resource} with uninstall command '#{uninstall_command}'")
@@ -145,7 +145,7 @@ def install_command_template
   when :msi
     "msiexec%2$s %1$s%3$s"
   else
-    "start /wait %1$s%2$s%3$s"
+    "start \"\" /wait %1$s%2$s%3$s"
   end
 end
 
@@ -154,7 +154,7 @@ def uninstall_command_template
   when :msi
     "msiexec %2$s %1$s"
   else
-    "start /wait /d%1$s %2$s %3$s"
+    "start \"\" /wait /d%1$s %2$s %3$s"
   end
 end
 
