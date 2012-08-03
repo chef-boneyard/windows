@@ -160,8 +160,13 @@ module Windows
       hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
         values.each_key { |key|
           name = "#{key}"
-          Chef::Log.debug("Deleting value #{name} in #{path}")
-          reg.delete_value(name)
+          # Ensure delete operation is idempotent.
+          if value_exists?(path, key)
+            Chef::Log.debug("Deleting value #{name} in #{path}")
+            reg.delete_value(name)
+          else
+            Chef::Log.debug("Value #{name} in #{path} does not exist, skipping.")
+          end
         }
       end
 
