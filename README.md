@@ -312,6 +312,7 @@ windows\_path
 ### Actions
 
 - :add: Add an item to the system path
+- :remove: Remove an item from the system path
 
 ### Attribute Parameters
 
@@ -322,6 +323,11 @@ windows\_path
     #Add Sysinternals to the system path
     windows_path 'C:\Sysinternals' do
       action :add
+    end
+
+    #Remove 7-Zip from the system path
+    windows_path 'C:\7-Zip' do
+      action :remove
     end
 
 
