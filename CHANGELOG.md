@@ -7,6 +7,17 @@
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 * Support all types of registry keys with `type` parameter in `windows_registry`.
 
+## v1.3.4:
+
+* [COOK-1173] - windows_registry throws Win32::Registry::Error for
+  action :remove on a nonexistent key
+* [COOK-1182] - windows package sets start window title instead of
+  quoting a path
+* [COOK-1476] - zipfile lwrp should support :zip action
+* [COOK-1485] - package resource fails to perform install correctly
+  when "source" contains quote
+* [COOK-1519] - add action :remove for path lwrp
+
 ## v1.3.2:
 
 * [COOK-1033] - remove the `libraries/ruby_19_patches.rb` file which
