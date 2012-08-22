@@ -143,7 +143,7 @@ private
 def install_command_template
   case installer_type
   when :msi
-    "msiexec%2$s %1$s%3$s"
+    "msiexec%2$s \"%1$s\"%3$s"
   else
     "start \"\" /wait %1$s%2$s%3$s"
   end
