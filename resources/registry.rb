@@ -24,7 +24,7 @@ actions :create, :modify, :force_modify, :remove
 
 attribute :key_name, :kind_of => String, :name_attribute => true
 attribute :values, :kind_of => Hash
-attribute :type, :kind_of => Symbol, :default => nil, :equal_to => [:binary]
+attribute :type, :kind_of => Symbol, :default => nil, :equal_to => [:binary, :string, :multi_string, :expand_string, :dword, :dword_big_endian, :qword]
 
 def initialize(name, run_context=nil)
   super
