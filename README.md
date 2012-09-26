@@ -278,7 +278,17 @@ Creates and modifies Windows registry keys.
 
 - key_name: name attribute. The registry key to create/modify.
 - values: hash of the values to set under the registry key. The individual hash items will become respective 'Value name' => 'Value data' items in the registry key.
-- type: Type of key to create, currently only used for :binary to create `REG_BINARY` registry keys. Must be a symbol. See __Roadmap__ for future plans.
+- type: Type of key to create, defaults to REG_SZ. Must be a symbol, see the overview below for valid values.
+
+### Registry key types
+
+- :binary: REG_BINARY
+- :string: REG_SZ
+- :multi_string: REG_MULTI_SZ
+- :expand_string: REG_EXPAND_SZ
+- :dword: REG_DWORD
+- :dword_big_endian: REG_DWORD_BIG_ENDIAN
+- :qword: REG_QWORD 
 
 ### Examples
 
@@ -298,6 +308,12 @@ Creates and modifies Windows registry keys.
       #Key is the name of the value that you want to delete the value is always empty
       values 'ValueToDelete' => ''
       action :remove
+    end
+
+    # Add a REG_MULTI_SZ value to the registry
+    windows_registry 'HKCU\Software\Test' do
+      values 'MultiString' => ['line 1', 'line 2', 'line 3']
+      type :multi_string
     end
 
 ### Library Methods
