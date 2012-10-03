@@ -346,6 +346,45 @@ windows\_path
       action :remove
     end
 
+windows\_task
+-------------
+
+Creates, deletes or runs a Windows scheduled task.
+
+### Actions
+
+- :create: creates a task
+- :delete: deletes a task
+- :run: runs a task
+
+### Attribute Parameters
+
+- name: name attribute, The task name.
+- command: The command the task will run.
+- cwd: The directory the task will be run from.
+- user: The user to run the task as. (requires password)
+- password: The user's password. (requires user)
+- run_level: Run with limited or highest privileges.
+- frequency: Frequency with which to run the task. (hourly, daily, ect.)
+- frequency_modifier: Multiple for frequency. (15 minutes, 2 days)
+
+### Examples
+
+    # Run Chef every 15 minutes
+    windows_task "Chef client" do
+      user "Administrator"
+      password "$ecR3t"
+      cwd "C:\chef\bin"
+      command "chef-client -L C:\tmp\"
+      run_level :highest
+      frequency :minute
+      frequency_modifier 15
+    end
+
+    # Delete a taks named "old task"
+    windows_task "old task" do
+      action :delete
+    end
 
 windows\_zipfile
 ----------------
