@@ -17,6 +17,8 @@ Platform
 * Windows 7
 * Windows Server 2008 (R1, R2)
 
+The `windows_task` LWRP requires Windows Server 2008 due to its API usage.
+
 Cookbooks
 ---------
 
@@ -288,7 +290,7 @@ Creates and modifies Windows registry keys.
 - :expand_string: REG_EXPAND_SZ
 - :dword: REG_DWORD
 - :dword_big_endian: REG_DWORD_BIG_ENDIAN
-- :qword: REG_QWORD 
+- :qword: REG_QWORD
 
 ### Examples
 
@@ -349,7 +351,8 @@ windows\_path
 windows\_task
 -------------
 
-Creates, deletes or runs a Windows scheduled task.
+Creates, deletes or runs a Windows scheduled task. Requires Windows
+Server 2008 due to API usage.
 
 ### Actions
 
