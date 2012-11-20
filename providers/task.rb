@@ -55,6 +55,23 @@ action :run do
   end
 end
 
+action :change do
+  if @current_resource.exists
+    cmd =  "schtasks /Change /TN \"#{@current_resource.name}\" "
+    cmd += "/TR \"#{@new_resource.command}\" "
+    if @new_resource.user && @new_resource.password
+      cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
+    elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
+      Chef::Log.warn "#{@new_resource.name}: Can't specify user or password without both!"
+    end
+    shell_out!(cmd, {:returns => [0]})
+    @new_resource.updated_by_last_action true
+    Chef::Log.info "Change #{@new_resource} task ran"
+  else
+    Chef::Log.debug "#{@new_resource} task doesn't exists - nothing to do"
+  end
+end
+
 action :delete do
   if @current_resource.exists
     cmd = "schtasks /Delete /TN \"#{@current_resource.name}\""
