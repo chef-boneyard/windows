@@ -6,6 +6,13 @@
 * windows_registry :force_modify action should use RegNotifyChangeKeyValue from WinAPI
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.4.0:
+
+* [COOK-1571] - windows_package resource (with msi provider) does not
+accept spaces in filename
+* [COOK-1581] - Windows cookbook needs a scheduled tasks LWRP
+* [COOK-1584] - `windows_registry` should support all registry types
+
 ## v1.3.4:
 
 * [COOK-1173] - windows_registry throws Win32::Registry::Error for
