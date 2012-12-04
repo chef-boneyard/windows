@@ -71,7 +71,7 @@ def load_current_resource
   @current_resource.name(@new_resource.name)
 
   task_hash = load_task_hash(@current_resource.name)
-  if task_hash
+  if task_hash[:TaskName] == '\\' + @new_resource.name
     @current_resource.exists = true
     if task_hash[:Status] == "Running"
       @current_resource.status = :running
