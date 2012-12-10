@@ -20,8 +20,16 @@
 
 actions :create
 
+default_action :create
+
 attribute :name, :kind_of => String
 attribute :target, :kind_of => String
 attribute :arguments, :kind_of => String
 attribute :description, :kind_of => String
 attribute :cwd, :kind_of => String
+
+# Covers 0.10.8 and earlier
+def initialize(*args)
+  super
+  @action = :create
+end

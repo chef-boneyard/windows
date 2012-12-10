@@ -20,6 +20,8 @@
 
 actions :install, :remove
 
+default_action :install
+
 attribute :package_name, :kind_of => String, :name_attribute => true
 attribute :source, :kind_of => String, :required => true
 attribute :version, :kind_of => String
@@ -35,3 +37,9 @@ attribute :timeout, :kind_of => Integer, :default => 600
 
 # allow target dirtory of installation to be set
 #attribute :target_dir
+
+# Covers 0.10.8 and earlier
+def initialize(*args)
+  super
+  @action = :install
+end
