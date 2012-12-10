@@ -359,6 +359,7 @@ Server 2008 due to API usage.
 - :create: creates a task
 - :delete: deletes a task
 - :run: runs a task
+- :change: changes the un/pw or command of a task
 
 ### Attribute Parameters
 
@@ -382,6 +383,15 @@ Server 2008 due to API usage.
       run_level :highest
       frequency :minute
       frequency_modifier 15
+    end
+
+    # Update Chef Client task with new password and log location
+    windows_task "Chef client" do
+      user "Administrator"
+      password "N3wPassW0Rd"
+      cwd "C:\chef\bin"
+      command "chef-client -L C:\chef\logs\"
+      action :change
     end
 
     # Delete a taks named "old task"
