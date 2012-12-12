@@ -6,6 +6,13 @@
 * windows_registry :force_modify action should use RegNotifyChangeKeyValue from WinAPI
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.5.0:
+
+* [COOK-1251] - Fix LWRP "NotImplementedError"
+* [COOK-1921] - Task LWRP will return true for resource exists when no
+  other scheduled tasks exist
+* [COOK-1932] - Include :change functionality to windows task lwrp
+
 ## v1.4.0:
 
 * [COOK-1571] - windows_package resource (with msi provider) does not
