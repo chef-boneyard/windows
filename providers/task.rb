@@ -96,9 +96,9 @@ def load_current_resource
     @current_resource.cwd(task_hash[:Folder])
     @current_resource.command(task_hash[:TaskToRun])
     @current_resource.user(task_hash[:RunAsUser])
-  end
+  end if task_hash.respond_to? :[]
 end
-  
+
 private
 
 def load_task_hash(task_name)
