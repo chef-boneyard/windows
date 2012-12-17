@@ -6,6 +6,12 @@
 * windows_registry :force_modify action should use RegNotifyChangeKeyValue from WinAPI
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.6.0:
+
+* [COOK-2048] - undefined method for Falseclass on task :change when
+  action is :nothing (and task doesn't exist)
+* [COOK-2049] - Add `windows_pagefile` resource
+
 ## v1.5.0:
 
 * [COOK-1251] - Fix LWRP "NotImplementedError"
