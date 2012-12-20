@@ -6,6 +6,10 @@
 * windows_registry :force_modify action should use RegNotifyChangeKeyValue from WinAPI
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.7.0:
+
+* [COOK-1745] - allow for newer versions of rubyzip
+
 ## v1.6.0:
 
 * [COOK-2048] - undefined method for Falseclass on task :change when
