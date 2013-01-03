@@ -223,7 +223,7 @@ def installer_type
     if @new_resource.installer_type
       @new_resource.installer_type
     else
-      basename = ::File.basename(cached_file(@new_resource.source))
+      basename = ::File.basename(cached_file(@new_resource.source, @new_resource.checksum))
       if basename.split(".").last == "msi" # Microsoft MSI
         :msi
       else
