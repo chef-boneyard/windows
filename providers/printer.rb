@@ -17,17 +17,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+# Support whyrun
+def whyrun_supported?
+  true
+end
+
 action :create do
   if @current_resource.exists
     Chef::Log.info "#{ @new_resource } already exists - nothing to do."
   else
-    create_printer
+    converge_by("Create #{ @new_resource }") do
+      create_printer
+    end
   end
 end
 
 action :delete do
   if @current_resource.exists
-    delete_printer
+    converge_by("Delete #{ @new_resource }") do
+      delete_printer
+    end
   else
     Chef::Log.info "#{ @current_resource } doesn't exist - can't delete."
   end
@@ -56,10 +66,10 @@ end
 
 def create_printer
   # Create the printer port first
-  windows_printer_port @new_resource.ipv4_address do
+  windows_printer_port new_resource.ipv4_address do
   end
 
-  port_name = @new_resource.port_name || "IP_#{ @new_resource.ipv4_address }"
+  new_resource.port_name ||= "IP_#{ new_resource.ipv4_address }"
 
   powershell "Creating printer: #{ new_resource.name }" do
     code <<-EOH
@@ -77,8 +87,6 @@ def create_printer
                   }
     EOH
   end
-
-  @new_resource.updated_by_last_action(true)
 end
 
 def delete_printer
@@ -88,6 +96,4 @@ def delete_printer
       $printer.Delete()
     EOH
   end
-
-  @new_resource.updated_by_last_action(true)
 end
