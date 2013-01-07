@@ -65,11 +65,12 @@ def printer_exists?(name)
 end
 
 def create_printer
+
   # Create the printer port first
   windows_printer_port new_resource.ipv4_address do
   end
 
-  new_resource.port_name ||= "IP_#{ new_resource.ipv4_address }"
+  port_name = "IP_#{ new_resource.ipv4_address }"
 
   powershell "Creating printer: #{ new_resource.name }" do
     code <<-EOH
