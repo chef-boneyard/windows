@@ -70,7 +70,7 @@ end
 
 def create_printer_port
 
-  new_resource.port_name ||= "IP_#{ new_resource.ipv4_address }"
+  port_name = new_resource.port_name || "IP_#{ new_resource.ipv4_address }"
 
   # create the printer port using PowerShell
   powershell "Creating printer port #{ new_resource.port_name }" do
@@ -79,7 +79,7 @@ def create_printer_port
       Set-WmiInstance -class Win32_TCPIPPrinterPort `
         -EnableAllPrivileges `
         -Argument @{ HostAddress = "#{ new_resource.ipv4_address }";
-                     Name        = "#{ new_resource.port_name }";
+                     Name        = "#{ port_name }";
                      Description = "#{ new_resource.port_description }";
                      PortNumber  = "#{ new_resource.port_number }";
                      Protocol    = "#{ new_resource.port_protocol }";
@@ -90,11 +90,12 @@ def create_printer_port
 end
 
 def delete_printer_port
-  new_resource.port_name ||= "IP_#{ new_resource.ipv4_address }"
+
+  port_name = new_resource.port_name || "IP_#{ new_resource.ipv4_address }"
 
   powershell "Deleting printer port: #{ new_resource.port_name }" do
     code <<-EOH
-      $port = Get-WMIObject -class Win32_TCPIPPrinterPort -EnableAllPrivileges -Filter "name = '#{ new_resource.port_name }'"
+      $port = Get-WMIObject -class Win32_TCPIPPrinterPort -EnableAllPrivileges -Filter "name = '#{ port_name }'"
       $port.Delete()
     EOH
   end
