@@ -413,6 +413,7 @@ Most version of Windows do not ship with native cli utility for managing compres
 - path: name attribute. The path where files will be unzipped to.
 - source: The source of the zip file. This can either be a URI or a local path.
 - overwrite: force an overwrite of the files if the already exists.
+- checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
 
 ### Examples
 

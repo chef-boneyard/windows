@@ -28,7 +28,7 @@ action :unzip do
   ensure_rubyzip_gem_installed
   Chef::Log.debug("unzip #{@new_resource.source} => #{@new_resource.path} (overwrite=#{@new_resource.overwrite})")
 
-  Zip::ZipFile.open(cached_file(@new_resource.source)) do |zip|
+  Zip::ZipFile.open(cached_file(@new_resource.source, @new_resource.checksum)) do |zip|
     zip.each do |entry|
       path = ::File.join(@new_resource.path, entry.name)
       FileUtils.mkdir_p(::File.dirname(path))
