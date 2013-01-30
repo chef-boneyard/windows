@@ -6,7 +6,15 @@
 * windows_registry :force_modify action should use RegNotifyChangeKeyValue from WinAPI
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
-## 1.8.0:
+## v1.8.2:
+
+**Important**: Use powershell in nodes expanded run lists to ensure
+  powershell is downloaded, as powershell has a dependency on this
+  cookbook; v1.8.0 created a circular dependency.
+
+* [COOK-2301] - windows 1.8.0 has circular dependency on powershell
+
+## v1.8.0:
 
 * [COOK-2126] - Add checksum attribute to windows_zipfile
 * [COOK-2142] - Add printer and printer_port LWRPs
