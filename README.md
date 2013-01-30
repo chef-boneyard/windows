@@ -22,8 +22,15 @@ The `windows_task` LWRP requires Windows Server 2008 due to its API usage.
 Cookbooks
 ---------
 
+The following cookbooks provided by Opscode are required as noted:
+
 * chef_handler (`windows::reboot_handler` leverages the chef_handler LWRP)
-* powershell - The Printer and Printer Port LWRP require Powershell
+* powershell - The Printer and Printer Port LWRP require Powershell.
+
+**NOTE** We cannot specifically depend on Opscode's powershell,
+  because powershell depends on this cookbook. Ensure that
+  `recipe[powershell]` exists in the node's expanded run list so it
+  gets downloaded where the printer LWRPs are used.
 
 Attributes
 ==========
@@ -234,6 +241,10 @@ For maximum flexibility the `source` attribute supports both remote and local in
 windows\_printer\_port
 ----------------------
 
+**Note** Include `recipe[powershell]` on the node's expanded run list
+  to ensure the powershell cookbook is downloaded to avoid circular
+  dependency.
+
 Create and delete TCP/IPv4 printer ports.
 
 ### Actions
@@ -278,6 +289,10 @@ Create and delete TCP/IPv4 printer ports.
 
 windows\_printer
 ----------------
+
+**Note** Include `recipe[powershell]` on the node's expanded run list
+  to ensure the powershell cookbook is downloaded to avoid circular
+  dependency.
 
 Create Windows printer. Note that this doesn't currently install a printer
 driver. You must already have the driver installed on the system.
