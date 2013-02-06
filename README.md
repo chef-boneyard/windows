@@ -185,6 +185,7 @@ For maximum flexibility the `source` attribute supports both remote and local in
 - checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
 - options: Additional options to pass the underlying installation command
 - timeout: set a timeout for the package download (default 600 seconds)
+- version: The version number of this package, as indicated by the 'DisplayVersion' value in one of the 'Uninstall' registry keys.  If the given version number does equal the 'DisplayVersion' in the registry, the package will be installed.
 
 ### Examples
 
