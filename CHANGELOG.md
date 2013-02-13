@@ -6,6 +6,13 @@
 * windows_registry :force_modify action should use RegNotifyChangeKeyValue from WinAPI
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.8.4:
+
+* [COOK-2336] - MSI That requires reboot returns with RC 3010 and
+  causes chef run failure
+* [COOK-2368] - `version` attribute of the `windows_package` provider
+  should be documented
+
 ## v1.8.2:
 
 **Important**: Use powershell in nodes expanded run lists to ensure
