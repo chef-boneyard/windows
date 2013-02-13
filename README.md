@@ -6,7 +6,7 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 Requirements
 ============
 
-Version 1.3.0+ of this cookbook requires Chef 0.10.10.
+Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
 
 Platform
 --------
@@ -186,6 +186,10 @@ For maximum flexibility the `source` attribute supports both remote and local in
 - options: Additional options to pass the underlying installation command
 - timeout: set a timeout for the package download (default 600 seconds)
 - version: The version number of this package, as indicated by the 'DisplayVersion' value in one of the 'Uninstall' registry keys.  If the given version number does equal the 'DisplayVersion' in the registry, the package will be installed.
+- success_codes: set an array of possible successful installation
+  return codes. Previously this was hardcoded, but certain MSIs may
+  have a different return code, e.g. 3010 for reboot required. Must be
+  an array, and defaults to `[0, 42, 127]`.
 
 ### Examples
 
