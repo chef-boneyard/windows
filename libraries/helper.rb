@@ -21,10 +21,10 @@
 module Windows
   module Helper
 
-    AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
-    ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
+    AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'.freeze unless defined?(AUTO_RUN_KEY)
+    ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'.freeze unless defined?(ENV_KEY)
 
-    # returns windows friendly version of the provided path, 
+    # returns windows friendly version of the provided path,
     # ensures backslashes are used everywhere
     def win_friendly_path(path)
       path.gsub(::File::SEPARATOR, ::File::ALT_SEPARATOR) if path
@@ -32,7 +32,7 @@ module Windows
 
     # account for Window's wacky File System Redirector
     # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
-    # especially important for 32-bit processes (like Ruby) on a 
+    # especially important for 32-bit processes (like Ruby) on a
     # 64-bit instance of Windows.
     def locate_sysnative_cmd(cmd)
       if ::File.exists?("#{ENV['WINDIR']}\\sysnative\\#{cmd}")
@@ -45,8 +45,8 @@ module Windows
     end
 
     # Create a feature provider dependent value object.
-    # mainly created becasue Windows Feature names are 
-    # different based on whether dism.exe or servicemanagercmd.exe 
+    # mainly created becasue Windows Feature names are
+    # different based on whether dism.exe or servicemanagercmd.exe
     # is used for installation
     def value_for_feature_provider(provider_hash)
       p = Chef::Platform.find_provider_for_node(node, :windows_feature)

@@ -30,45 +30,45 @@ module Windows
 
     # Suite Masks
     # Microsoft BackOffice components are installed.
-    VER_SUITE_BACKOFFICE = 0x00000004
+    VER_SUITE_BACKOFFICE = 0x00000004.freeze unless defined?(VER_SUITE_BACKOFFICE)
     # Windows Server 2003, Web Edition is installed.
-    VER_SUITE_BLADE = 0x00000400
+    VER_SUITE_BLADE = 0x00000400.freeze unless defined?(VER_SUITE_BLADE)
     # Windows Server 2003, Compute Cluster Edition is installed.
-    VER_SUITE_COMPUTE_SERVER = 0x00004000
+    VER_SUITE_COMPUTE_SERVER = 0x00004000.freeze unless defined?(VER_SUITE_COMPUTE_SERVER)
     # Windows Server 2008 Datacenter, Windows Server 2003, Datacenter Edition, or Windows 2000 Datacenter Server is installed.
-    VER_SUITE_DATACENTER = 0x00000080
+    VER_SUITE_DATACENTER = 0x00000080.freeze unless defined?(VER_SUITE_DATACENTER)
     # Windows Server 2008 Enterprise, Windows Server 2003, Enterprise Edition, or Windows 2000 Advanced Server is installed. Refer to the Remarks section for more information about this bit flag.
-    VER_SUITE_ENTERPRISE = 0x00000002
+    VER_SUITE_ENTERPRISE = 0x00000002.freeze unless defined?(VER_SUITE_ENTERPRISE)
     # Windows XP Embedded is installed.
-    VER_SUITE_EMBEDDEDNT = 0x00000040
+    VER_SUITE_EMBEDDEDNT = 0x00000040.freeze unless defined?(VER_SUITE_EMBEDDEDNT)
     # Windows Vista Home Premium, Windows Vista Home Basic, or Windows XP Home Edition is installed.
-    VER_SUITE_PERSONAL = 0x00000200
+    VER_SUITE_PERSONAL = 0x00000200.freeze unless defined?(VER_SUITE_PERSONAL)
     # Remote Desktop is supported, but only one interactive session is supported. This value is set unless the system is running in application server mode.
-    VER_SUITE_SINGLEUSERTS = 0x00000100
+    VER_SUITE_SINGLEUSERTS = 0x00000100.freeze unless defined?(VER_SUITE_SINGLEUSERTS)
     # Microsoft Small Business Server was once installed on the system, but may have been upgraded to another version of Windows. Refer to the Remarks section for more information about this bit flag.
-    VER_SUITE_SMALLBUSINESS = 0x00000001
+    VER_SUITE_SMALLBUSINESS = 0x00000001.freeze unless defined?(VER_SUITE_SMALLBUSINESS)
     # Microsoft Small Business Server is installed with the restrictive client license in force. Refer to the Remarks section for more information about this bit flag.
-    VER_SUITE_SMALLBUSINESS_RESTRICTED = 0x00000020
+    VER_SUITE_SMALLBUSINESS_RESTRICTED = 0x00000020.freeze unless defined?(VER_SUITE_SMALLBUSINESS_RESTRICTED)
     # Windows Storage Server 2003 R2 or Windows Storage Server 2003is installed.
-    VER_SUITE_STORAGE_SERVER = 0x00002000
+    VER_SUITE_STORAGE_SERVER = 0x00002000.freeze unless defined?(VER_SUITE_STORAGE_SERVER)
     # Terminal Services is installed. This value is always set.
     # If VER_SUITE_TERMINAL is set but VER_SUITE_SINGLEUSERTS is not set, the system is running in application server mode.
-    VER_SUITE_TERMINAL = 0x00000010
+    VER_SUITE_TERMINAL = 0x00000010.freeze unless defined?(VER_SUITE_TERMINAL)
     # Windows Home Server is installed.
-    VER_SUITE_WH_SERVER = 0x00008000
+    VER_SUITE_WH_SERVER = 0x00008000.freeze unless defined?(VER_SUITE_WH_SERVER)
 
     # Product Type
     # The system is a domain controller and the operating system is Windows Server 2008 R2, Windows Server 2008, Windows Server 2003, or Windows 2000 Server.
-    VER_NT_DOMAIN_CONTROLLER = 0x0000002
+    VER_NT_DOMAIN_CONTROLLER = 0x0000002.freeze unless defined?(VER_NT_DOMAIN_CONTROLLER)
     # The operating system is Windows Server 2008 R2, Windows Server 2008, Windows Server 2003, or Windows 2000 Server.
     # Note that a server that is also a domain controller is reported as VER_NT_DOMAIN_CONTROLLER, not VER_NT_SERVER.
-    VER_NT_SERVER = 0x0000003
+    VER_NT_SERVER = 0x0000003.freeze unless defined?(VER_NT_SERVER)
     # The operating system is Windows 7, Windows Vista, Windows XP Professional, Windows XP Home Edition, or Windows 2000 Professional.
-    VER_NT_WORKSTATION = 0x0000001
+    VER_NT_WORKSTATION = 0x0000001.freeze unless defined?(VER_NT_WORKSTATION)
 
     # GetSystemMetrics
     # The build number if the system is Windows Server 2003 R2; otherwise, 0.
-    SM_SERVERR2 = 89
+    SM_SERVERR2 = 89.freeze unless defined?(SM_SERVERR2)
 
     # http://msdn.microsoft.com/en-us/library/ms724358(v=vs.85).aspx
     # this is what it sounds like...when kittens die
@@ -126,7 +126,7 @@ module Windows
       0x0000001C => {:ms_const => 'PRODUCT_ULTIMATE_N', :name => 'Ultimate N'},
       0x00000011 => {:ms_const => 'PRODUCT_WEB_SERVER', :name => 'Web Server (full installation)'},
       0x0000001D => {:ms_const => 'PRODUCT_WEB_SERVER_CORE', :name => 'Web Server (core installation)'}
-    }
+    }.freeze unless defined?(SKU)
 
     attr_reader :major_version, :minor_version, :build_number, :service_pack_major_version, :service_pack_minor_version
     attr_reader :version, :product_type, :product_suite, :sku
@@ -149,7 +149,7 @@ module Windows
       "Windows Server 2003" => {:major => 5, :minor => 2, :callable => lambda{ Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) == 0 }},
       "Windows XP" => {:major => 5, :minor => 1},
       "Windows 2000" => {:major => 5, :minor => 0}
-    }
+    }.freeze unless defined?(WIN_VERSIONS)
 
     marketing_names = Array.new
 

@@ -1,5 +1,5 @@
 #
-# Author:: Doug Ireton (<doug.ireton@nordstrom.com>) 
+# Author:: Doug Ireton (<doug.ireton@nordstrom.com>)
 # Cookbook Name:: windows
 # Provider:: printer
 #
@@ -56,7 +56,7 @@ end
 
 private
 
-PRINTERS_REG_KEY = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Print\Printers\\'
+PRINTERS_REG_KEY = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Print\Printers\\'.freeze unless defined?(PRINTERS_REG_KEY)
 
 def printer_exists?(name)
   printer_reg_key = PRINTERS_REG_KEY + name
