@@ -27,6 +27,7 @@ require 'chef/mixin/language'
 
 include Chef::Mixin::ShellOut
 include Windows::Helper
+include Windows::MsiHelper
 
 # the logic in all action methods mirror that of
 # the Chef::Provider::Package which will make
@@ -118,7 +119,12 @@ end
 
 def install_package(name,version)
   Chef::Log.debug("Processing #{@new_resource} as a #{installer_type} installer.")
-  install_args = [cached_file(@new_resource.source, @new_resource.checksum), expand_options(unattended_installation_flags), expand_options(@new_resource.options)]
+  if @new_resource.allow_partial_reinstall
+    @new_resource.options << msi_reinstall_flags
+  end
+  install_args = [cached_file(@new_resource.source, @new_resource.checksum),
+                  expand_options(unattended_installation_flags),
+                  expand_options(@new_resource.options)]
   Chef::Log.info("Starting installation...this could take awhile.")
   Chef::Log.debug "Install command: #{ sprintf(install_command_template, *install_args) }"
   shell_out!(sprintf(install_command_template, *install_args), {:timeout => @new_resource.timeout, :returns => @new_resource.success_codes})
@@ -177,6 +183,22 @@ def unattended_installation_flags
   end
 end
 
+# Flags to support small updates
+# http://msdn.microsoft.com/en-us/library/windows/desktop/aa367575(v=vs.85).aspx
+# To ensure REINSTALL and REINSTALLMODE are not passed during major upgrades
+# (where the ProductName is the same, ProductVersion is incremented, and ProductCode is differs),
+# the ProductCode must be used to check if the new_resource is already installed.
+def msi_reinstall_flags
+  reinstall_flags = ""
+  if installer_type == :msi
+    msi = MsiPackage.new(cached_file(@new_resource.source, @new_resource.checksum))
+    if msi.installed?
+      reinstall_flags = " REINSTALL=ALL REINSTALLMODE=vomus"
+    end
+  end
+  reinstall_flags
+end
+
 def installed_packages
   @installed_packages || begin
     installed_packages = {}
@@ -225,7 +247,7 @@ def installer_type
       @new_resource.installer_type
     else
       basename = ::File.basename(cached_file(@new_resource.source, @new_resource.checksum))
-      if basename.split(".").last == "msi" # Microsoft MSI
+      if basename.split(".").last.downcase == "msi" # Microsoft MSI
         :msi
       else
         # search the binary file for installer type
