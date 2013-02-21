@@ -152,7 +152,7 @@ def install_command_template
   when :msi
     "msiexec%2$s \"%1$s\"%3$s"
   else
-    "start \"\" /wait %1$s%2$s%3$s"
+    "start \"\" /wait \"%1$s\"%2$s%3$s"
   end
 end
 
