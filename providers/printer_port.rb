@@ -1,5 +1,5 @@
 #
-# Author:: Doug Ireton (<doug.ireton@nordstrom.com>) 
+# Author:: Doug Ireton (<doug.ireton@nordstrom.com>)
 # Cookbook Name:: windows
 # Provider:: printer_port
 #
@@ -58,7 +58,7 @@ end
 
 private
 
-PORTS_REG_KEY = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\Standard TCP/IP Port\Ports\\'
+PORTS_REG_KEY = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\Standard TCP/IP Port\Ports\\'.freeze unless defined?(PORTS_REG_KEY)
 
 def port_exists?(name)
   port_reg_key = PORTS_REG_KEY + name
