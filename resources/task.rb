@@ -20,7 +20,7 @@
 
 # Passwords can't be loaded for existing tasks, making :modify both confusing
 # and not very useful
-actions :create, :delete, :run
+actions :create, :delete, :run, :change
 
 attribute :name, :kind_of => String, :name_attribute => true
 attribute :command, :kind_of => String
