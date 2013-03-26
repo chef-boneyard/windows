@@ -29,6 +29,7 @@ attribute :user, :kind_of => String, :default => nil
 attribute :password, :kind_of => String, :default => nil
 attribute :run_level, :equal_to => [:highest, :limited], :default => :limited
 attribute :frequency_modifier, :kind_of => Integer, :default => 1
+attribute :starttime, :kind_of => String, :default => nil, :regex => /[0-9][0-9]:[0-9][0-9]/
 attribute :frequency, :equal_to => [:minute,
                                     :hourly,
                                     :daily,
