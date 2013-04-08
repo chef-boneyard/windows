@@ -3,8 +3,14 @@
 * package preseeding/response_file support
 * package installation location via a `target_dir` attribute.
 * [COOK-666] `windows_package` should support CoApp packages
-* windows_registry :force_modify action should use RegNotifyChangeKeyValue from WinAPI
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
+
+## v1.8.6:
+
+* [COOK-968] - windows_package provider should gracefully handle paths with spaces
+* [COOK-222] - windows_task resource does not declare :change action
+* [COOK-241] - Windows cookbook should check for redefined constants
+* [COOK-248] - Windows package install type is case sensitive
 
 ## v1.8.4:
 
