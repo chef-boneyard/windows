@@ -17,6 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+require 'uri'
 
 module Windows
   module Helper
@@ -64,8 +65,9 @@ module Windows
     def cached_file(source, checksum=nil, windows_path=true)
       @installer_file_path ||= begin
 
-        if(source =~ /^(https?:\/\/)(.*\/)(.*)$/)
-          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(source)}"
+        if ::URI.parse(source).absolute?
+          uri = ::URI.parse(::URI.unescape(source))
+          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(uri.path)}"
           Chef::Log.debug("Caching a copy of file #{source} at #{cache_file_path}")
           r = Chef::Resource::RemoteFile.new(cache_file_path, run_context)
           r.source(source)
