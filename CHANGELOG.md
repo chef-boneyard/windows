@@ -1,14 +1,18 @@
 ## Future
 
-* package preseeding/response_file support
+* package preseeding/`response_file` support
 * package installation location via a `target_dir` attribute.
 * [COOK-666] `windows_package` should support CoApp packages
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.8.8:
+
+* [COOK-2729] - helper should use URI rather than regex and bare string
+
 ## v1.8.6:
 
-* [COOK-968] - windows_package provider should gracefully handle paths with spaces
-* [COOK-222] - windows_task resource does not declare :change action
+* [COOK-968] - `windows_package` provider should gracefully handle paths with spaces
+* [COOK-222] - `windows_task` resource does not declare :change action
 * [COOK-241] - Windows cookbook should check for redefined constants
 * [COOK-248] - Windows package install type is case sensitive
 
@@ -29,8 +33,8 @@
 
 ## v1.8.0:
 
-* [COOK-2126] - Add checksum attribute to windows_zipfile
-* [COOK-2142] - Add printer and printer_port LWRPs
+* [COOK-2126] - Add checksum attribute to `windows_zipfile`
+* [COOK-2142] - Add printer and `printer_port` LWRPs
 * [COOK-2149] - Chef::Log.debug Windows Package command line
 * [COOK-2155] -`windows_package` does not send checksum to
   `cached_file` in `installer_type`
@@ -54,14 +58,14 @@
 
 ## v1.4.0:
 
-* [COOK-1571] - windows_package resource (with msi provider) does not
+* [COOK-1571] - `windows_package` resource (with msi provider) does not
 accept spaces in filename
 * [COOK-1581] - Windows cookbook needs a scheduled tasks LWRP
 * [COOK-1584] - `windows_registry` should support all registry types
 
 ## v1.3.4:
 
-* [COOK-1173] - windows_registry throws Win32::Registry::Error for
+* [COOK-1173] - `windows_registry` throws Win32::Registry::Error for
   action :remove on a nonexistent key
 * [COOK-1182] - windows package sets start window title instead of
   quoting a path
@@ -80,9 +84,9 @@ accept spaces in filename
 
 * [COOK-1323] - Update for changes in Chef 0.10.10.
   - Setting file mode doesn't make sense on Windows (package provider
-  - and reboot_handler recipe)
+  - and `reboot_handler` recipe)
   - Prefix ::Win32 to avoid namespace collision with Chef::Win32
-  - (registry_helper library)
+  - (`registry_helper` library)
   - Use chef_gem instead of gem_package so gems get installed correctly
     under the Ruby environment Chef runs in (reboot_handler recipe,
     zipfile provider)
@@ -90,7 +94,7 @@ accept spaces in filename
 ## v1.2.12:
 
 * [COOK-1037] - specify version for rubyzip gem
-* [COOK-1007] - windows_feature does not work to remove features with
+* [COOK-1007] - `windows_feature` does not work to remove features with
   dism
 * [COOK-667] - shortcut resource + provider for Windows platforms
 
@@ -112,23 +116,23 @@ accept spaces in filename
 
 ## v1.2.4
 
-* windows_package - catch Win32::Registry::Error that pops up when searching certain keys
+* `windows_package` - catch Win32::Registry::Error that pops up when searching certain keys
 
 ## v1.2.2
 
 * combined numerous helper libarires for easier sharing across libaries/LWRPs
 * renamed Chef::Provider::WindowsFeature::Base file to the more descriptive `feature_base.rb`
-* refactored windows_path LWRP
+* refactored `windows_path` LWRP
   * :add action should MODIFY the the underlying ENV variable (vs CREATE)
   * deleted greedy :remove action until it could be made more idempotent
-* added a windows_batch resource/provider for running batch scripts remotely
+* added a `windows_batch` resource/provider for running batch scripts remotely
 
 ## v1.2.0
 
 * [COOK-745] gracefully handle required server restarts on Windows platform
   * WindowsRebootHandler for requested and pending reboots
-  * windows_reboot LWRP for requesting (receiving notifies) reboots
-  * reboot_handler recipe for enabling WindowsRebootHandler as a report handler
+  * `windows_reboot` LWRP for requesting (receiving notifies) reboots
+  * `reboot_handler` recipe for enabling WindowsRebootHandler as a report handler
 * [COOK-714] Correct initialize misspelling
 * RegistryHelper - new `get_values` method which returns all values for a particular key.
 
@@ -154,8 +158,8 @@ accept spaces in filename
   * NEW - `windows_auto_run` resource/provider
   * NEW - `windows_env_vars` resource/provider
   * NEW - `windows_path` resource/provider
-* re-write of the windows_package logic for determining current installed packages
-* new checksum attribute for windows_package resource...useful for remote packages
+* re-write of the `windows_package` logic for determining current installed packages
+* new checksum attribute for `windows_package` resource...useful for remote packages
 
 ## v1.0.2:
 
