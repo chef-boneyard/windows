@@ -26,9 +26,14 @@ action :create do
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
     cmd =  "schtasks /Create /TN \"#{@new_resource.name}\" "
-    cmd += "/SC #{@new_resource.frequency} /MO #{@new_resource.frequency_modifier} "
-    cmd += "/TR \"#{@new_resource.command}\" "
-    if @new_resource.user && @new_resource.password
+    cmd += "/SC #{@new_resource.frequency} "
+	if !@new_resource.frequency_modifier.nil?
+      cmd += "/MO \"#{@new_resource.frequency_modifier}\" "
+    end
+	cmd += "/TR \"#{@new_resource.command}\" "
+    if is_system?(@new_resource.user)
+      cmd += "/RU \"#{@new_resource.user}\" "
+    elsif @new_resource.user && @new_resource.password
       cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
     elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
       Chef::Log.fatal "#{@new_resource.name}: Can't specify user or password without both!"
@@ -121,4 +126,8 @@ def load_task_hash(task_name)
   end
 
   task
+end
+
+def is_system?(user)
+  user =~ /^(?:NT AUTHORITY\\)?(?:SYSTEM|NETWORKSERVICE|LOCALSERVICE)$/i
 end
