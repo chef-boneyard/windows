@@ -65,7 +65,7 @@ module Windows
     def cached_file(source, checksum=nil, windows_path=true)
       @installer_file_path ||= begin
 
-        if ::URI.parse(source).absolute?
+        if source =~ ::URI::ABS_URI && %w[http https].include?(URI.parse(source).scheme)
           uri = ::URI.parse(::URI.unescape(source))
           cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(uri.path)}"
           Chef::Log.debug("Caching a copy of file #{source} at #{cache_file_path}")
