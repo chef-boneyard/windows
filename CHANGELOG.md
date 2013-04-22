@@ -5,6 +5,16 @@
 * [COOK-666] `windows_package` should support CoApp packages
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.8.10:
+
+When using Windows qualified filepaths (C:/foo), the #absolute? method
+for URI returns true, because "C" is the scheme.
+
+This change checks that the URI is http or https scheme, so it can be
+passed off to remote_file appropriately.
+
+* [COOK-2729] - allow only http, https URI schemes
+
 ## v1.8.8:
 
 * [COOK-2729] - helper should use URI rather than regex and bare string
