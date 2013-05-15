@@ -39,7 +39,7 @@ class Chef
     #File -> Load Hive... in regedit.exe
     def reg_load_key(name, file)
       run(SE_BACKUP_NAME, SE_RESTORE_NAME) do
-        rc = RegLoadKey(HKEY_USERS, "#{name}", file)
+        rc = RegLoadKey(HKEY_USERS, name.to_s, file)
         if rc == ERROR_SUCCESS
           return true
         elsif rc == ERROR_SHARING_VIOLATION
@@ -53,7 +53,7 @@ class Chef
     #File -> Unload Hive... in regedit.exe
     def reg_unload_key(name)
       run(SE_BACKUP_NAME, SE_RESTORE_NAME) do
-        rc = RegUnLoadKey(HKEY_USERS, "#{name}")
+        rc = RegUnLoadKey(HKEY_USERS, name.to_s)
         if rc != ERROR_SUCCESS
           raise get_last_error(rc)
         end
