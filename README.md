@@ -473,11 +473,13 @@ Server 2008 due to API usage.
 - name: name attribute, The task name.
 - command: The command the task will run.
 - cwd: The directory the task will be run from.
-- user: The user to run the task as. (requires password)
+- user: The user to run the task as. (requires password unless "SYSTEM" is specfied)
 - password: The user's password. (requires user)
 - run_level: Run with limited or highest privileges.
 - frequency: Frequency with which to run the task. (hourly, daily, ect.)
 - frequency_modifier: Multiple for frequency. (15 minutes, 2 days)
+- start\_day: Optional string for the first occurence of the task (MM/DD/YYYY)
+- start\_time: Optional string for the first occurence of the task (HH:mm)
 
 ### Examples
 

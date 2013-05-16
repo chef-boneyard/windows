@@ -30,10 +30,14 @@ action :create do
     cmd += "/TR \"#{@new_resource.command}\" "
     if @new_resource.user && @new_resource.password
       cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
+    elsif @new_resource.user == "SYSTEM"
+      cmd += "/RU \"#{@new_resource.user}\" "
     elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
       Chef::Log.fatal "#{@new_resource.name}: Can't specify user or password without both!"
     end
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
+    cmd += "/SD \"#{@new_resource.start_day}\" " unless @new_resource.start_day.nil?
+    cmd += "/ST \"#{@new_resource.start_time}\" " unless @new_resource.start_time.nil?
     shell_out!(cmd, {:returns => [0]})
     @new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
