@@ -96,7 +96,7 @@ module Windows
       hive.send(mode, key_name, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
         changed_something = false
         values.each do |k,val|
-          key = "#{k}" #wtf. avoid "can't modify frozen string" in win32/registry.rb
+          key = k.to_s #wtf. avoid "can't modify frozen string" in win32/registry.rb
           cur_val = nil
           begin
             cur_val = reg[key]
@@ -170,7 +170,7 @@ module Windows
       Chef::Log.debug("Deleting values in #{path}")
       hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
         values.each_key { |key|
-          name = "#{key}"
+          name = key.to_s
           # Ensure delete operation is idempotent.
           if value_exists?(path, key)
             Chef::Log.debug("Deleting value #{name} in #{path}")
