@@ -5,6 +5,20 @@
 * [COOK-666] `windows_package` should support CoApp packages
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.9.0:
+
+### Bug
+
+- [COOK-2899]: windows_feature fails when a feature install requires a
+  reboot
+- [COOK-2914]: Foodcritic failures in Cookbooks
+- [COOK-2983]: windows cookbook has foodcritic failures
+
+### Improvement
+
+- [COOK-2686]: Add Windows Server 2012 to version.rb so other
+  depending chef scripts can detect Windows Server 2012
+
 ## v1.8.10:
 
 When using Windows qualified filepaths (C:/foo), the #absolute? method
