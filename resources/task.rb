@@ -28,6 +28,7 @@ attribute :cwd, :kind_of => String
 attribute :user, :kind_of => String, :default => nil
 attribute :password, :kind_of => String, :default => nil
 attribute :run_level, :equal_to => [:highest, :limited], :default => :limited
+attribute :force, :kind_of => [ TrueClass, FalseClass ], :default => false
 attribute :frequency_modifier, :kind_of => Integer, :default => 1
 attribute :frequency, :equal_to => [:minute,
                                     :hourly,
