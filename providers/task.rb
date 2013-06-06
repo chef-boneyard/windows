@@ -25,7 +25,8 @@ action :create do
   if @current_resource.exists
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
-    cmd =  "schtasks /Create /TN \"#{@new_resource.name}\" "
+    use_force = @new_resource.force ? '/F' : ''
+    cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
     cmd += "/SC #{@new_resource.frequency} /MO #{@new_resource.frequency_modifier} "
     cmd += "/TR \"#{@new_resource.command}\" "
     if @new_resource.user && @new_resource.password
@@ -74,7 +75,8 @@ end
 
 action :delete do
   if @current_resource.exists
-    cmd = "schtasks /Delete /TN \"#{@current_resource.name}\""
+    use_force = @new_resource.force ? '/F' : ''
+    cmd = "schtasks /Delete #{use_force} /TN \"#{@current_resource.name}\""
     shell_out!(cmd, {:returns => [0]})
     @new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
