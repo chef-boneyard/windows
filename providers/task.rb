@@ -26,7 +26,8 @@ action :create do
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
     cmd =  "schtasks /Create /TN \"#{@new_resource.name}\" "
-    cmd += "/SC #{@new_resource.frequency} /MO #{@new_resource.frequency_modifier} "
+    cmd += "/SC #{@new_resource.frequency} "
+    cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
     cmd += "/TR \"#{@new_resource.command}\" "
     if @new_resource.user && @new_resource.password
       cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
