@@ -5,6 +5,13 @@
 * [COOK-666] `windows_package` should support CoApp packages
 * WindowsRebootHandler/`windows_reboot` LWRP should support kicking off subsequent chef run on reboot.
 
+## v1.10.0:
+
+### Improvement
+
+- [COOK-3126]: `windows_task` should support the on start frequency
+- [COOK-3127]: Support the force option on task create and delete
+
 ## v1.9.0:
 
 ### Bug
