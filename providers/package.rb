@@ -32,6 +32,30 @@ include Windows::Helper
 # the Chef::Provider::Package which will make
 # refactoring into core chef easy
 
+action :run_batch do
+    # run batch command after source is downloaded
+    if @new_resource.version != nil && @new_resource.version != @current_resource.version
+        install_version = @new_resource.version
+    # If it's not installed at all, install it
+    elsif @current_resource.version == nil
+        install_version = candidate_version
+    end
+    if install_version
+        Chef::Log.debug("Running batch ...")
+        # check if source exists, download if not
+        c_file = cached_file(@new_resource, @new_resource.checksum)
+        batch_resource = Chef::Resource::Batch.new(@new_resource.name, run_context)
+        batch_code = <<-EOH
+        set SOURCE="#{c_file}"
+        #{@new_resource.batch_code}
+        EOH
+        Chef::Log.info("Script being run:\n#{batch_code}")
+        batch_resource.code(batch_code)
+        batch_resource.run_action(:run)
+        @new_resource.updated_by_last_action(batch_resource.updated_by_last_action?)
+    end
+end
+
 action :install do
   # If we specified a version, and it's not the current version, move to the specified version
   if @new_resource.version != nil && @new_resource.version != @current_resource.version

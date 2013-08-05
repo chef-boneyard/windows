@@ -18,12 +18,13 @@
 # limitations under the License.
 #
 
-actions :install, :remove
+actions :install, :remove, :run_batch
 
 default_action :install
 
 attribute :package_name, :kind_of => String, :name_attribute => true
 attribute :source, :kind_of => String, :required => true
+attribute :batch_code, :kind_of => String, :default => nil
 attribute :version, :kind_of => String
 attribute :options, :kind_of => String
 attribute :installer_type, :kind_of => Symbol, :default => nil, :equal_to => [:msi, :inno, :nsis, :wise, :installshield, :custom]
