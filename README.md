@@ -172,6 +172,7 @@ For maximum flexibility the `source` attribute supports both remote and local in
 #### Actions
 - :install: install a package
 - :remove: remove a package. The remove action is completely hit or miss as many application uninstallers do not support a full silent/quiet mode.
+- :run_batch: execute a batch script using the cmd.exe interpreter. Also provides %SOURCE% variable which points to location of a source.
 
 #### Attribute Parameters
 - package_name: name attribute. The 'DisplayName' of the application installation package.
@@ -180,6 +181,7 @@ For maximum flexibility the `source` attribute supports both remote and local in
 - checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
 - options: Additional options to pass the underlying installation command
 - timeout: set a timeout for the package download (default 600 seconds)
+- batch_code: quoted string of code to execute. Applicable only with :run_batch action.
 - version: The version number of this package, as indicated by the 'DisplayVersion' value in one of the 'Uninstall' registry keys.  If the given version number does equal the 'DisplayVersion' in the registry, the package will be installed.
 - success_codes: set an array of possible successful installation
   return codes. Previously this was hardcoded, but certain MSIs may
@@ -243,6 +245,21 @@ Remove Google Chrome
 ```ruby
 windows_package 'Google Chrome' do
   action :remove
+end
+```
+Visual Studio ( custom batch commands to install it )
+```ruby
+windows_package "Microsoft Visual Studio Ultimate 2012" do
+  source "https://nexus.local.net/content/repositories/thirdparty-test/microsoft/visual-studio-2012/11.0.50727/visual-studio-2012-11.0.50727.zip"
+  checksum "005393cf185af82642c5300a8db4d542d97f9a87"
+  batch_code <<-EOH
+  cmd /c 7z.exe x %SOURCE%  -oC:\\tmp\\vs_install -aoa
+  cd C:\\tmp\\vs_install
+  vs_ultimate.exe /adminfile AdminDeployment.xml /quiet /norestart
+  rmdir /S /Q c:\\tmp\\vs_install
+  EOH
+  installer_type :custom
+  action :run_batch
 end
 ```
 
