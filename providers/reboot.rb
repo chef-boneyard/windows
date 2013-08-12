@@ -19,9 +19,9 @@
 #
 
 action :request do
-  node.run_state['reboot_requested'] = true
-  node.run_state['reboot_timeout'] = @new_resource.timeout
-  node.run_state['reboot_reason'] = @new_resource.reason
+  node.run_state[:reboot_requested] = true
+  node.run_state[:reboot_timeout] = @new_resource.timeout
+  node.run_state[:reboot_reason] = @new_resource.reason
 end
 
 action :cancel do
