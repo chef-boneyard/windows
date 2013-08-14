@@ -29,6 +29,8 @@ action :create do
     cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
     cmd += "/SC #{@new_resource.frequency} "
     cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
+    cmd += "/SD \"#{@new_resource.start_day}\" " unless @new_resource.start_day.nil?
+    cmd += "/ST \"#{@new_resource.start_time}\" " unless @new_resource.start_time.nil?
     cmd += "/TR \"#{@new_resource.command}\" "
     if @new_resource.user && @new_resource.password
       cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
