@@ -216,15 +216,19 @@ def extract_installed_packages_from_key(hkey = ::Win32::Registry::HKEY_LOCAL_MAC
         end
       end
     end
+  rescue ::Win32::Registry::Error
+  end
+  begin
     ::Win32::Registry.open(hkey, update_subkey, desired) do |reg|
       reg.each_key do |key, wtime|
         begin
-          key.each_key do |subkey, subwtime|
+          k = reg.open(key, desired)
+          k.each_key do |subkey, subwtime|
             begin
-              k = reg.open(subkey, desired)
+              subk = k.open(subkey, desired)
           
-              display_name = k["PackageName"] rescue nil
-              version = k["PackageVersion"] rescue "NO VERSION"
+              display_name = subk["PackageName"] rescue nil
+              version = subk["PackageVersion"] rescue "NO VERSION"
               uninstall_string = nil
               if display_name
                 packages[display_name] = {:name => display_name,
