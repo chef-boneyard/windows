@@ -71,7 +71,6 @@ module Windows
     SM_SERVERR2 = 89.freeze unless defined?(SM_SERVERR2)
 
     # http://msdn.microsoft.com/en-us/library/ms724358(v=vs.85).aspx
-    # this is what it sounds like...when kittens die
     SKU = {
       0x00000006 => {:ms_const => 'PRODUCT_BUSINESS', :name => 'Business'},
       0x00000010 => {:ms_const => 'PRODUCT_BUSINESS_N', :name => 'Business N'},
