@@ -36,9 +36,9 @@ attribute :frequency, :equal_to => [:minute,
                                     :weekly,
                                     :monthly,
                                     :once,
-                                    :on_logon,
+                                    :onlogon,
                                     :onstart,
-                                    :on_idle], :default => :hourly
+                                    :onidle], :default => :hourly
 
 attr_accessor :exists, :status
 
