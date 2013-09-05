@@ -28,7 +28,7 @@ action :unzip do
   ensure_rubyzip_gem_installed
   Chef::Log.debug("unzip #{@new_resource.source} => #{@new_resource.path} (overwrite=#{@new_resource.overwrite})")
 
-  Zip::ZipFile.open(cached_file(@new_resource.source, @new_resource.checksum)) do |zip|
+  Zip::File.open(cached_file(@new_resource.source, @new_resource.checksum)) do |zip|
     zip.each do |entry|
       path = ::File.join(@new_resource.path, entry.name)
       FileUtils.mkdir_p(::File.dirname(path))
@@ -57,7 +57,7 @@ action :zip do
     end
     # only supporting compression of a single directory (recursively).
     if ::File.directory?(@new_resource.source)
-      z = Zip::ZipFile.new(@new_resource.path, true)
+      z = Zip::File.new(@new_resource.path, true)
       unless @new_resource.source =~ /::File::ALT_SEPARATOR$/
         @new_resource.source << ::File::ALT_SEPARATOR
       end
@@ -80,12 +80,12 @@ end
 private
 def ensure_rubyzip_gem_installed
   begin
-    require 'zip/zip'
+    require 'zip'
   rescue LoadError
     Chef::Log.info("Missing gem 'rubyzip'...installing now.")
     chef_gem "rubyzip" do
       version node['windows']['rubyzipversion']
     end
-    require 'zip/zip'
+    require 'zip'
   end
 end
