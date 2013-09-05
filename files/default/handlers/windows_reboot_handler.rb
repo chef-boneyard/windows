@@ -67,7 +67,7 @@ class WindowsRebootHandler < Chef::Handler
   end
 
   def timeout
-    node.run_state[:reboot_timeout] || @timeout
+    node.run_state[:reboot_timeout] || node['windows']['reboot_timeout'] || @timeout
   end
 
   def reason
