@@ -62,7 +62,9 @@ module Windows
     # if a file is local it returns a windows friendly path version
     # if a file is remote it caches it locally
     def cached_file(source, checksum=nil, windows_path=true)
+
       @installer_file_path ||= begin
+
 
         if(source =~ /^(https?:\/\/)(.*\/)(.*)$/)
           cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(source)}"
@@ -72,6 +74,18 @@ module Windows
           r.backup(false)
           r.checksum(checksum) if checksum
           r.run_action(:create)
+        elsif source =~ /^cookbook:\/\/.*/i
+          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(source)}"
+
+          Chef::Log.info("Getting cached file: #{cache_file_path}")
+
+          r = Chef::Resource::CookbookFile.new(cache_file_path, run_context)
+          r.source(::File.basename(source))
+          r.cookbook(cookbook_name)
+          r.backup(false)
+          r.checksum(checksum) if checksum
+          r.run_action(:create_if_missing)
+
         else
           cache_file_path = source
         end
