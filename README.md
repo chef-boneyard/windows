@@ -6,7 +6,7 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 Requirements
 ============
 
-Version 1.3.0+ of this cookbook requires Chef 0.10.10.
+Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
 
 Platform
 --------
@@ -22,8 +22,15 @@ The `windows_task` LWRP requires Windows Server 2008 due to its API usage.
 Cookbooks
 ---------
 
+The following cookbooks provided by Opscode are required as noted:
+
 * chef_handler (`windows::reboot_handler` leverages the chef_handler LWRP)
-* powershell - The Printer and Printer Port LWRP require Powershell
+* powershell - The Printer and Printer Port LWRP require Powershell.
+
+**NOTE** We cannot specifically depend on Opscode's powershell,
+  because powershell depends on this cookbook. Ensure that
+  `recipe[powershell]` exists in the node's expanded run list so it
+  gets downloaded where the printer LWRPs are used.
 
 Attributes
 ==========
@@ -178,6 +185,11 @@ For maximum flexibility the `source` attribute supports both remote and local in
 - checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
 - options: Additional options to pass the underlying installation command
 - timeout: set a timeout for the package download (default 600 seconds)
+- version: The version number of this package, as indicated by the 'DisplayVersion' value in one of the 'Uninstall' registry keys.  If the given version number does equal the 'DisplayVersion' in the registry, the package will be installed.
+- success_codes: set an array of possible successful installation
+  return codes. Previously this was hardcoded, but certain MSIs may
+  have a different return code, e.g. 3010 for reboot required. Must be
+  an array, and defaults to `[0, 42, 127]`.
 
 ### Examples
 
@@ -234,6 +246,10 @@ For maximum flexibility the `source` attribute supports both remote and local in
 windows\_printer\_port
 ----------------------
 
+**Note** Include `recipe[powershell]` on the node's expanded run list
+  to ensure the powershell cookbook is downloaded to avoid circular
+  dependency.
+
 Create and delete TCP/IPv4 printer ports.
 
 ### Actions
@@ -278,6 +294,10 @@ Create and delete TCP/IPv4 printer ports.
 
 windows\_printer
 ----------------
+
+**Note** Include `recipe[powershell]` on the node's expanded run list
+  to ensure the powershell cookbook is downloaded to avoid circular
+  dependency.
 
 Create Windows printer. Note that this doesn't currently install a printer
 driver. You must already have the driver installed on the system.

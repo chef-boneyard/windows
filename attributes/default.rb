@@ -20,3 +20,4 @@
 
 default['windows']['allow_pending_reboots'] = true
 default['windows']['rubyzipversion'] = nil
+default['windows']['reboot_timeout'] = 60

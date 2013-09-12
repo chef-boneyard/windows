@@ -29,11 +29,12 @@ attribute :options, :kind_of => String
 attribute :installer_type, :kind_of => Symbol, :default => nil, :equal_to => [:msi, :inno, :nsis, :wise, :installshield, :custom]
 attribute :checksum, :kind_of => String
 attribute :timeout, :kind_of => Integer, :default => 600
+attribute :success_codes, :kind_of => Array, :default => [0, 42, 127]
 
-# TODO 
+# TODO
 
 # add preseeding support
-#attribute :response_file 
+#attribute :response_file
 
 # allow target dirtory of installation to be set
 #attribute :target_dir
