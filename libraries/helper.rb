@@ -73,13 +73,13 @@ module Windows
           r.backup(false)
           r.checksum(checksum) if checksum
           r.run_action(:create)
-        elsif source =~ /^cookbook:\/\/.*/i
+        elsif source =~ /^cookbook:\/\/\/.*/i
           cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(source)}"
 
-          Chef::Log.info("Getting cached file: #{cache_file_path}")
+          Chef::Log.debug("Getting cached file: #{cache_file_path}")
 
           r = Chef::Resource::CookbookFile.new(cache_file_path, run_context)
-          r.source(::File.basename(source))
+          r.source(source.gsub(/^cookbook:\/\/\//i, ""))
           r.cookbook(cookbook_name)
           r.backup(false)
           r.checksum(checksum) if checksum
