@@ -27,7 +27,8 @@ action :create do
   else
     use_force = @new_resource.force ? '/F' : ''
     cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
-    cmd += "/SC #{@new_resource.frequency} "
+    schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
+    cmd += "/SC #{schedule} "
     cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
     cmd += "/TR \"#{@new_resource.command}\" "
     if @new_resource.user && @new_resource.password
