@@ -36,6 +36,9 @@ action :create do
     elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
       Chef::Log.fatal "#{@new_resource.name}: Can't specify user or password without both!"
     end
+    if @new_resource.starttime then
+       cmd += "/ST #{@new_resource.starttime} "
+    end
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
     shell_out!(cmd, {:returns => [0]})
     @new_resource.updated_by_last_action true
