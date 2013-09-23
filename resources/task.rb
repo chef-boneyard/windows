@@ -39,6 +39,8 @@ attribute :frequency, :equal_to => [:minute,
                                     :on_logon,
                                     :onstart,
                                     :on_idle], :default => :hourly
+attribute :start_day, :kind_of => String, :default => nil
+attribute :start_time, :kind_of => String, :default => nil
 
 attr_accessor :exists, :status
 
