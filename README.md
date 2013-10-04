@@ -68,6 +68,8 @@ windows\_auto\_run
 windows\_batch
 --------------
 
+(Chef 11.6.0 includes a built-in [batch](http://docs.opscode.com/resource_batch.html) resource, so use that in preference to `windows_batch` if possible.)
+
 Execute a batch script using the cmd.exe interpreter (much like the script resources for bash, csh, powershell, perl, python and ruby). A temporary file is created and executed like other script resources, rather than run inline. By their nature, Script resources are not idempotent, as they are completely up to the user's imagination. Use the `not_if` or `only_if` meta parameters to guard the resource for idempotence.
 
 ### Actions
@@ -371,6 +373,8 @@ Sets required data in the node's run_state to notify `WindowsRebootHandler` a re
 
 windows\_registry
 -----------------
+
+(Chef 11.6.0 includes a built-in [registry_key](http://docs.opscode.com/resource_registry_key.html) resource, so use that in preference to `windows_registry` if possible.)
 
 Creates and modifies Windows registry keys.
 
