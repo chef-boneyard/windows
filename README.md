@@ -124,6 +124,8 @@ For more information on Roles, Role Services and Features see the [Microsoft Tec
 ### Attribute Parameters
 
 - feature_name: name of the feature/role to install.  The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
+- all: Boolean. Optional. Default: false. DISM provider only. Forces all dependencies to be installed.
+- source: String. Optional. DISM provider only. Uses local repository for feature install.
 
 ### Providers
 
@@ -147,6 +149,13 @@ For more information on Roles, Role Services and Features see the [Microsoft Tec
       windows_feature feature do
         action :remove
       end
+    end
+
+    # enable .Net 3.5.1 on Server 2012 using repository files on DVD
+    windows_feature "NetFx3" do
+      action :install
+      all true
+      source "d:\sources\sxs"
     end
 
 windows\_package
