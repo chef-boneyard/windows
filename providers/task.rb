@@ -25,13 +25,18 @@ action :create do
   if @current_resource.exists
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
-    cmd =  "schtasks /Create /TN \"#{@new_resource.name}\" "
-    cmd += "/SC #{@new_resource.frequency} /MO #{@new_resource.frequency_modifier} "
+    use_force = @new_resource.force ? '/F' : ''
+    cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
+    schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
+    cmd += "/SC #{schedule} "
+    cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
+    cmd += "/SD \"#{@new_resource.start_day}\" " unless @new_resource.start_day.nil?
+    cmd += "/ST \"#{@new_resource.start_time}\" " unless @new_resource.start_time.nil?
     cmd += "/TR \"#{@new_resource.command}\" "
     if @new_resource.user && @new_resource.password
       cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
     elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
-      Chef::Log.warn "#{@new_resource.name}: Can't specify user or password without both!"
+      Chef::Log.fatal "#{@new_resource.name}: Can't specify user or password without both!"
     end
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
     shell_out!(cmd, {:returns => [0]})
@@ -55,9 +60,27 @@ action :run do
   end
 end
 
+action :change do
+  if @current_resource.exists
+    cmd =  "schtasks /Change /TN \"#{@current_resource.name}\" "
+    cmd += "/TR \"#{@new_resource.command}\" " if @new_resource.command
+    if @new_resource.user && @new_resource.password
+      cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
+    elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
+      Chef::Log.fatal "#{@new_resource.name}: Can't specify user or password without both!"
+    end
+    shell_out!(cmd, {:returns => [0]})
+    @new_resource.updated_by_last_action true
+    Chef::Log.info "Change #{@new_resource} task ran"
+  else
+    Chef::Log.debug "#{@new_resource} task doesn't exists - nothing to do"
+  end
+end
+
 action :delete do
   if @current_resource.exists
-    cmd = "schtasks /Delete /TN \"#{@current_resource.name}\""
+    use_force = @new_resource.force ? '/F' : ''
+    cmd = "schtasks /Delete #{use_force} /TN \"#{@current_resource.name}\""
     shell_out!(cmd, {:returns => [0]})
     @new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
@@ -79,9 +102,9 @@ def load_current_resource
     @current_resource.cwd(task_hash[:Folder])
     @current_resource.command(task_hash[:TaskToRun])
     @current_resource.user(task_hash[:RunAsUser])
-  end
+  end if task_hash.respond_to? :[]
 end
-  
+
 private
 
 def load_task_hash(task_name)
