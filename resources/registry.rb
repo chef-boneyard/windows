@@ -30,4 +30,5 @@ def initialize(name, run_context=nil)
   super
   @action = :modify
   @key_name = name
+  Chef::Log.warn("Please use the registry_key resource in Chef Client 11. The windows_registry LWRP is still supported for Chef Client 10, but is deprecated in future versions.")
 end
