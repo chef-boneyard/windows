@@ -3,6 +3,23 @@ windows Cookbook CHANGELOG
 This file is used to list changes made in each version of the windows cookbook.
 
 
+v1.11.0
+-------
+### Improvement
+- **[COOK-3724](https://tickets.opscode.com/browse/COOK-3724)** - Rrecommend built-in resources over cookbook resources
+- **[COOK-3515](https://tickets.opscode.com/browse/COOK-3515)** - Remove unprofessional comment from library
+- **[COOK-3455](https://tickets.opscode.com/browse/COOK-3455)** - Add Windows Server 2012R2 to windows cookbook version helper
+
+### Bug
+- **[COOK-3542](https://tickets.opscode.com/browse/COOK-3542)** - Fix an issue where `windows_zipfile` fails with LoadError
+- **[COOK-3447](https://tickets.opscode.com/browse/COOK-3447)** - Allow Overriding Of The Default Reboot Timeout In windows_reboot_handler
+- **[COOK-3382](https://tickets.opscode.com/browse/COOK-3382)** - Allow windows_task to create `on_logon` tasks
+- **[COOK-2098](https://tickets.opscode.com/browse/COOK-2098)** - Fix and issue where the `windows_reboot` handler is ignoring the reboot time
+
+### New Feature
+- **[COOK-3458](https://tickets.opscode.com/browse/COOK-3458)** - Add support for `start_date` and `start_time` in `windows_task`
+
+
 v1.10.0
 -------
 ### Improvement
