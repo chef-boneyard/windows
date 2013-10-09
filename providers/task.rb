@@ -25,6 +25,7 @@ action :create do
   if @current_resource.exists
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
+    if @new_resource.user and @new_resource.password.nil? Chef::Log.debug "#{@new_resource} did not specify a password, creating task without a password"
     use_force = @new_resource.force ? '/F' : ''
     cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
     schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
