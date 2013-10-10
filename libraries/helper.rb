@@ -17,15 +17,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-require 'uri'
 
 module Windows
   module Helper
 
-    AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'.freeze unless defined?(AUTO_RUN_KEY)
-    ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'.freeze unless defined?(ENV_KEY)
+    AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+    ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
 
-    # returns windows friendly version of the provided path,
+    # returns windows friendly version of the provided path, 
     # ensures backslashes are used everywhere
     def win_friendly_path(path)
       path.gsub(::File::SEPARATOR, ::File::ALT_SEPARATOR) if path
@@ -33,7 +32,7 @@ module Windows
 
     # account for Window's wacky File System Redirector
     # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
-    # especially important for 32-bit processes (like Ruby) on a
+    # especially important for 32-bit processes (like Ruby) on a 
     # 64-bit instance of Windows.
     def locate_sysnative_cmd(cmd)
       if ::File.exists?("#{ENV['WINDIR']}\\sysnative\\#{cmd}")
@@ -46,8 +45,8 @@ module Windows
     end
 
     # Create a feature provider dependent value object.
-    # mainly created becasue Windows Feature names are
-    # different based on whether dism.exe or servicemanagercmd.exe
+    # mainly created becasue Windows Feature names are 
+    # different based on whether dism.exe or servicemanagercmd.exe 
     # is used for installation
     def value_for_feature_provider(provider_hash)
       p = Chef::Platform.find_provider_for_node(node, :windows_feature)
@@ -67,13 +66,25 @@ module Windows
 
         if source =~ ::URI::ABS_URI && %w[http https].include?(URI.parse(source).scheme)
           uri = ::URI.parse(::URI.unescape(source))
-          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(uri.path)}"
+          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(source)}"
           Chef::Log.debug("Caching a copy of file #{source} at #{cache_file_path}")
           r = Chef::Resource::RemoteFile.new(cache_file_path, run_context)
           r.source(source)
           r.backup(false)
           r.checksum(checksum) if checksum
           r.run_action(:create)
+        elsif source =~ /^cookbook:\/\/\/.*/i
+          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(source)}"
+
+          Chef::Log.debug("Getting cached file: #{cache_file_path}")
+
+          r = Chef::Resource::CookbookFile.new(cache_file_path, run_context)
+          r.source(source.gsub(/^cookbook:\/\/\//i, ""))
+          r.cookbook(cookbook_name)
+          r.backup(false)
+          r.checksum(checksum) if checksum
+          r.run_action(:create_if_missing)
+
         else
           cache_file_path = source
         end

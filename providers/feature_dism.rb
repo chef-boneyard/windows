@@ -25,6 +25,7 @@ include Windows::Helper
 def install_feature(name)
   # return code 3010 is valid, it indicates a reboot is required
   shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart", {:returns => [0,42,127,3010]})
+  @@installedFeatures = shell_out("#{dism} /online /Get-Features", {:returns => [0,42,127]})
 end
 
 def remove_feature(name)
@@ -33,9 +34,10 @@ def remove_feature(name)
 end
 
 def installed?
+  @@installedFeatures ||= shell_out("#{dism} /online /Get-Features", {:returns => [0,42,127]})
+
   @installed ||= begin
-    cmd = shell_out("#{dism} /online /Get-Features", {:returns => [0,42,127]})
-    cmd.stderr.empty? && (cmd.stdout =~  /^Feature Name : #{@new_resource.feature_name}.?$\n^State : Enabled.?$/i)
+    @@installedFeatures.stderr.empty? && (@@installedFeatures.stdout =~  /^Feature Name : #{@new_resource.feature_name}.?$\n^State : Enabled.?$/i)
   end
 end
 
