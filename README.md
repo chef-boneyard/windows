@@ -368,7 +368,7 @@ Create Windows printer drivers.
 
 Install HP LaserJet 9050 PS driver x64
 ```ruby
-    windows_print_driver "HP LaserJet 9050 PS" do
+    windows_printer_driver "HP LaserJet 9050 PS" do
       action :create
       inf_path "c:\\9050 x64\\hpc9050v.inf"      
     end
@@ -376,7 +376,7 @@ Install HP LaserJet 9050 PS driver x64
 
 Install HP LaserJet 9050 PS driver x86
 ```ruby
-    windows_print_driver "HP LaserJet 9050 PS" do
+    windows_printer_driver "HP LaserJet 9050 PS" do
       action :create
       inf_path "c:\\9050 x64\\hpc9050v.inf"      
       environment "x86"
@@ -384,13 +384,13 @@ Install HP LaserJet 9050 PS driver x86
 ```
 Delete HP LaserJet 9050 PS driver x64
 ```ruby
-    windows_print_driver "HP LaserJet 9050 PS" do
+    windows_printer_driver "HP LaserJet 9050 PS" do
       action :delete
     end
 ```
 Delete HP LaserJet 9050 PS driver x86
 ```ruby
-    windows_print_driver "HP LaserJet 9050 PS" do
+    windows_printer_driver "HP LaserJet 9050 PS" do
       action :delete
       environment "x86"
     end
