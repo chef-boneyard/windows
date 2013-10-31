@@ -344,6 +344,55 @@ Delete a printer. Note: this doesn't delete the associated printer port. See `wi
 windows_printer 'HP LaserJet 5th Floor' do
   action :delete
 end
+
+'''
+### windows_printer_driver
+**Note** Include `recipe[powershell]` on the node's expanded run list
+  to ensure the powershell cookbook is downloaded to avoid circular
+  dependency.
+
+Create Windows printer drivers.
+
+### Actions
+- :create: Installs a printer driver
+- :delete: Removes a printer driver
+
+### Attribute Parameters
+- driver_name: name attribute.  Name of the print driver to install.
+- inf_path: Full path to the inf file.
+- version: Default "Type 3 - User Mode" Options: "Type 3 - User Mode" or "Type 2 - Kernel Mode"
+- environment: Chipset of the driver being installed. Default "x64" Options: "x86", "x64" or "Itanium".
+
+### Examples
+
+Install HP LaserJet 9050 PS driver x64
+```ruby
+    windows_print_driver "HP LaserJet 9050 PS" do
+      action :create
+      inf_path "c:\\9050 x64\\hpc9050v.inf"      
+    end
+```
+
+Install HP LaserJet 9050 PS driver x86
+```ruby
+    windows_print_driver "HP LaserJet 9050 PS" do
+      action :create
+      inf_path "c:\\9050 x64\\hpc9050v.inf"      
+      environment "x86"
+    end
+```
+Delete HP LaserJet 9050 PS driver x64
+```ruby
+    windows_print_driver "HP LaserJet 9050 PS" do
+      action :delete
+    end
+```
+Delete HP LaserJet 9050 PS driver x86
+```ruby
+    windows_print_driver "HP LaserJet 9050 PS" do
+      action :delete
+      environment "x86"
+    end
 ```
 
 ### windows_reboot
