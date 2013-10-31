@@ -344,8 +344,9 @@ Delete a printer. Note: this doesn't delete the associated printer port. See `wi
 windows_printer 'HP LaserJet 5th Floor' do
   action :delete
 end
+```
 
-'''
+
 ### windows_printer_driver
 **Note** Include `recipe[powershell]` on the node's expanded run list
   to ensure the powershell cookbook is downloaded to avoid circular
@@ -394,6 +395,7 @@ Delete HP LaserJet 9050 PS driver x86
       environment "x86"
     end
 ```
+
 
 ### windows_reboot
 Sets required data in the node's run_state to notify `WindowsRebootHandler` a reboot is requested.  If Chef run completes successfully a reboot will occur if the `WindowsRebootHandler` is properly registered as a report handler.  As an action of `:request` will cause a node to reboot every Chef run, this resource is usually notified by other resources...ie restart node after a package is installed (see example below).
