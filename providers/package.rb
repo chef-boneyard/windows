@@ -118,7 +118,7 @@ end
 
 def install_package(name,version)
   Chef::Log.debug("Processing #{@new_resource} as a #{installer_type} installer.")
-  install_args = [cached_file(@new_resource.source, @new_resource.checksum), expand_options(unattended_installation_flags), expand_options(@new_resource.options)]
+  install_args = [cached_file(@new_resource, @new_resource.checksum), expand_options(unattended_installation_flags), expand_options(@new_resource.options)]
   Chef::Log.info("Starting installation...this could take awhile.")
   Chef::Log.debug "Install command: #{ sprintf(install_command_template, *install_args) }"
   shell_out!(sprintf(install_command_template, *install_args), {:timeout => @new_resource.timeout, :returns => @new_resource.success_codes})
@@ -225,12 +225,12 @@ def installer_type
     if @new_resource.installer_type
       @new_resource.installer_type
     else
-      basename = ::File.basename(cached_file(@new_resource.source, @new_resource.checksum))
+      basename = ::File.basename(cached_file(@new_resource, @new_resource.checksum))
       if basename.split(".").last.downcase == "msi" # Microsoft MSI
         :msi
       else
         # search the binary file for installer type
-        contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), "rb") {|io| io.read } # TODO limit data read in
+        contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource)), "rb") {|io| io.read } # TODO limit data read in
         case contents
         when /inno/i # Inno Setup
           :inno

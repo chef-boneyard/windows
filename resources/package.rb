@@ -24,6 +24,7 @@ default_action :install
 
 attribute :package_name, :kind_of => String, :name_attribute => true
 attribute :source, :kind_of => String, :required => true
+attribute :headers, :kind_of => Hash, :default => {}
 attribute :version, :kind_of => String
 attribute :options, :kind_of => String
 attribute :installer_type, :kind_of => Symbol, :default => nil, :equal_to => [:msi, :inno, :nsis, :wise, :installshield, :custom]
