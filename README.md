@@ -247,6 +247,7 @@ windows_package 'Google Chrome' do
   action :remove
 end
 ```
+
 Visual Studio ( custom batch commands to install it )
 ```ruby
 windows_package "Microsoft Visual Studio Ultimate 2012" do
