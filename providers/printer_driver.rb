@@ -27,24 +27,24 @@
 require 'mixlib/shellout'
 
 action :create do
-  if exists?
+  if driver_exists?
     Chef::Log.info("#{ new_resource.name } already exists - nothing to do.")
     new_resource.updated_by_last_action(false)
   else
     windows_batch "Creating print driver: #{ new_resource.name }" do
       code "rundll32 printui.dll PrintUIEntry /ia /m \"#{new_resource.name }\" /h \"#{ new_resource.environment}\" /v \"#{new_resource.version }\" /f \"#{new_resource.inf_path}\""
     end
-  
+    Chef::Log.info("#{ new_resource.name } installed.")
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :delete do
-  if exists?
+  if driver_exists?
     windows_batch "Deleting print driver: #{ new_resource.name }" do
       code "rundll32 printui.dll PrintUIEntry /dd /m \"#{new_resource.name}\" /h \"#{new_resource.environment}\" /v \"#{new_resource.version}\""
     end
-
+    Chef::Log.info("#{ new_resource.name } uninstalled.")
     new_resource.updated_by_last_action(true)
   else
     Chef::Log.info("#{ new_resource.name } doesn't exist - can't delete.")
@@ -52,7 +52,7 @@ action :delete do
   end
 end
   
-def exists?
+def driver_exists?
   case new_resource.environment
   when "x64"
     check = Mixlib::ShellOut.new("powershell.exe \"Get-wmiobject -Class Win32_PrinterDriver -EnableAllPrivileges | where {$_.name -like '#{new_resource.name},3,Windows x64'} | fl name\"").run_command
