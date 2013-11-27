@@ -35,6 +35,8 @@ action :create do
     cmd += "/TR \"#{@new_resource.command}\" "
     if @new_resource.user && @new_resource.password
       cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
+    elsif @new_resource.user == "SYSTEM"
+      cmd += "/RU \"#{@new_resource.user}\" "
     elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
       Chef::Log.fatal "#{@new_resource.name}: Can't specify user or password without both!"
     end
