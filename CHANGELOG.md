@@ -18,6 +18,7 @@ v1.11.0
 
 ### New Feature
 - **[COOK-3458](https://tickets.opscode.com/browse/COOK-3458)** - Add support for `start_date` and `start_time` in `windows_task`
+- **[COOK-2589](https://tickets.opscode.com/browse/COOK-2589)** - Add support for `allow_partial_reinstall` in `windows_package`
 
 
 v1.10.0

@@ -30,6 +30,7 @@ attribute :installer_type, :kind_of => Symbol, :default => nil, :equal_to => [:m
 attribute :checksum, :kind_of => String
 attribute :timeout, :kind_of => Integer, :default => 600
 attribute :success_codes, :kind_of => Array, :default => [0, 42, 127]
+attribute :allow_partial_reinstall, :kind_of => [TrueClass, FalseClass], :default => false
 
 # TODO
 

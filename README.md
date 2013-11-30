@@ -185,8 +185,9 @@ For maximum flexibility the `source` attribute supports both remote and local in
   return codes. Previously this was hardcoded, but certain MSIs may
   have a different return code, e.g. 3010 for reboot required. Must be
   an array, and defaults to `[0, 42, 127]`.
+- allow_partial_reinstall: Default is `false`. Set to `true` to support small updates by passing `REINSTALL=ALL REINSTALLMODE=vomus`. For more information see [Applying Small Updates by Reinstalling the Product](http://msdn.microsoft.com/en-us/library/windows/desktop/aa367575%28v=vs.85%29.aspx)
 
-#### Examples
+ #### Examples
 
 Install PuTTY (InnoSetup installer)
 ```ruby
