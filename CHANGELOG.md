@@ -2,6 +2,12 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.12.2
+-------
+### Bug
+- **[COOK-4110](https://tickets.opscode.com/browse/COOK-4110)** - feature_servermanager installed? method regex bug
+
+
 v1.12.0
 -------
 ### Bug
