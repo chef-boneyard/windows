@@ -12,6 +12,15 @@ v1.12.0
 - **[COOK-3714](https://tickets.opscode.com/browse/COOK-3714)** - Powershell features provider and delete support.
 
 
+v1.12.0
+-------
+### Bug
+- **[COOK-3793](https://tickets.opscode.com/browse/COOK-3793)** - parens inside parens of README.md don't render
+
+### New Feature
+- **[COOK-3714](https://tickets.opscode.com/browse/COOK-3714)** - Powershell features provider and delete support.
+
+
 v1.11.0
 -------
 ### Improvement
