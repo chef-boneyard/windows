@@ -2,6 +2,11 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.12.4
+-------
+Fixing depend/depends typo in metadata.rb
+
+
 v1.12.2
 -------
 ### Bug
