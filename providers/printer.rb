@@ -72,7 +72,7 @@ def create_printer
 
   port_name = "IP_#{ new_resource.ipv4_address }"
 
-  powershell "Creating printer: #{ new_resource.name }" do
+  powershell_script "Creating printer: #{ new_resource.name }" do
     code <<-EOH
 
       Set-WmiInstance -class Win32_Printer `
@@ -91,7 +91,7 @@ def create_printer
 end
 
 def delete_printer
-  powershell "Deleting printer: #{ new_resource.name }" do
+  powershell_script "Deleting printer: #{ new_resource.name }" do
     code <<-EOH
       $printer = Get-WMIObject -class Win32_Printer -EnableAllPrivileges -Filter "name = '#{ new_resource.name }'"
       $printer.Delete()
