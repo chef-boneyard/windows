@@ -2,6 +2,11 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.12.6 (2014-01-03)
+--------------------
+[COOK-4168] Circular dep on powershell - moving powershell libraries into windows. removing dependency on powershell
+
+
 v1.12.4
 -------
 Fixing depend/depends typo in metadata.rb
