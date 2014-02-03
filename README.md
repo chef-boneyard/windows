@@ -471,6 +471,36 @@ windows_path 'C:\7-Zip' do
 end
 ```
 
+### windows_share
+Creates and removes Windows shares
+
+#### Actions
+- :create: creates a share
+- :delete: deletes a share
+#### Attribute Parameters
+- share_name: name attribute, the share name.
+- path: Path to the directory to be shared
+- full_users: A list of users which should have "Full control" permissions
+- change_users: A list of users which should have "Change" permissions
+- read_users: A list of users which should have "Read" permissions
+#### Examples
+
+```ruby
+windows_share "foo" do
+  action :create
+  path "C:\\foo"
+  full_users ["DOMAIN_A\\some_user", "DOMAIN_B\\some_other_user"]
+  read_users ["DOMAIN_C\\Domain users"]
+end
+```
+
+```ruby
+windows_share "foo" do
+  action :delete
+end
+```
+
+
 ### windows_task
 Creates, deletes or runs a Windows scheduled task. Requires Windows
 Server 2008 due to API usage.
