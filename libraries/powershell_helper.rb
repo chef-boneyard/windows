@@ -45,7 +45,7 @@ module Powershell
         if cmd.stdout.empty? # PowerShell 1.0 doesn't have a $PSVersionTable
           1
         else
-          if cmd.stdout =~ /^(\d)/
+          if cmd.stdout =~ /^(\d+)/
             $1.to_i
           else
             nil
