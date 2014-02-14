@@ -25,12 +25,7 @@ module Powershell
     include Chef::Mixin::ShellOut
 
     def powershell_installed?
-      begin
-        cmd = shell_out("#{interpreter} -inputformat none  -Command \"& {Get-Host}\"")
-        cmd.stderr.empty? && (cmd.stdout =~ /Version\s*:\s*2.0/i)
-      rescue Errno::ENOENT
-        false
-      end
+      !powershell_version.nil?
     end
 
     def interpreter
@@ -41,6 +36,23 @@ module Powershell
         "#{ENV['WINDIR']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe"
       else
         "powershell.exe"
+      end
+    end
+
+    def powershell_version
+      begin
+        cmd = shell_out("#{interpreter} -InputFormat none -Command \"& echo $PSVersionTable.psversion.major\"")
+        if cmd.stdout.empty? # PowerShell 1.0 doesn't have a $PSVersionTable
+          1
+        else
+          if cmd.stdout =~ /^(\d+)/
+            $1.to_i
+          else
+            nil
+          end
+        end
+      rescue Errno::ENOENT
+        nil
       end
     end
   end
