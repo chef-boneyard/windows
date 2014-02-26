@@ -315,6 +315,7 @@ The Windows Printer LWRP will automatically create a TCP/IP printer port for you
 - :share_name: Printer share name.
 - :ipv4_address: Printer IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP addresss to set it. Required.
 
+An error of "Set-WmiInstance : Generic failure" is most likely due to the printer driver name not matching or not being installed.
 
 #### Examples
 
