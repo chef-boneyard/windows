@@ -557,6 +557,44 @@ Required reboots are a necessary evil of configuring and managing Windows nodes.
 - `reason`:  comment on the reason for the reboot. default is 'Opscode Chef initiated reboot'
 
 
+Windows ChefSpec Matchers
+-------------------------
+The Windows cookbook includes custom [ChefSpec](https://github.com/sethvargo/chefspec) matchers you can use to test your own cookbooks that consume Windows cookbook LWRPs.
+
+###Example Matcher Usage
+```ruby
+expect(chef_run).to install_windows_package('Node.js').with(
+  source: 'http://nodejs.org/dist/v0.10.26/x64/node-v0.10.26-x64.msi')
+```
+
+###Windows Cookbook Matchers
+* install_windows_package
+* remove_windows_package
+* install_windows_feature
+* remove_windows_feature
+* delete_windows_feature
+* create_windows_task
+* delete_windows_task
+* run_windows_task
+* change_windows_task
+* add_windows_path
+* remove_windows_path
+* run_windows_batch
+* set_windows_pagefile
+* unzip_windows_zipfile_to
+* zip_windows_zipfile_to
+* create_windows_shortcut
+* create_windows_auto_run
+* remove_windows_auto_run
+* create_windows_printer
+* delete_windows_printer
+* create_windows_printer_port
+* delete_windows_printer_port
+* request_windows_reboot
+* cancel_windows_reboot
+* create_windows_shortcut
+
+
 Usage
 -----
 
