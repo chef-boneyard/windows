@@ -25,4 +25,4 @@ default_action :install
 attribute :driver_name, :kind_of => String, :name_attribute => true,
             :required => true
 attribute :inf_path, :kind_of => String
-attribute :environment, :kind_of => String, :default => "x64"
+attribute :architecture, :kind_of => String, :default => "x64"

@@ -361,7 +361,7 @@ Create Windows printer drivers.
 ### Attribute Parameters
 - driver_name: name attribute.  Name of the print driver to install.
 - inf_path: Full path to the inf file.
-- environment: Chipset of the driver being installed. Default "x64" Options: "x86", "x64" or "Itanium".
+- architecture: Chipset of the driver being installed. Default "x64" Options: "x86", "x64" or "Itanium".
 
 ### Examples
 
@@ -390,7 +390,7 @@ Remove HP LaserJet 9050 PS driver x64
 Remove HP LaserJet 9050 PS driver x86
 ```ruby
     windows_printer_driver "HP LaserJet 9050 PS" do
-      action :Remove
+      action :remove
       environment "x86"
     end
 ```

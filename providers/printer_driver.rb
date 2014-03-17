@@ -26,7 +26,7 @@ action :install do
     new_resource.updated_by_last_action(false)
   else
     windows_batch "Creating print driver: #{ new_resource.name }" do
-      code "rundll32 printui.dll PrintUIEntry /ia /m \"#{ new_resource.name }\" /h \"#{ new_resource.environment}\" /f \"#{ new_resource.inf_path}\""
+      code "rundll32 printui.dll PrintUIEntry /ia /m \"#{ new_resource.name }\" /h \"#{ new_resource.architecture}\" /f \"#{ new_resource.inf_path}\""
     end
     Chef::Log.info("#{ new_resource.name } installed.")
     new_resource.updated_by_last_action(true)
@@ -36,7 +36,7 @@ end
 action :remove do
   if driver_exists?
     windows_batch "Deleting print driver: #{ new_resource.name }" do
-      code "rundll32 printui.dll PrintUIEntry /dd /m \"#{ new_resource.name}\" /h \"#{new_resource.environment }\""
+      code "rundll32 printui.dll PrintUIEntry /dd /m \"#{ new_resource.name}\" /h \"#{new_resource.architecture }\""
     end
     Chef::Log.info("#{ new_resource.name } uninstalled.")
     new_resource.updated_by_last_action(true)
@@ -48,7 +48,7 @@ end
   
 def driver_exists?
   check = "Mixlib::ShellOut.new(\"powershell.exe \"Get-wmiobject -Class Win32_PrinterDriver -EnableAllPrivileges | where {$_.name -like '#{ new_resource.name},3,"
-  case new_resource.environment
+  case new_resource.architecture
   when "x64"
     check << "Windows x64"
   when "x86"
@@ -56,7 +56,7 @@ def driver_exists?
   when "Itanium"
     check << "Itanium"
   else
-    Chef::Log.error("Please use \"x64\", \"x86\" or \"Itanium\" as the environment type")
+    Chef::Log.error("Please use \"x64\", \"x86\" or \"Itanium\" as the architecture type")
   end
   check << "'} | fl name\"\").run_command"
   check.stdout.include? "#{ new_resource.name }"
