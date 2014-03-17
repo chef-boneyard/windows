@@ -25,5 +25,4 @@ default_action :install
 attribute :driver_name, :kind_of => String, :name_attribute => true,
             :required => true
 attribute :inf_path, :kind_of => String
-attribute :version, :kind_of => String, :default => "Type 3 - User Mode"
 attribute :environment, :kind_of => String, :default => "x64"

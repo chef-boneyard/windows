@@ -355,13 +355,12 @@ end
 Create Windows printer drivers.
 
 ### Actions
-- :create: Installs a printer driver
-- :delete: Removes a printer driver
+- :install: Installs a printer driver
+- :remove: Removes a printer driver
 
 ### Attribute Parameters
 - driver_name: name attribute.  Name of the print driver to install.
 - inf_path: Full path to the inf file.
-- version: Default "Type 3 - User Mode" Options: "Type 3 - User Mode" or "Type 2 - Kernel Mode"
 - environment: Chipset of the driver being installed. Default "x64" Options: "x86", "x64" or "Itanium".
 
 ### Examples
@@ -369,7 +368,7 @@ Create Windows printer drivers.
 Install HP LaserJet 9050 PS driver x64
 ```ruby
     windows_printer_driver "HP LaserJet 9050 PS" do
-      action :create
+      action :install
       inf_path "c:\\9050 x64\\hpc9050v.inf"      
     end
 ```
@@ -377,21 +376,21 @@ Install HP LaserJet 9050 PS driver x64
 Install HP LaserJet 9050 PS driver x86
 ```ruby
     windows_printer_driver "HP LaserJet 9050 PS" do
-      action :create
+      action :install
       inf_path "c:\\9050 x64\\hpc9050v.inf"      
       environment "x86"
     end
 ```
-Delete HP LaserJet 9050 PS driver x64
+Remove HP LaserJet 9050 PS driver x64
 ```ruby
     windows_printer_driver "HP LaserJet 9050 PS" do
-      action :delete
+      action :remove
     end
 ```
-Delete HP LaserJet 9050 PS driver x86
+Remove HP LaserJet 9050 PS driver x86
 ```ruby
     windows_printer_driver "HP LaserJet 9050 PS" do
-      action :delete
+      action :Remove
       environment "x86"
     end
 ```

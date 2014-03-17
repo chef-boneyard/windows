@@ -26,7 +26,7 @@ action :install do
     new_resource.updated_by_last_action(false)
   else
     windows_batch "Creating print driver: #{ new_resource.name }" do
-      code "rundll32 printui.dll PrintUIEntry /ia /m \"#{ new_resource.name }\" /h \"#{ new_resource.environment}\" /v \"#{ new_resource.version }\" /f \"#{ new_resource.inf_path}\""
+      code "rundll32 printui.dll PrintUIEntry /ia /m \"#{ new_resource.name }\" /h \"#{ new_resource.environment}\" /f \"#{ new_resource.inf_path}\""
     end
     Chef::Log.info("#{ new_resource.name } installed.")
     new_resource.updated_by_last_action(true)
@@ -36,7 +36,7 @@ end
 action :remove do
   if driver_exists?
     windows_batch "Deleting print driver: #{ new_resource.name }" do
-      code "rundll32 printui.dll PrintUIEntry /dd /m \"#{ new_resource.name}\" /h \"#{new_resource.environment }\" /v \"#{ new_resource.version}\""
+      code "rundll32 printui.dll PrintUIEntry /dd /m \"#{ new_resource.name}\" /h \"#{new_resource.environment }\""
     end
     Chef::Log.info("#{ new_resource.name } uninstalled.")
     new_resource.updated_by_last_action(true)
