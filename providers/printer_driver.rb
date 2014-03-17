@@ -42,7 +42,6 @@ action :remove do
     new_resource.updated_by_last_action(true)
   else
     Chef::Log.info("#{ new_resource.name } doesn't exist - can't delete.")
-    new_resource.updated_by_last_action(false)
   end
 end
   
