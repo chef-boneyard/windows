@@ -247,9 +247,6 @@ end
 ```
 
 ### windows_printer_port
-**Note** Include `recipe[powershell]` on the node's expanded run list
-  to ensure the powershell cookbook is downloaded to avoid circular
-  dependency.
 
 Create and delete TCP/IPv4 printer ports.
 
@@ -298,9 +295,6 @@ end
 ```
 
 ### windows_printer
-**Note** Include `recipe[powershell]` on the node's expanded run list
-  to ensure the powershell cookbook is downloaded to avoid circular
-  dependency.
 
 Create Windows printer. Note that this doesn't currently install a printer
 driver. You must already have the driver installed on the system.
@@ -341,9 +335,6 @@ end
 
 
 ### windows_printer_driver
-**Note** Include `recipe[powershell]` on the node's expanded run list
-  to ensure the powershell cookbook is downloaded to avoid circular
-  dependency.
 
 Create Windows printer drivers.
 
