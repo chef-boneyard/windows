@@ -142,6 +142,7 @@ windows_feature "NetFx3" do
   all true
   source "d:\sources\sxs"
 end
+```
 
 Disable Telnet client/server
 
