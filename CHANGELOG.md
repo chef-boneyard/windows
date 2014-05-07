@@ -2,6 +2,11 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.31.0 (2014-05-07)
+--------------------
+- [COOK-2934] - Add windows_feature support for 2 new DISM attributes: all, source
+
+
 v1.30.2 (2014-04-02)
 --------------------
 - [COOK-4414] - Adding ChefSpec matchers
