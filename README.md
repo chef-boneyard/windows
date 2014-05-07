@@ -109,6 +109,8 @@ servermanagercmd -query
 
 #### Attribute Parameters
 - feature_name: name of the feature/role to install.  The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
+- all: Boolean. Optional. Default: false. DISM provider only. Forces all dependencies to be installed.
+- source: String. Optional. DISM provider only. Uses local repository for feature install.
 
 #### Providers
 - **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
@@ -128,6 +130,17 @@ Enable TFTP
 ```ruby
 windows_feature 'TFTP' do
   action :install
+end
+```
+
+Enable .Net 3.5.1 on Server 2012 using repository files on DVD and
+install all dependencies
+
+```ruby
+windows_feature "NetFx3" do
+  action :install
+  all true
+  source "d:\sources\sxs"
 end
 ```
 
