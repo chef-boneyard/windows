@@ -25,7 +25,7 @@ attribute :direction, :kind_of => Symbol, :default => :in, :equal_to => [:in, :o
 attribute :profile, :kind_of => Array, :default => nil
 attribute :protocol, :kind_of => Symbol, :default => :tcp, :equal_to => [:tcp, :udp, :icmpv4, :icmpv6, :any]
 attribute :ports, :kind_of => Array
-attribute :enable, :kind_of => Symbol, :default => nil, :equal_to => [:yes, :no]
+attribute :enable, :kind_of => [TrueClass, FalseClass], :default => true, :equal_to => [true, false]
 
 attr_accessor :created
 

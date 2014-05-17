@@ -26,7 +26,7 @@ action :add do
     cmd += " Dir=\"#{@new_resource.direction.to_s}\"" unless @new_resource.direction.nil?
     cmd += " Action=\"#{@new_resource.firewall_action.to_s}\"" unless @new_resource.firewall_action.nil?
     cmd += " Protocol=\"#{@new_resource.protocol.to_s}\"" unless @new_resource.protocol.nil?
-    cmd += " Enable=\"#{@new_resource.enable.to_s}\"" unless @new_resource.enable.nil?
+    cmd += " Enable=\"#{ @new_resource.enable ? true : false}\"" unless @new_resource.enable.nil?
     cmd += " Profile=\"#{@new_resource.profile.join(",")}\"" unless @new_resource.profile.nil?
     cmd += " Localport=#{@new_resource.ports.join(",")}" unless @new_resource.ports.nil?
 
@@ -42,7 +42,7 @@ action :set do
   if @new_resource.created
     cmd = "netsh advfirewall firewall set rule #{@new_resource.group ? 'Group' : 'Name'}=\"#{@new_resource.rule_name}\""
     cmd += " new"
-    cmd += " Enable=\"#{@new_resource.enable.to_s}\"" unless @new_resource.enable.nil?
+    cmd += " Enable=\"#{ @new_resource.enable ? true : false}\"" unless @new_resource.enable.nil?
     cmd += " Dir=\"#{@new_resource.direction.to_s}\"" unless (@new_resource.direction.nil? || @new_resource.group)
     cmd += " Action=\"#{@new_resource.firewall_action.to_s}\"" unless (@new_resource.firewall_action.nil? || @new_resource.group)
     cmd += " Protocol=\"#{@new_resource.protocol.to_s}\"" unless (@new_resource.protocol.nil? || @new_resource.group)
