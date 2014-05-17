@@ -24,7 +24,7 @@ attribute :firewall_action, :kind_of => Symbol, :default => :allow, :equal_to =>
 attribute :direction, :kind_of => Symbol, :default => :in, :equal_to => [:in, :out]
 attribute :profile, :kind_of => Array, :default => nil
 attribute :protocol, :kind_of => Symbol, :default => :tcp, :equal_to => [:tcp, :udp, :icmpv4, :icmpv6, :any]
-attribute :ports, :kind_of => Array, :default => [80]
+attribute :ports, :kind_of => Array
 attribute :enable, :kind_of => Symbol, :default => nil, :equal_to => [:yes, :no]
 
 attr_accessor :created
