@@ -23,12 +23,12 @@ include Chef::Mixin::ShellOut
 include Windows::Helper
 
 def install_feature(name)
-  # return code 3010 is valid, it indicates a reboot is required
-  shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart", {:returns => [0,42,127,3010]})
+  addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ""
+  addall = @new_resource.all ? "/All" : ""
+  shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", {:returns => [0,42,127,3010]})
 end
 
 def remove_feature(name)
-  # return code 3010 is valid, it indicates a reboot is required
   shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /norestart", {:returns => [0,42,127,3010]})
 end
 
