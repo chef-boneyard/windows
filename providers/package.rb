@@ -36,6 +36,10 @@ action :install do
   # If we specified a version, and it's not the current version, move to the specified version
   if @new_resource.version != nil && @new_resource.version != @current_resource.version
     install_version = @new_resource.version
+    if @new_resource.uninstall_to_upgrade && @current_resource.version != nil
+       Chef::Log.info("Removing #{@current_resource} before upgrading")
+       remove_package(@current_resource.package_name, @current_resource.version)
+    end
   # If it's not installed at all, install it
   elsif @current_resource.version == nil
     install_version = candidate_version
@@ -106,6 +110,14 @@ def current_installed_version
   @current_installed_version ||= begin
     if installed_packages.include?(@new_resource.package_name)
       installed_packages[@new_resource.package_name][:version]
+    else 
+      begin
+         matching_package = installed_packages.select { |k,v| v[:name] =~ /#{@new_resource.package_name}/ }.first
+         @current_resource.package_name(matching_package[1][:name])
+         matching_package[1][:version]
+      rescue SyntaxError, NoMethodError
+        nil
+      end
     end
   end
 end
@@ -125,7 +137,7 @@ def install_package(name,version)
 end
 
 def remove_package(name, version)
-  uninstall_string = installed_packages[@new_resource.package_name][:uninstall_string]
+  uninstall_string = installed_packages[@current_resource.package_name][:uninstall_string].sub(/ \/[Ii]/," /X")
   Chef::Log.info("Registry provided uninstall string for #{@new_resource} is '#{uninstall_string}'")
   uninstall_command = begin
     if uninstall_string =~ /msiexec/i
@@ -163,8 +175,7 @@ end
 def unattended_installation_flags
   case installer_type
   when :msi
-    # this is no-ui
-    "/qn /i"
+    "/qb /i"
   when :installshield
     "/s /sms"
   when :nsis
