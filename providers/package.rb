@@ -137,11 +137,11 @@ def install_package(name,version)
 end
 
 def remove_package(name, version)
-  uninstall_string = installed_packages[@current_resource.package_name][:uninstall_string].sub(/ \/[Ii]/," /X")
+  uninstall_string = installed_packages[@current_resource.package_name][:uninstall_string]
   Chef::Log.info("Registry provided uninstall string for #{@new_resource} is '#{uninstall_string}'")
   uninstall_command = begin
     if uninstall_string =~ /msiexec/i
-      "#{uninstall_string} /qn"
+      "#{uninstall_string} /qn".sub(/ \/[Ii]/," /X")
     else
       uninstall_string.gsub!('"','')
       "start \"\" /wait /d\"#{::File.dirname(uninstall_string)}\" #{::File.basename(uninstall_string)}#{expand_options(@new_resource.options)} /S"
@@ -175,7 +175,8 @@ end
 def unattended_installation_flags
   case installer_type
   when :msi
-    "/qb /i"
+    # this is no-ui
+    "/qn /i"
   when :installshield
     "/s /sms"
   when :nsis
