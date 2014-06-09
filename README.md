@@ -141,6 +141,52 @@ Disable Telnet client/server
 end
 ```
 
+### windows_firewall
+Manage Windows Firewall rules.
+
+Uses command line to issue commands to the advfirewall to create, delete, or change rules.
+
+#### Actions
+- :create: creates a firewall rule
+- :delete: deletes a firewall rule
+- :set: changes one or more settings of an existing firewall rule.
+
+
+#### Attribute Parameters
+- rule_name: name of the firewall rule as displayed in the GUI.
+- direction: direction of traffic. "in" or "out"
+- behavior: behavior for the rule. "allow", "block", or "bypass"
+- options: hash to allow entering all available other options.  See http://technet.microsoft.com/en-us/library/dd734783(v=ws.10).aspx for a full list of avaialble options.
+
+#### Examples
+Create an incommming allow for traffic on port 22.
+
+```ruby
+windows_firewall 'Allow Port 22' do
+  direction "in"
+  behavior "allow"
+  action :create
+  option ({ "enable" => "yes",
+            "localport" => "22"  
+          })
+end
+```ruby
+
+Delete firewall rule "Program"
+
+```ruby
+windows_firewall "Delete Program" do
+  action :delete
+end
+```ruby
+Disable the firewall rule "Program"
+
+windows_firewall "Disable Program"
+  action :set
+  option ({ "behavior" => "block" })
+end
+```ruby
+
 ### windows_package
 Manage Windows application packages in an unattended, idempotent way.
 
