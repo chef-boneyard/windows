@@ -22,7 +22,7 @@ include Chef::Mixin::ShellOut
 
 action :add do
   unless @new_resource.created
-    cmd = "netsh advfirewall firewall add rule #{@new_resource.group ? 'Group' : 'Name'}=\"#{@new_resource.rule_name}\""
+    cmd = "netsh advfirewall firewall add rule Name=\"#{@new_resource.rule_name}\""
     cmd += " Dir=\"#{@new_resource.direction.to_s}\"" unless @new_resource.direction.nil?
     cmd += " Action=\"#{@new_resource.firewall_action.to_s}\"" unless @new_resource.firewall_action.nil?
     cmd += " Protocol=\"#{@new_resource.protocol.to_s}\"" unless @new_resource.protocol.nil?
@@ -40,14 +40,14 @@ end
 
 action :set do
   if @new_resource.created
-    cmd = "netsh advfirewall firewall set rule #{@new_resource.group ? 'Group' : 'Name'}=\"#{@new_resource.rule_name}\""
+    cmd = "netsh advfirewall firewall set rule Name=\"#{@new_resource.rule_name}\""
     cmd += " new"
     cmd += " Enable=\"#{ @new_resource.enable ? true : false}\"" unless @new_resource.enable.nil?
-    cmd += " Dir=\"#{@new_resource.direction.to_s}\"" unless (@new_resource.direction.nil? || @new_resource.group)
-    cmd += " Action=\"#{@new_resource.firewall_action.to_s}\"" unless (@new_resource.firewall_action.nil? || @new_resource.group)
-    cmd += " Protocol=\"#{@new_resource.protocol.to_s}\"" unless (@new_resource.protocol.nil? || @new_resource.group)
-    cmd += " Profile=\"#{@new_resource.profile.join(",")}\"" unless (@new_resource.profile.nil? || @new_resource.group)
-    cmd += " Localport=#{@new_resource.ports.join(",")}" unless (@new_resource.ports.nil? || @new_resource.group)
+    cmd += " Dir=\"#{@new_resource.direction.to_s}\"" @new_resource.direction.nil?
+    cmd += " Action=\"#{@new_resource.firewall_action.to_s}\"" @new_resource.firewall_action.nil?
+    cmd += " Protocol=\"#{@new_resource.protocol.to_s}\"" @new_resource.protocol.nil?
+    cmd += " Profile=\"#{@new_resource.profile.join(",")}\"" @new_resource.profile.nil?
+    cmd += " Localport=#{@new_resource.ports.join(",")}" @new_resource.ports.nil?
 
     Chef::Log.info "Updating #{@new_resource.rule_name}"
     Chef::Log.debug(cmd)
@@ -59,7 +59,7 @@ end
 
 action :delete do
   if @new_resource.created
-    cmd = "netsh advfirewall firewall delete rule #{@new_resource.group ? 'Group' : 'Name'}=\"#{@new_resource.rule_name}\""
+    cmd = "netsh advfirewall firewall delete rule Name=\"#{@new_resource.rule_name}\""
     cmd += " Dir=\"#{@new_resource.direction.to_s}\"" unless @new_resource.direction.nil?
     cmd += " Protocol=\"#{@new_resource.protocol.to_s}\"" unless @new_resource.protocol.nil?
     cmd += " Localport=#{@new_resource.ports.join(",")}" unless @new_resource.ports.nil?
@@ -73,13 +73,9 @@ action :delete do
 end
 
 def load_current_resource
-  unless @new_resource.group
-    show_rule_cmd = "netsh advfirewall firewall show rule Name=\"#{@new_resource.rule_name}\""
-    cmd = shell_out("#{show_rule_cmd}", { :returns => [0] })
-    if (cmd.stderr.empty? && (cmd.stdout =~ /^.*Rule Name.*$/i))
-      @new_resource.created = true
-    end
-  else
+  show_rule_cmd = "netsh advfirewall firewall show rule Name=\"#{@new_resource.rule_name}\""
+  cmd = shell_out("#{show_rule_cmd}", { :returns => [0] })
+  if (cmd.stderr.empty? && (cmd.stdout =~ /^.*Rule Name.*$/i))
     @new_resource.created = true
   end
 end

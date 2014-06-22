@@ -19,7 +19,6 @@
 actions :add, :set, :delete
 
 attribute :rule_name, :kind_of => String, :name_attribute => true
-attribute :group, :kind_of => [TrueClass, FalseClass], :default => true, :equal_to => [true, false]
 attribute :firewall_action, :kind_of => Symbol, :default => :allow, :equal_to => [:allow, :block]
 attribute :direction, :kind_of => Symbol, :default => :in, :equal_to => [:in, :out]
 attribute :profile, :kind_of => Array, :default => nil
