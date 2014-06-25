@@ -17,6 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+use_inline_resources if defined?(use_inline_resources)
 
 action :create do
   windows_registry 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
