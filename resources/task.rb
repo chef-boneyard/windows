@@ -22,7 +22,7 @@
 # and not very useful
 actions :create, :delete, :run, :change
 
-attribute :name, :kind_of => String, :name_attribute => true
+attribute :name, :kind_of => String, :name_attribute => true, :regex => [ /\A[^\\\/\:\*\?\<\>\|]+\z/ ]
 attribute :command, :kind_of => String
 attribute :cwd, :kind_of => String
 attribute :user, :kind_of => String, :default => nil
