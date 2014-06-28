@@ -444,8 +444,4 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_reboot, :cancel, resource_name)
   end
 
-  def create_windows_shortcut(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:windows_shortcut, :create, resource_name)
-  end
-
 end
