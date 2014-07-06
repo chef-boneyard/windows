@@ -115,6 +115,7 @@ servermanagercmd -query
 #### Providers
 - **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
 - **Chef::Provider::WindowsFeature::ServerManagerCmd**: Uses Server Manager to manage roles/features.
+- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features. (see [COOK-3714](https://tickets.opscode.com/browse/COOK-3714)
 
 #### Examples
 Enable the node as a DHCP Server
