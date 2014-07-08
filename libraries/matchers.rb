@@ -1,4 +1,16 @@
 if defined?(ChefSpec)
+  ChefSpec::Runner.define_runner_method :windows_package
+  ChefSpec::Runner.define_runner_method :windows_feature
+  ChefSpec::Runner.define_runner_method :windows_task
+  ChefSpec::Runner.define_runner_method :windows_path
+  ChefSpec::Runner.define_runner_method :windows_batch
+  ChefSpec::Runner.define_runner_method :windows_pagefile
+  ChefSpec::Runner.define_runner_method :windows_zipfile
+  ChefSpec::Runner.define_runner_method :windows_shortcut
+  ChefSpec::Runner.define_runner_method :windows_auto_run
+  ChefSpec::Runner.define_runner_method :windows_printer
+  ChefSpec::Runner.define_runner_method :windows_printer_port
+  ChefSpec::Runner.define_runner_method :windows_reboot
 
   #
   # Assert that a +windows_package+ resource exists in the Chef run with the
@@ -442,10 +454,6 @@ if defined?(ChefSpec)
 
   def cancel_windows_reboot(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_reboot, :cancel, resource_name)
-  end
-
-  def create_windows_shortcut(resource_name)
-    ChefSpec::Matchers::ResourceMatcher.new(:windows_shortcut, :create, resource_name)
   end
 
 end
