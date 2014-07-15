@@ -22,12 +22,25 @@ include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::ShellOut
 include Windows::Helper
 
+# Exit codes are listed at http://technet.microsoft.com/en-us/library/cc749128(v=ws.10).aspx
+
+def check_reboot(result, feature)
+  if result.exitstatus == 3010 # successful, but needs reboot
+  	node.run_state[:reboot_requested] = true
+  	Chef::Log.warn("Require reboot to install #{feature}")
+  elsif result.exitstatus == 1001 # failure, but needs reboot before we can do anything else
+  	node.run_state[:reboot_requested] = true
+  	Chef::Log.warn("Failed installing #{feature} and need to reboot")
+  end
+  result.error! # throw for any other bad results
+end
+
 def install_feature(name)
-  shell_out!("#{servermanagercmd} -install #{@new_resource.feature_name}", {:returns => [0,42,127,1003]})
+  check_reboot(shell_out("#{servermanagercmd} -install #{@new_resource.feature_name}", {:returns => [0,42,127,1003,3010]}), @new_resource.feature_name)
 end
 
 def remove_feature(name)
-  shell_out!("#{servermanagercmd} -remove #{@new_resource.feature_name}", {:returns => [0,42,127,1003]})
+  check_reboot(shell_out("#{servermanagercmd} -remove #{@new_resource.feature_name}", {:returns => [0,42,127,1003,3010]}), @new_resource.feature_name)
 end
 
 def installed?
