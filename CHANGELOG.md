@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.32.1 (2014-07-15)
+--------------------
+- Fixes broken cookbook release
+
 v1.32.0 (2014-07-11)
 --------------------
 - Add ChefSpec resource methods to allow notification testing (@sneal)
