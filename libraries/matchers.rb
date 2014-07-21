@@ -459,5 +459,4 @@ if defined?(ChefSpec)
   def create_windows_share(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_share, :create, resource_name)
   end
-
 end
