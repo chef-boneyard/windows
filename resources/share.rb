@@ -1,4 +1,3 @@
-uthor:: Venkat Naidu (<naiduvenkat@gmail.com>)
 # Cookbook Name:: windows
 # Resource:: share
 #
