@@ -2,31 +2,37 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.32.1 (2014-07-15)
+--------------------
+- Fixes broken cookbook release
+
+v1.32.0 (2014-07-11)
+--------------------
+- Add ChefSpec resource methods to allow notification testing (@sneal)
+- Add use_inline_resources to providers (@micgo)
+- [COOK-4728] - Allow reboot handler to be used as an exception handler
+- [COOK-4620] - Ensure win_friendly_path doesn't error out when ALT_SEPARATOR is nil
+
 v1.31.0 (2014-05-07)
 --------------------
 - [COOK-2934] - Add windows_feature support for 2 new DISM attributes: all, source
 
-
 v1.30.2 (2014-04-02)
 --------------------
 - [COOK-4414] - Adding ChefSpec matchers
-
 
 v1.30.0 (2014-02-14)
 --------------------
 - [COOK-3715] - Unable to create a startup task with no login
 - [COOK-4188] - Add powershell_version method to return Powershell version
 
-
 v1.12.8 (2014-01-21)
 --------------------
-[COOK-3988] Don't unescape URI before constructing it.
-
+- [COOK-3988] Don't unescape URI before constructing it.
 
 v1.12.6 (2014-01-03)
 --------------------
-[COOK-4168] Circular dep on powershell - moving powershell libraries into windows. removing dependency on powershell
-
+- [COOK-4168] Circular dep on powershell - moving powershell libraries into windows. removing dependency on powershell
 
 v1.12.4
 -------
