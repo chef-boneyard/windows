@@ -19,6 +19,6 @@
 actions :create, :delete
 attribute :name, :kind_of => String, :name_attribute => true
 attribute :path, :kind_of => String
-attribute :access, :kind_of => Symbol, :default => :read, :equal_to => [:read, :chage, :full]
+attribute :access, :kind_of => Symbol, :default => :read, :equal_to => [:read, :change, :full]
 attribute :user, :kind_of => String
 
