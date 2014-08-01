@@ -89,6 +89,29 @@ windows_batch 'echo some env vars' do
 end
 ```
 
+### windows_cmdkey
+Credential Manager allows you to store credentials, such as user names and passwords that you use to log on to websites or other computers on a network. By storing your credentials, Windows can automatically log you on to websites or other computers. Credentials are saved in special folders on your computer called vaults. Windows and programs (such as web browsers) can securely give the credentials in the vaults to other computers and websites. For information about saving credentials in a vault.
+
+#### Actions
+- :create: creates a username and password stored credential
+- :remove: removes a username and password stored credential
+
+#### Attribute Parameters
+- name: name attribute.  Name of the username / password entry in credential manager.
+- user: username to store. ex: "adminstrator", "domain\administrator"
+- pass: password to store.
+
+#### Examples
+Store the local administrator password for use with "Run as Administrator"
+```ruby
+windows_cmdkey 'Local Administrator' do
+  action :create
+  user "localhost\administrator"
+  pass "Password"
+end
+```
+
+This resource allows you to manage credential manager.
 ### windows_feature
 Windows Roles and Features can be thought of as built-in operating system packages that ship with the OS.  A server role is a set of software programs that, when they are installed and properly configured, lets a computer perform a specific function for multiple users or other computers within a network.  A Role can have multiple Role Services that provide functionality to the Role.  Role services are software programs that provide the functionality of a role. Features are software programs that, although they are not directly parts of roles, can support or augment the functionality of one or more roles, or improve the functionality of the server, regardless of which roles are installed.  Collectively we refer to all of these attributes as 'features'.
 
