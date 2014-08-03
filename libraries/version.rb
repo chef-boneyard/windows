@@ -19,7 +19,7 @@
 #
 
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-  require 'ruby-wmi'
+  require 'wmi-lite'
   require 'Win32API'
 end
 
@@ -193,7 +193,8 @@ module Windows
     # query WMI Win32_OperatingSystem for required OS info
     def get_os_info
       cols = %w{ Version ProductType OSProductSuite OperatingSystemSKU ServicePackMajorVersion ServicePackMinorVersion }
-      os_info = WMI::Win32_OperatingSystem.find(:first)
+      wmi = WmiLite::Wmi.new
+      os_info = wmi.first('Win32_OperatingSystem')
       cols.map do |c|
         begin
           os_info.send(c)
