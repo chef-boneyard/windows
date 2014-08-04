@@ -19,7 +19,7 @@
 #
 
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-  require 'ruby-wmi'
+  require_relative 'wmi-lite-gem'
   require 'Win32API'
 end
 
@@ -100,6 +100,7 @@ module Windows
       0x00000030 => {:ms_const => 'PRODUCT_PROFESSIONAL', :name => 'Professional'},
       0x00000045 => {:ms_const => 'PRODUCT_PROFESSIONAL_E', :name => 'Not supported'},
       0x00000031 => {:ms_const => 'PRODUCT_PROFESSIONAL_N', :name => 'Professional N'},
+      0x00000067 => {:ms_const => 'PRODUCT_PROFESSIONAL_WMC', :name => 'Professional with Media Center'},
       0x00000018 => {:ms_const => 'PRODUCT_SERVER_FOR_SMALLBUSINESS', :name => 'Windows Server 2008 for Windows Essential Server Solutions'},
       0x00000023 => {:ms_const => 'PRODUCT_SERVER_FOR_SMALLBUSINESS_V', :name => 'Windows Server 2008 without Hyper-V for Windows Essential Server Solutions'},
       0x00000021 => {:ms_const => 'PRODUCT_SERVER_FOUNDATION', :name => 'Server Foundation'},
@@ -193,10 +194,11 @@ module Windows
     # query WMI Win32_OperatingSystem for required OS info
     def get_os_info
       cols = %w{ Version ProductType OSProductSuite OperatingSystemSKU ServicePackMajorVersion ServicePackMinorVersion }
-      os_info = WMI::Win32_OperatingSystem.find(:first)
+      wmi = WmiLite::Wmi.new
+      os_info = wmi.first_of('Win32_OperatingSystem')
       cols.map do |c|
         begin
-          os_info.send(c)
+          os_info[c]
         rescue # OperatingSystemSKU doesn't exist in all versions of Windows
           nil
         end
