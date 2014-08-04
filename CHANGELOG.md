@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.34.0 (2014-08-04)
+--------------------
+- [Issue 99](https://github.com/opscode-cookbooks/windows/issues/99) - Use wmi-lite to fix Chef 11.14.2 break in rdp-ruby-wmi dependency
+
 v1.32.1 (2014-07-15)
 --------------------
 - Fixes broken cookbook release
