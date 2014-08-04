@@ -19,7 +19,7 @@
 #
 
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-  require 'wmi-lite'
+  require_relative 'wmi-lite-gem'
   require 'Win32API'
 end
 
