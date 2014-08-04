@@ -194,10 +194,10 @@ module Windows
     def get_os_info
       cols = %w{ Version ProductType OSProductSuite OperatingSystemSKU ServicePackMajorVersion ServicePackMinorVersion }
       wmi = WmiLite::Wmi.new
-      os_info = wmi.first('Win32_OperatingSystem')
+      os_info = wmi.first_of('Win32_OperatingSystem')
       cols.map do |c|
         begin
-          os_info.send(c)
+          os_info[c]
         rescue # OperatingSystemSKU doesn't exist in all versions of Windows
           nil
         end
