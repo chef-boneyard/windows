@@ -24,7 +24,7 @@
 
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
   require 'win32/registry'
-  require 'wmi-lite'
+  require_relative 'wmi-lite-gem'
 end
 
 module Windows
@@ -253,7 +253,7 @@ module Windows
     def resolve_user_to_sid(username)
       begin
         wmi = WmiLite::Wmi.new
-        user_query = wmi.query("select * from Win32_UserAccount where Name='#{username}")
+        user_query = wmi.query("select * from Win32_UserAccount where Name='#{username}'")
         sid = nil
 
         user_query.each do |user|
