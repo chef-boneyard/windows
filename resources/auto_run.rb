@@ -1,5 +1,5 @@
 #
-# Author:: Paul Morotn (<pmorton@biaprotect.com>)
+# Author:: Paul Morton (<pmorton@biaprotect.com>)
 # Cookbook Name:: windows
 # Resource:: auto_run
 #
