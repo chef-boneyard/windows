@@ -19,7 +19,7 @@
 #
 
 action :add do
-  env "PATH" do
+  env "path" do
     action :modify
     delim ::File::PATH_SEPARATOR
     value new_resource.path
@@ -27,7 +27,7 @@ action :add do
 end
 
 action :remove do
-  env "PATH" do
+  env "path" do
     action :delete
     delim ::File::PATH_SEPARATOR
     value new_resource.path
