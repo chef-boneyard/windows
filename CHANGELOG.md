@@ -4,7 +4,7 @@ This file is used to list changes made in each version of the windows cookbook.
 
 v1.34.2 (2014-08-12)
 --------------------
-- [Issue 105](https://github.com/opscode-cookbooks/windows/issues/105) - Remove rubygems / Internet wmi-lite dependency (PR #108)
+- [Issue 99](https://github.com/opscode-cookbooks/windows/issues/99) - Remove rubygems / Internet wmi-lite dependency (PR #108)
 
 v1.34.0 (2014-08-04)
 --------------------
