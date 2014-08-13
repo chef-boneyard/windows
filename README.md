@@ -154,6 +154,52 @@ Disable Telnet client/server
 end
 ```
 
+### windows_firewall
+Manage Windows Firewall rules.
+
+Uses command line to issue commands to the advfirewall to create, delete, or change rules.
+
+#### Actions
+- :create: creates a firewall rule
+- :delete: deletes a firewall rule
+- :set: changes one or more settings of an existing firewall rule.
+
+
+#### Attribute Parameters
+- rule_name: name of the firewall rule as displayed in the GUI.
+- direction: direction of traffic. "in" or "out"
+- behavior: behavior for the rule. "allow", "block", or "bypass"
+- options: hash to allow entering all available other options.  See http://technet.microsoft.com/en-us/library/dd734783(v=ws.10).aspx for a full list of avaialble options.
+
+#### Examples
+Create an incommming allow for traffic on port 22.
+
+```ruby
+windows_firewall 'Allow Port 22' do
+  direction "in"
+  behavior "allow"
+  action :create
+  option ({ "enable" => "yes",
+            "localport" => "22"  
+          })
+end
+```ruby
+
+Delete firewall rule "Program"
+
+```ruby
+windows_firewall "Delete Program" do
+  action :delete
+end
+```ruby
+Disable the firewall rule "Program"
+
+windows_firewall "Disable Program"
+  action :set
+  option ({ "behavior" => "block" })
+end
+```ruby
+
 ### windows_package
 Manage Windows application packages in an unattended, idempotent way.
 
@@ -346,6 +392,53 @@ windows_printer 'HP LaserJet 5th Floor' do
   action :delete
 end
 ```
+
+
+### windows_printer_driver
+
+Create Windows printer drivers.
+
+### Actions
+- :install: Installs a printer driver
+- :remove: Removes a printer driver
+
+### Attribute Parameters
+- driver_name: name attribute.  Name of the print driver to install.
+- inf_path: Full path to the inf file.
+- architecture: Chipset of the driver being installed. Default "x64" Options: "x86", "x64" or "Itanium".
+
+### Examples
+
+Install HP LaserJet 9050 PS driver x64
+```ruby
+    windows_printer_driver "HP LaserJet 9050 PS" do
+      action :install
+      inf_path "c:\\9050 x64\\hpc9050v.inf"      
+    end
+```
+
+Install HP LaserJet 9050 PS driver x86
+```ruby
+    windows_printer_driver "HP LaserJet 9050 PS" do
+      action :install
+      inf_path "c:\\9050 x64\\hpc9050v.inf"      
+      environment "x86"
+    end
+```
+Remove HP LaserJet 9050 PS driver x64
+```ruby
+    windows_printer_driver "HP LaserJet 9050 PS" do
+      action :remove
+    end
+```
+Remove HP LaserJet 9050 PS driver x86
+```ruby
+    windows_printer_driver "HP LaserJet 9050 PS" do
+      action :remove
+      environment "x86"
+    end
+```
+
 
 ### windows_reboot
 Sets required data in the node's run_state to notify `WindowsRebootHandler` a reboot is requested.  If Chef run completes successfully a reboot will occur if the `WindowsRebootHandler` is properly registered as a report handler.  As an action of `:request` will cause a node to reboot every Chef run, this resource is usually notified by other resources...ie restart node after a package is installed (see example below).
