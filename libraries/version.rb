@@ -19,7 +19,7 @@
 #
 
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-  require_relative 'wmi-lite-gem'
+  require_relative 'wmi_helper'
   require 'Win32API'
 end
 
@@ -194,11 +194,10 @@ module Windows
     # query WMI Win32_OperatingSystem for required OS info
     def get_os_info
       cols = %w{ Version ProductType OSProductSuite OperatingSystemSKU ServicePackMajorVersion ServicePackMinorVersion }
-      wmi = WmiLite::Wmi.new
-      os_info = wmi.first_of('Win32_OperatingSystem')
+      os_info = execute_wmi_query("select * from Win32_OperatingSystem").each.next
       cols.map do |c|
         begin
-          os_info[c]
+          wmi_object_property(os_info, c)
         rescue # OperatingSystemSKU doesn't exist in all versions of Windows
           nil
         end
