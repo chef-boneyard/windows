@@ -47,4 +47,19 @@ attr_accessor :exists, :status
 def initialize(name, run_context=nil)
   super
   @action = :create
+  @provider = lookup_provider_constant(locate_default_provider)
+end
+
+private
+
+def locate_default_provider
+  begin
+    WIN32OLE.new("Schedule.Service")
+  rescue WIN32OLERuntimeError
+    # no task scheduler 2.0 - selecting 1.0
+    :windows_task_gem
+  else
+    # task scheduler 2.0 detected
+    :windows_task_schtasks
+  end
 end

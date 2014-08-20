@@ -32,3 +32,9 @@ end
     action :install
   end
 end
+
+# on windows xp/2003 install win32-taskscheduler
+chef_gem "win32-taskscheduler" do
+  action :install
+  only_if {node["platform_version"] =~ /^5\./}
+end
