@@ -197,6 +197,7 @@ end
 
 def extract_installed_packages_from_key(hkey = ::Win32::Registry::HKEY_LOCAL_MACHINE, desired = ::Win32::Registry::Constants::KEY_READ)
   uninstall_subkey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall'
+  update_subkey = 'Software\Microsoft\Updates'
   packages = {}
   begin
     ::Win32::Registry.open(hkey, uninstall_subkey, desired) do |reg|
@@ -210,6 +211,32 @@ def extract_installed_packages_from_key(hkey = ::Win32::Registry::HKEY_LOCAL_MAC
             packages[display_name] = {:name => display_name,
                                       :version => version,
                                       :uninstall_string => uninstall_string}
+          end
+        rescue ::Win32::Registry::Error
+        end
+      end
+    end
+  rescue ::Win32::Registry::Error
+  end
+  begin
+    ::Win32::Registry.open(hkey, update_subkey, desired) do |reg|
+      reg.each_key do |key, wtime|
+        begin
+          k = reg.open(key, desired)
+          k.each_key do |subkey, subwtime|
+            begin
+              subk = k.open(subkey, desired)
+          
+              display_name = subk["PackageName"] rescue nil
+              version = subk["PackageVersion"] rescue "NO VERSION"
+              uninstall_string = nil
+              if display_name
+                packages[display_name] = {:name => display_name,
+                                          :version => version,
+                                          :uninstall_string => uninstall_string}
+              end
+            rescue ::Win32::Registry::Error
+            end
           end
         rescue ::Win32::Registry::Error
         end
