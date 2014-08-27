@@ -1,9 +1,6 @@
-#
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
+uthor:: Venkat Naidu (<naiduvenkat@gmail.com>)
 # Cookbook Name:: windows
-# Attribute:: default
-#
-# Copyright 2011, Opscode, Inc
+# Resource:: share
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +15,9 @@
 # limitations under the License.
 #
 
-default['windows']['allow_pending_reboots'] = true
-default['windows']['allow_reboot_on_failure'] = false
-default['windows']['rubyzipversion'] = nil
-default['windows']['reboot_timeout'] = 60
+actions :create, :delete
+attribute :name, :kind_of => String, :name_attribute => true
+attribute :path, :kind_of => String
+attribute :access, :kind_of => Symbol, :default => :read, :equal_to => [:read, :chage, :full]
+attribute :user, :kind_of => String
+
