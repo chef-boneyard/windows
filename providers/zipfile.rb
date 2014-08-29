@@ -2,7 +2,7 @@
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: Seth Chisamore (<schisamo@opscode.com>)
 # Cookbook Name:: windows
-# Provider:: unzip
+# Provider:: zipfile
 #
 # Copyright:: 2010, VMware, Inc.
 # Copyright:: 2011, Opscode, Inc.
