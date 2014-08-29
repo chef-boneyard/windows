@@ -530,17 +530,17 @@ end
 ```
 
 ### windows_zipfile
-Most version of Windows do not ship with native cli utility for managing compressed files.  This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken on the zip file every Chef run.
+Most version of Windows do not ship with native cli utility for managing compressed files.  This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
 
 #### Actions
 - :unzip: unzip a compressed file
-- :zip: zip a single folder (recursively)
+- :zip: zip a directory (recursively)
 
 #### Attribute Parameters
-- path: name attribute. The path where files will be unzipped to.
-- source: The source of the zip file. This can either be a URI or a local path.
-- overwrite: force an overwrite of the files if the already exists.
-- checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
+- path: name attribute. The path where files will be (un)zipped to.
+- source: source of the zip file (either a URI or local path) for :unzip, or directory to be zipped for :zip.
+- overwrite: force an overwrite of the files if they already exist.
+- checksum: for :unzip, useful if source is remote, if the local file matches the SHA-256 checksum, Chef will not download it.
 
 #### Examples
 
@@ -561,7 +561,7 @@ windows_zipfile 'c:/the_codez' do
 end
 ```
 
-Zip a local zipfile
+Create a local zipfile
 ```ruby
 windows_zipfile 'c:/foo/baz/the_codez.zip' do
   source 'c:/the_codez'
