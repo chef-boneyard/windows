@@ -18,12 +18,14 @@
 # limitations under the License.
 
 require 'uri'
+require 'Win32API' if Chef::Platform.windows?
 
 module Windows
   module Helper
 
     AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'.freeze unless defined?(AUTO_RUN_KEY)
     ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'.freeze unless defined?(ENV_KEY)
+    ExpandEnvironmentStrings = Win32API.new('kernel32', 'ExpandEnvironmentStrings', ['P', 'P', 'L'], 'L') if Chef::Platform.windows?
 
     # returns windows friendly version of the provided path,
     # ensures backslashes are used everywhere
@@ -80,6 +82,13 @@ module Windows
 
         windows_path ? win_friendly_path(cache_file_path) : cache_file_path
       end
+    end
+
+    # Expands the environment variables
+    def expand_env_vars(path)
+      buf = 0.chr * 32 * (1 << 10) # 32k
+      ExpandEnvironmentStrings.call(path, buf, buf.length)
+      buf.strip
     end
 
   end
