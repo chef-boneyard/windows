@@ -22,9 +22,17 @@ require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
 action :create do
+  has_changed = nil
   if @current_resource.exists
-    Chef::Log.info "#{@new_resource} task already exists - nothing to do"
-  else
+    has_changed = existing_task_different_from_expected_one()
+    if has_changed
+      Chef::Log.info "#{@new_resource} task already exists but with another definition"
+    else
+      Chef::Log.info "#{@new_resource} task already exists - nothing to do"
+    end
+  end
+
+  if !@current_resource.exists || (has_changed && @new_resource.force)
     if @new_resource.user and @new_resource.password.nil? then Chef::Log.debug "#{@new_resource} did not specify a password, creating task without a password" end
     use_force = @new_resource.force ? '/F' : ''
     cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
@@ -33,7 +41,8 @@ action :create do
     cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
     cmd += "/SD \"#{@new_resource.start_day}\" " unless @new_resource.start_day.nil?
     cmd += "/ST \"#{@new_resource.start_time}\" " unless @new_resource.start_time.nil?
-    cmd += "/TR \"#{@new_resource.command}\" "
+    command = @new_resource.command.gsub(/["\\]/,'\\\\\0') # Escapes double quotes and backslashes
+    cmd += "/TR \"#{command}\" "
     cmd += "/RU \"#{@new_resource.user}\" " if @new_resource.user
     cmd += "/RP \"#{@new_resource.password}\" " if @new_resource.user and @new_resource.password
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
@@ -164,4 +173,18 @@ def load_task_hash(task_name)
   end
 
   task
+end
+
+def existing_task_different_from_expected_one
+  if @current_resource.command != @new_resource.command
+    Chef::Log.debug "#{@new_resource} task already exists but doesn't have the expected command"
+    return true
+  end
+
+  # On Windows, logins are not case-sensitive
+  if @current_resource.user.downcase != @new_resource.user.downcase
+    Chef::Log.debug "#{@new_resource} task already exists but doesn't have the expected user"
+    return true
+  end
+  return false
 end
