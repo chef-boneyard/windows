@@ -26,7 +26,7 @@ action :add do
     action :modify
     delim ::File::PATH_SEPARATOR
     value new_resource.path
-    notifies :run, "ruby_block[fix ruby ENV['PATH']]"
+    notifies :run, "ruby_block[fix ruby ENV['PATH']]", :immediately
   end
 
   # The windows Env provider does not correctly expand variables in 
