@@ -19,6 +19,7 @@
 
 require 'uri'
 require 'Win32API' if Chef::Platform.windows?
+require 'chef/exceptions'
 
 module Windows
   module Helper
@@ -87,7 +88,9 @@ module Windows
     # Expands the environment variables
     def expand_env_vars(path)
       buf = 0.chr * 32 * (1 << 10) # 32k
-      ExpandEnvironmentStrings.call(path, buf, buf.length)
+      if ExpandEnvironmentStrings.call(path, buf, buf.length) == 0
+        raise Chef::Exceptions::Win32APIError, "Failed calling ExpandEnvironmentStrings (received 0)"
+      end
       buf.strip
     end
 
