@@ -17,14 +17,9 @@ platforms:
   - name: windows-8.1-professional
     driver:
       box: windows-8.1
-  - name: windows2008r2
-    driver:
-      box: win2008r2
-  #- name: windows2012r2
-    #driver:
-      #box: kensykora/windows_2012_r2_standard
 
 suites:
   - name: default
     run_list:
       - recipe[windows::default]
+      - recipe[path_test::default]
