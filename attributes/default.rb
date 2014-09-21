@@ -22,3 +22,5 @@ default['windows']['allow_pending_reboots'] = true
 default['windows']['allow_reboot_on_failure'] = false
 default['windows']['rubyzipversion'] = nil
 default['windows']['reboot_timeout'] = 60
+default['windows']['upgrade_script_location'] = "#{Chef::Config[:file_cache_path]}/chef-upgrade.ps1"
+default['windows']['chef_msi_location'] = "#{Chef::Config[:file_cache_path]}/chef.msi"
