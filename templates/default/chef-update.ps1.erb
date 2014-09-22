@@ -1,8 +1,8 @@
 $ErrorActionPreference = "Stop"
 
 $chef_client_service = Get-WmiObject -Class Win32_Service -Filter "Name='chef-client'"
-$msi = <%= node['windows']['upgrade_script_location'] %>
-$proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i c:\vagrant\chef-windows-11.16.2-1.windows.msi" -Passthru
+$msi = "<%= node['windows']['chef_msi_location'] %>"
+$proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $msi" -Passthru
 $bar = ""
 while (-Not $proc_msi.HasExited ) {
     Write-Host -NoNewline "`r`t[MSI] [$bar"
@@ -23,3 +23,7 @@ if ($chef_client_service -ne $null) {
         $new_service.StartService()
     }
 }
+
+schtasks /delete /TN 'upgrade chef' /F
+$script_path = $MyInvocation.MyCommand.Definition
+Remove-Item $script_path

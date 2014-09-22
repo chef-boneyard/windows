@@ -24,13 +24,29 @@ end
 
 module Windows
   module ChefUpdateHelper
-    def can_upgrade_to?(source)
-      product_code = MsiInstallerFunctions.get_product_property(source, 'ProductCode').strip
-      current_version = MsiInstallerFunctions.get_installed_version(product_code).strip
-      msi_version = MsiInstallerFunctions.get_product_property(source, 'ProductVersion').strip
+    class UpgradeRequested < RuntimeError; end
+
+    def self.windows_path(path)
+      if path.start_with? '/'
+        path = "#{ENV['SystemDrive']}/#{path}"
+      end
+      path = path.gsub(::File::SEPARATOR, ::File::ALT_SEPARATOR || '\\')
+    end
+
+    def self.can_upgrade_to?(source)
+      source = windows_path(source)
+      current_version = Chef::VERSION
+      msi_version = MsiInstallerFunctions.get_product_property(source, 'ProductVersion').strip.gsub(/-\d+$/,'')
+      Chef::Log.debug("Found chef #{current_version} installed. Asked to upgrade to #{msi_version}.")
       Gem::Version.new(msi_version) > Gem::Version.new(current_version)
+    end
+
+    def self.format_start_day(month, day, year)
+      '%02d/%02d/%04d' % [month, day, year]
+    end
+
+    def self.format_start_time(hour, min)
+      '%02d:%02d' % [hour, min]
     end
   end
 end
-
-Chef::Recipe.send(:include, Windows::ChefUpdateHelper)
