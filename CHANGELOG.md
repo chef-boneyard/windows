@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.34.6 (2014-09-22)
+--------------------
+- [Chef-2009] (https://github.com/opscode/chef/issues/2009) - Patch to work around a regression in [Chef](https://github.com/opscode/chef)
+
 v1.34.2 (2014-08-12)
 --------------------
 - [Issue 99](https://github.com/opscode-cookbooks/windows/issues/99) - Remove rubygems / Internet wmi-lite dependency (PR #108)
