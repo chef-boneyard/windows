@@ -18,12 +18,15 @@
 # limitations under the License.
 
 require 'uri'
+require 'Win32API' if Chef::Platform.windows?
+require 'chef/exceptions'
 
 module Windows
   module Helper
 
     AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'.freeze unless defined?(AUTO_RUN_KEY)
     ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'.freeze unless defined?(ENV_KEY)
+    ExpandEnvironmentStrings = Win32API.new('kernel32', 'ExpandEnvironmentStrings', ['P', 'P', 'L'], 'L') if Chef::Platform.windows?
 
     # returns windows friendly version of the provided path,
     # ensures backslashes are used everywhere
@@ -80,6 +83,17 @@ module Windows
 
         windows_path ? win_friendly_path(cache_file_path) : cache_file_path
       end
+    end
+
+    # Expands the environment variables
+    def expand_env_vars(path)
+      # We pick 32k because that is the largest it could be:
+      # http://msdn.microsoft.com/en-us/library/windows/desktop/ms724265%28v=vs.85%29.aspx
+      buf = 0.chr * 32 * 1024 # 32k
+      if ExpandEnvironmentStrings.call(path, buf, buf.length) == 0
+        raise Chef::Exceptions::Win32APIError, "Failed calling ExpandEnvironmentStrings (received 0)"
+      end
+      buf.strip
     end
 
   end
