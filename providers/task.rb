@@ -22,7 +22,7 @@ require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
 action :create do
-  if @current_resource.exists
+  if @current_resource.exists && !@new_resource.force
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
     if @new_resource.user and @new_resource.password.nil? then Chef::Log.debug "#{@new_resource} did not specify a password, creating task without a password" end
