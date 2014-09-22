@@ -37,6 +37,10 @@ action :create do
     cmd += "/RU \"#{@new_resource.user}\" " if @new_resource.user
     cmd += "/RP \"#{@new_resource.password}\" " if @new_resource.user and @new_resource.password
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
+    validate_create_day
+    if @new_resource.day then
+      cmd += "/D \"#{@new_resource.day}\" "
+    end
     shell_out!(cmd, {:returns => [0]})
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
@@ -164,4 +168,21 @@ def load_task_hash(task_name)
   end
 
   task
+end
+
+def validate_create_day 
+  if not @new_resource.day then
+    return
+  end
+  if not [:weekly, :monthly].include?(@new_resource.frequency) then
+    raise "day attribute is only valid for tasks that run weekly or monthly"
+  end
+  if @new_resource.day.is_a? String then
+    days = @new_resource.day.split(",")
+    days.each do |day|
+      if not ["mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"].include?(day.strip.downcase) then
+        raise "day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma."
+      end
+    end
+  end
 end
