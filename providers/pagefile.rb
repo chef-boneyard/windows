@@ -60,7 +60,7 @@ action :set do
     end
   end
 
-  @new_resource.updated_by_last_action(updated)
+  new_resource.updated_by_last_action(updated)
 end
 
 action :delete do
@@ -72,7 +72,7 @@ action :delete do
     updated = true
   end
 
-  @new_resource.updated_by_last_action(updated)
+  new_resource.updated_by_last_action(updated)
 end
 
 
