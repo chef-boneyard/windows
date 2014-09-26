@@ -105,6 +105,8 @@ module Windows
       # "9306cdfc-c4a1-4a22-9996-848cb67eddc3"=1
       (::Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired') &&
         ::Registry.get_values('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired').select { |v| v[2] == 1 }.any?) ||
+      # this key will only exit if the system is pending a reboot
+      ::Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending') ||
       # 1 or 2 for 'Flags' value means reboot pending
       (::Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile') &&
         [1, 2].include?(::Registry::get_value('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile', 'Flags')))
