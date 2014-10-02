@@ -23,9 +23,12 @@ include Chef::Mixin::ShellOut
 include Windows::Helper
 
 def install_feature(name)
-  addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ""
-  addall = @new_resource.all ? "/All" : ""
-  shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", {:returns => [0,42,127,3010]})
+  if node[:os_version] >= "6.2"
+    addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ""
+    addall = @new_resource.all ? "/All" : ""
+  else
+    shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", {:returns => [0,42,127,3010]})
+  end
 end
 
 def remove_feature(name)
