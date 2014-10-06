@@ -38,7 +38,7 @@ action :create do
     cmd += "/RP \"#{@new_resource.password}\" " if @new_resource.user and @new_resource.password
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
     shell_out!(cmd, {:returns => [0]})
-    @new_resource.updated_by_last_action true
+    new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
   end
 end
@@ -50,7 +50,7 @@ action :run do
     else
       cmd = "schtasks /Run /TN \"#{@current_resource.name}\""
       shell_out!(cmd, {:returns => [0]})
-      @new_resource.updated_by_last_action true
+      new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task ran"
     end
   else
@@ -68,7 +68,7 @@ action :change do
       Chef::Log.fatal "#{@new_resource.name}: Can't specify user or password without both!"
     end
     shell_out!(cmd, {:returns => [0]})
-    @new_resource.updated_by_last_action true
+    new_resource.updated_by_last_action true
     Chef::Log.info "Change #{@new_resource} task ran"
   else
     Chef::Log.debug "#{@new_resource} task doesn't exists - nothing to do"
@@ -80,7 +80,7 @@ action :delete do
     use_force = @new_resource.force ? '/F' : ''
     cmd = "schtasks /Delete #{use_force} /TN \"#{@current_resource.name}\""
     shell_out!(cmd, {:returns => [0]})
-    @new_resource.updated_by_last_action true
+    new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
   else
     Chef::Log.debug "#{@new_resource} task doesn't exists - nothing to do"
@@ -107,7 +107,8 @@ private
 
 def load_task_hash(task_name)
   Chef::Log.debug "looking for existing tasks"
-  output = `schtasks /Query /FO LIST /V /TN \"#{task_name}\" 2> NUL`
+
+  output = shell_out!("schtasks /Query /FO LIST /V /TN \"#{task_name}\" 2> NUL").stdout
   if output.empty?
     task = false
   else
