@@ -45,7 +45,7 @@ action :install do
     Chef::Log.info("Installing #{@new_resource} version #{install_version}")
     status = install_package(@new_resource.package_name, install_version)
     if status
-      @new_resource.updated_by_last_action(true)
+      new_resource.updated_by_last_action(true)
     end
   end
 end
@@ -56,7 +56,7 @@ action :upgrade do
     Chef::Log.info("Upgrading #{@new_resource} version from #{orig_version} to #{candidate_version}")
     status = upgrade_package(@new_resource.package_name, candidate_version)
     if status
-      @new_resource.updated_by_last_action(true)
+      new_resource.updated_by_last_action(true)
     end
   end
 end
@@ -65,7 +65,7 @@ action :remove do
   if removing_package?
     Chef::Log.info("Removing #{@new_resource}")
     remove_package(@current_resource.package_name, @new_resource.version)
-    @new_resource.updated_by_last_action(true)
+    new_resource.updated_by_last_action(true)
   else
   end
 end

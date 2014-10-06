@@ -38,7 +38,7 @@ action :unzip do
       zip.extract(entry, path)
     end
   end
-  @new_resource.updated_by_last_action(true)
+  new_resource.updated_by_last_action(true)
 end
 
 action :zip do
@@ -71,6 +71,7 @@ action :zip do
         z.add(zip_fname, f)
       end
       z.close
+      new_resource.updated_by_last_action(true)
     else
       Chef::Log.info("Single directory must be specified for compression, and #{@new_resource.source} does not meet that criteria.")
     end
