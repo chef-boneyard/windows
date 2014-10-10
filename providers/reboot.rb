@@ -22,10 +22,12 @@ action :request do
   node.run_state[:reboot_requested] = true
   node.run_state[:reboot_timeout] = @new_resource.timeout
   node.run_state[:reboot_reason] = @new_resource.reason
+  new_resource.updated_by_last_action(true)
 end
 
 action :cancel do
   node.run_state.delete(:reboot_requested)
   node.run_state.delete(:reboot_timeout)
   node.run_state.delete(:reboot_reason)
+  new_resource.updated_by_last_action(true)
 end
