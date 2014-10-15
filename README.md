@@ -546,6 +546,20 @@ windows_task 'old task' do
 end
 ```
 
+Enable a task named 'Chef client'
+```ruby
+windows_task 'Chef client' do
+  action :enable
+end
+```
+
+Disable a task named 'Chef client'
+```ruby
+windows_task 'Chef client' do
+  action :disable
+end
+```
+
 ### windows_zipfile
 Most version of Windows do not ship with native cli utility for managing compressed files.  This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
 
