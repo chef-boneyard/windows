@@ -1,6 +1,6 @@
 # Encoding: utf-8
 # Author:: Dave Viebrock (<dave.viebrock@nordstrom.com>) with
-# assistance gratefully accepted from James Fitzgibbon and # Doug Ireton
+# assistance gratefully accepted from James Fitzgibbon and Doug Ireton
 
 # Cookbook Name:: windows
 # Provider:: windows_share
