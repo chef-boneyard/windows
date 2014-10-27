@@ -1,16 +1,27 @@
 if defined?(ChefSpec)
-  ChefSpec::Runner.define_runner_method :windows_package
-  ChefSpec::Runner.define_runner_method :windows_feature
-  ChefSpec::Runner.define_runner_method :windows_task
-  ChefSpec::Runner.define_runner_method :windows_path
-  ChefSpec::Runner.define_runner_method :windows_batch
-  ChefSpec::Runner.define_runner_method :windows_pagefile
-  ChefSpec::Runner.define_runner_method :windows_zipfile
-  ChefSpec::Runner.define_runner_method :windows_shortcut
-  ChefSpec::Runner.define_runner_method :windows_auto_run
-  ChefSpec::Runner.define_runner_method :windows_printer
-  ChefSpec::Runner.define_runner_method :windows_printer_port
-  ChefSpec::Runner.define_runner_method :windows_reboot
+  matchers = [
+    :windows_package,
+    :windows_feature,
+    :windows_task,
+    :windows_path,
+    :windows_batch,
+    :windows_pagefile,
+    :windows_zipfile,
+    :windows_shortcut,
+    :windows_auto_run,
+    :windows_printer,
+    :windows_printer_port,
+    :windows_reboot
+  ]
+  if ChefSpec::VERSION < '4.1.0'
+    matchers.each do |m|
+      ChefSpec::Runner.define_runner_method m
+    end
+  else
+    matchers.each do |m|
+      ChefSpec.define_matcher m
+    end
+  end
 
   #
   # Assert that a +windows_package+ resource exists in the Chef run with the
