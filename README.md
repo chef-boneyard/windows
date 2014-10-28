@@ -474,6 +474,71 @@ windows_path 'C:\7-Zip' do
 end
 ```
 
+### windows_share
+Creates, deletes or runs a Windows shared folder.
+
+#### Actions
+- :create: creates a shared folder
+- :delete: deletes a shared folder
+
+#### Attribute Parameters
+- share_name: The share name.
+- folder_patch: The path to the folder to share.
+- group: The Active Directory group or user object to grant share permissions to.  Default is 'Everyone'.
+- permission: Pick one of 'Read', 'Change', or 'Full'.  Default is 'Change'.
+
+#### Examples
+
+Share the C:\Temp folder as 'Temp'
+```ruby
+windows_share 'temp' do
+  share_name 'temp'
+  folder_path 'C:\\temp'
+  group 'Everyone'
+  action :create
+  permission 'Read'
+end
+```
+
+Delete the folder share 'temp'.  Just the share, and does *NOT* delete the data from disk.
+```ruby
+windows_share 'temp' do
+  share_name 'temp'
+  folder_path 'C:\\temp'
+  group 'Everyone'
+  action :create
+  permission 'Read'
+end
+```
+
+Do a bunch at one time.  Add something similar to the following in your recipe and
+attributes file
+
+Recipe:
+```ruby
+dirs = node['fileprint_servers']['standard_shared_folders']
+dirs.each do |dir|
+  windows_share dir do
+    share_name dir[:share_name]
+    folder_path dir[:folder_path]
+  end
+end
+```
+
+Attributes file:
+```ruby
+default['fileprint_servers']['standard_shared_folders'] = [
+  {
+    share_name: 'Apps',
+    folder_path: 'D:\apps',
+  },
+  {
+    share_name: 'SecretSquirrel',
+    folder_path: 'D:\SecretSquirrel',
+  }
+]
+```
+
 ### windows_task
 Creates, deletes or runs a Windows scheduled task. Requires Windows
 Server 2008 due to API usage.
