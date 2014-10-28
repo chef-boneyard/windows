@@ -511,6 +511,34 @@ windows_share 'temp' do
 end
 ```
 
+Do a bunch at one time.  Add something similar to the following in your recipe and
+attributes file
+
+Recipe:
+```ruby
+dirs = node['fileprint_servers']['standard_shared_folders']
+dirs.each do |dir|
+  windows_share dir do
+    share_name dir[:share_name]
+    folder_path dir[:folder_path]
+  end
+end
+```
+
+Attributes file:
+```ruby
+default['fileprint_servers']['standard_shared_folders'] = [
+  {
+    share_name: 'Apps',
+    folder_path: 'D:\apps',
+  },
+  {
+    share_name: 'SecretSquirrel',
+    folder_path: 'D:\SecretSquirrel',
+  }
+]
+```
+
 ### windows_task
 Creates, deletes or runs a Windows scheduled task. Requires Windows
 Server 2008 due to API usage.
