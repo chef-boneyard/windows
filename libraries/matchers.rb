@@ -1,17 +1,23 @@
 if defined?(ChefSpec)
-  ChefSpec::Runner.define_runner_method :windows_package
-  ChefSpec::Runner.define_runner_method :windows_feature
-  ChefSpec::Runner.define_runner_method :windows_task
-  ChefSpec::Runner.define_runner_method :windows_path
-  ChefSpec::Runner.define_runner_method :windows_batch
-  ChefSpec::Runner.define_runner_method :windows_pagefile
-  ChefSpec::Runner.define_runner_method :windows_zipfile
-  ChefSpec::Runner.define_runner_method :windows_shortcut
-  ChefSpec::Runner.define_runner_method :windows_auto_run
-  ChefSpec::Runner.define_runner_method :windows_printer
-  ChefSpec::Runner.define_runner_method :windows_printer_port
-  ChefSpec::Runner.define_runner_method :windows_reboot
+  chefspec_version = Gem.loaded_specs["chefspec"].version
+  if chefspec_version < Gem::Version.new('4.1.0')
+    define_method = ChefSpec::Runner.method(:define_runner_method)
+  else
+    define_method = ChefSpec.method(:define_matcher)
+  end
 
+  define_method.call :windows_package
+  define_method.call :windows_feature
+  define_method.call :windows_task
+  define_method.call :windows_path
+  define_method.call :windows_batch
+  define_method.call :windows_pagefile
+  define_method.call :windows_zipfile
+  define_method.call :windows_shortcut
+  define_method.call :windows_auto_run
+  define_method.call :windows_printer
+  define_method.call :windows_printer_port
+  define_method.call :windows_reboot
   #
   # Assert that a +windows_package+ resource exists in the Chef run with the
   # action +:install+. Given a Chef Recipe that installs "Node.js" as a
