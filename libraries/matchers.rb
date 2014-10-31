@@ -1,16 +1,16 @@
 if defined?(ChefSpec)
-  ChefSpec::Runner.define_runner_method :windows_package
-  ChefSpec::Runner.define_runner_method :windows_feature
-  ChefSpec::Runner.define_runner_method :windows_task
-  ChefSpec::Runner.define_runner_method :windows_path
-  ChefSpec::Runner.define_runner_method :windows_batch
-  ChefSpec::Runner.define_runner_method :windows_pagefile
-  ChefSpec::Runner.define_runner_method :windows_zipfile
-  ChefSpec::Runner.define_runner_method :windows_shortcut
-  ChefSpec::Runner.define_runner_method :windows_auto_run
-  ChefSpec::Runner.define_runner_method :windows_printer
-  ChefSpec::Runner.define_runner_method :windows_printer_port
-  ChefSpec::Runner.define_runner_method :windows_reboot
+  ChefSpec.define_matcher :windows_package
+  ChefSpec.define_matcher :windows_feature
+  ChefSpec.define_matcher :windows_task
+  ChefSpec.define_matcher :windows_path
+  ChefSpec.define_matcher :windows_batch
+  ChefSpec.define_matcher :windows_pagefile
+  ChefSpec.define_matcher :windows_zipfile
+  ChefSpec.define_matcher :windows_shortcut
+  ChefSpec.define_matcher :windows_auto_run
+  ChefSpec.define_matcher :windows_printer
+  ChefSpec.define_matcher :windows_printer_port
+  ChefSpec.define_matcher :windows_reboot
 
   #
   # Assert that a +windows_package+ resource exists in the Chef run with the
