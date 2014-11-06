@@ -90,6 +90,34 @@ windows_batch 'echo some env vars' do
 end
 ```
 
+### windows_dep
+Sets the Data Execution Prevention (DEP) policy configuration on Windows servers
+
+#### Actions
+- :set: Sets the configured policy
+
+#### Attribute Parameters
+- approach: Required.  Pick either of 'OptIn' or 'OptOut'.  Default is 'OptOut'.
+- actions: 'set' is the only one, and also the default.
+
+#### Examples
+
+Set the DEP policy to 'OptIn'
+```ruby
+windows_dep 'My_Dep_Setting' do
+  approach 'OptIn'
+  action :set
+end
+```
+
+Set the DEP policy to 'OptOut'
+```ruby
+windows_dep 'My_Dep_Setting' do
+  approach 'OptOut'
+  action :set
+end
+```
+
 ### windows_feature
 Windows Roles and Features can be thought of as built-in operating system packages that ship with the OS.  A server role is a set of software programs that, when they are installed and properly configured, lets a computer perform a specific function for multiple users or other computers within a network.  A Role can have multiple Role Services that provide functionality to the Role.  Role services are software programs that provide the functionality of a role. Features are software programs that, although they are not directly parts of roles, can support or augment the functionality of one or more roles, or improve the functionality of the server, regardless of which roles are installed.  Collectively we refer to all of these attributes as 'features'.
 
