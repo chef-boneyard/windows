@@ -30,6 +30,28 @@ Attributes
 
 Resource/Provider
 -----------------
+### windows_auditpol
+The windows_auditpol LWRP allows authors to manage 'Object Access' settings within local (not domain-based) group policy settings.
+#### Actions
+- :enable: Enables a setting for a policy
+- :disable: Disables a setting for a policy
+
+#### Attribute Parameters
+- :subcategory: Name attribute. The name of the subcategory object of the 'Object Access' category you wish to manage
+- :success: Required.  Must also be enable or disable.
+- :failure: Required.  Must also be enable or disable.
+
+#### Examples
+Disable "Filtering Platform Connection".  Note the use of double quotes inside the single quotes.  This is required for the Windows CMD shell which, per this example, needs an input string of "Filtering Platform Connection" because of the spaces in the name.
+
+```ruby
+windows_auditpol 'my_auditpol_setting1' do
+  subcategory '"Filtering Platform Connection"'
+  success 'disable'
+  failure 'disable'
+end
+```
+
 ### windows_auto_run
 #### Actions
 - :create: Create an item to be run at login
@@ -90,7 +112,8 @@ windows_batch 'echo some env vars' do
 end
 ```
 
-### windows_dep
+
+## windows_dep
 Sets the Data Execution Prevention (DEP) policy configuration on Windows servers
 
 #### Actions
@@ -103,6 +126,7 @@ Sets the Data Execution Prevention (DEP) policy configuration on Windows servers
 #### Examples
 
 Set the DEP policy to 'OptIn'
+
 ```ruby
 windows_dep 'My_Dep_Setting' do
   approach 'OptIn'
@@ -111,6 +135,7 @@ end
 ```
 
 Set the DEP policy to 'OptOut'
+
 ```ruby
 windows_dep 'My_Dep_Setting' do
   approach 'OptOut'
