@@ -143,6 +143,27 @@ windows_dep 'My_Dep_Setting' do
 end
 ```
 
+### windows_dircleanup
+USE WITH CAUTION!  The windows_dircleanup LWRP allows authors to delete all files older than X days in a given directory.  Expected use of this LWRP is to regularly clean out files where file build-up is expected, such as logging or temp file directories
+.
+#### Actions
+- :cleanup: The only action.  Default is 'cleanup'
+
+#### Attribute Parameters
+- :directory: Name attribute.  Name of the directory you wish to regularly clean files out of.  Beware of directories with space characters in the name, in order to escape them properly.
+- :age: Number of days old a file can be before cleaning it out.  Default is '15'.
+
+#### Examples
+Cleanup the C:\\temp directory.
+
+```ruby
+windows_dircleanup 'my_temp_dir' do
+  action :cleanup
+  directory 'C:\\temp'
+  age '15'
+end
+```
+
 ### windows_feature
 Windows Roles and Features can be thought of as built-in operating system packages that ship with the OS.  A server role is a set of software programs that, when they are installed and properly configured, lets a computer perform a specific function for multiple users or other computers within a network.  A Role can have multiple Role Services that provide functionality to the Role.  Role services are software programs that provide the functionality of a role. Features are software programs that, although they are not directly parts of roles, can support or augment the functionality of one or more roles, or improve the functionality of the server, regardless of which roles are installed.  Collectively we refer to all of these attributes as 'features'.
 
