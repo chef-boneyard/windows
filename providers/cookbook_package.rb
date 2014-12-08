@@ -28,6 +28,8 @@ require 'chef/mixin/language'
 include Chef::Mixin::ShellOut
 include Windows::Helper
 
+provides :windows_package, platform => :windows
+
 # the logic in all action methods mirror that of
 # the Chef::Provider::Package which will make
 # refactoring into core chef easy
