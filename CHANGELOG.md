@@ -5,7 +5,8 @@ This file is used to list changes made in each version of the windows cookbook.
 Unreleased
 --------------------
 - [PR 145](https://github.com/opscode-cookbooks/windows/pull/145) - do not fail on non-existant task
-
+- [PR 144](https://github.com/opscode-cookbooks/windows/pull/144) - Add a zip example to the README
+- 
 v1.34.8 (2014-10-31)
 --------------------
 - [Issue 137](https://github.com/opscode-cookbooks/windows/issues/137) - windows_path resource breaks with ruby 2.x
