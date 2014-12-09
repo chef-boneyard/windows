@@ -534,6 +534,7 @@ Most version of Windows do not ship with native cli utility for managing compres
 
 #### Actions
 - :unzip: unzip a compressed file
+- :zip: zip a single folder (recursively)
 
 #### Attribute Parameters
 - path: name attribute. The path where files will be unzipped to.
@@ -560,6 +561,13 @@ windows_zipfile 'c:/the_codez' do
 end
 ```
 
+Zip a local zipfile
+```ruby
+windows_zipfile 'c:/foo/baz/the_codez.zip' do
+  source 'c:/the_codez'
+  action :zip
+end
+```
 
 Exception/Report Handlers
 -------------------------
