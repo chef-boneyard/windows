@@ -488,7 +488,7 @@ Server 2008 due to API usage.
 - name: name attribute, The task name.
 - command: The command the task will run.
 - cwd: The directory the task will be run from.
-- user: The user to run the task as. (requires password)
+- user: The user to run the task as.
 - password: The user's password. (requires user)
 - run_level: Run with limited or highest privileges.
 - frequency: Frequency with which to run the task. (hourly, daily, ect.)
@@ -504,7 +504,7 @@ windows_task 'Chef client' do
   user 'Administrator'
   password '$ecR3t'
   cwd 'C:\chef\bin'
-  command 'chef-client -L C:\tmp\'
+  command 'chef-client -L C:\tmp\\'
   run_level :highest
   frequency :minute
   frequency_modifier 15
@@ -517,7 +517,7 @@ windows_task 'Chef client' do
   user 'Administrator'
   password 'N3wPassW0Rd'
   cwd 'C:\chef\bin'
-  command 'chef-client -L C:\chef\logs\'
+  command 'chef-client -L C:\chef\logs\\'
   action :change
 end
 ```
