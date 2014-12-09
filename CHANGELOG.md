@@ -2,13 +2,17 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+Unreleased
+--------------------
+- [PR 145](https://github.com/opscode-cookbooks/windows/pull/145) - do not fail on non-existant task
+
 v1.34.8 (2014-10-31)
 --------------------
-- [Issue 137] (https://github.com/opscode-cookbooks/windows/issues/137) - windows_path resource breaks with ruby 2.x
+- [Issue 137](https://github.com/opscode-cookbooks/windows/issues/137) - windows_path resource breaks with ruby 2.x
 
 v1.34.6 (2014-09-22)
 --------------------
-- [Chef-2009] (https://github.com/opscode/chef/issues/2009) - Patch to work around a regression in [Chef](https://github.com/opscode/chef)
+- [Chef-2009](https://github.com/opscode/chef/issues/2009) - Patch to work around a regression in [Chef](https://github.com/opscode/chef)
 
 v1.34.2 (2014-08-12)
 --------------------

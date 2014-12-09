@@ -108,6 +108,7 @@ private
 def load_task_hash(task_name)
   Chef::Log.debug "looking for existing tasks"
 
+  # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
   output = shell_out("schtasks /Query /FO LIST /V /TN \"#{task_name}\"").stdout
   if output.empty?
     task = false
