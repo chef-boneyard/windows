@@ -32,7 +32,7 @@ ruby_block "load namespace" do
     begin
       require "#{node['chef_handler']['handler_path']}/windows_reboot_handler"
     rescue LoadError
-      log 'Unable to require the LogStash handler!' do
+      log 'Unable to require the windows reboot handler!' do
         action :write
       end
     end
