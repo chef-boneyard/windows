@@ -17,13 +17,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include Windows::Helper
 
 def load_current_resource
   require 'win32ole'
   fonts_dir  = WIN32OLE.new("WScript.Shell").SpecialFolders("Fonts")
-  @current_resource = Chef::Resource::Font.new(@new_resource.name)
-  @current_resource.name(@new_resource.name)
-  @current_resource.file(win_path(::File.join(fonts_dir, @new_resource.file)))
+  @current_resource = Chef::Resource::WindowsFont.new(@new_resource.name)
+  @current_resource.file(win_friendly_path(::File.join(fonts_dir, @new_resource.file)))
   @current_resource
 end
 
@@ -38,7 +38,7 @@ end
 
 def get_cookbook_font
   r = Chef::Resource::CookbookFile.new(@new_resource.file, run_context)
-  r.path(win_path(::File.join(ENV['TEMP'], @new_resource.file)))
+  r.path(win_friendly_path(::File.join(ENV['TEMP'], @new_resource.file)))
   r.cookbook(cookbook_name.to_s)
   r.run_action(:create)
 end
@@ -52,14 +52,10 @@ def install_font
   require 'win32ole'
   fonts_dir  = WIN32OLE.new("WScript.Shell").SpecialFolders("Fonts")
   folder = WIN32OLE.new("Shell.Application").Namespace(fonts_dir)
-  folder.CopyHere(win_path(::File.join(ENV['TEMP'], @new_resource.file)))
-  Chef::Log.debug("Installed font: #{@new_resource.file}")
+  folder.CopyHere(win_friendly_path(::File.join(ENV['TEMP'], @new_resource.file)))
+  Chef::Log.debug("Installing font: #{@new_resource.file}")
 end
     
-def win_path(path)
-  path.gsub(::File::SEPARATOR, ::File::ALT_SEPARATOR || '\\') if path
-end
-
 def action_install
   unless font_exists?
     get_cookbook_font
@@ -67,6 +63,7 @@ def action_install
     del_cookbook_font
     new_resource.updated_by_last_action(true)
   else
+    Chef::Log.debug("Not installing font: #{@new_resource.file}, font already installed.")
     new_resource.updated_by_last_action(false)
   end
 end
