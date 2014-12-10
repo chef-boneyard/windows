@@ -22,12 +22,4 @@ actions :install
 
 default_action :install
 
-attribute :name, :kind_of => String
-attribute :file, :kind_of => String
-
-# Covers 0.10.8 and earlier
-def initialize(*args)
-  super
-  @action = :install
-  @file ||= @name
-end
+attribute :file, :kind_of => String, :name_attribute => true
