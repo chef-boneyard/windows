@@ -156,6 +156,23 @@ Disable Telnet client/server
 end
 ```
 
+### windows_font
+Installs a font.
+
+Font files should be included in the cookbooks
+
+#### Actions
+- :install: install a font to the system fonts directory.
+
+#### Attribute Parameters
+- file: The name of the font file name to install. It should exist in the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
+
+#### Examples
+
+```ruby
+windows_font 'Code New Roman.otf'
+```
+
 ### windows_package
 Manage Windows application packages in an unattended, idempotent way.
 
