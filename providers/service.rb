@@ -53,7 +53,7 @@ def load_current_resource
 
   service_hash = load_service_hash(@current_resource.name)
   if service_hash[:SERVICE_NAME] == @new_resource.name
-    @current_resource.running = running?(@new_resource.name) ? true : false
+    @current_resource.running = running?(@new_resource.name)
     @current_resource.exists = true
     @current_resource.binary_path(service_hash[:BINARY_PATH_NAME])
     @current_resource.display_name(service_hash[:DISPLAY_NAME])
