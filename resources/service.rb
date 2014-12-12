@@ -21,7 +21,7 @@ actions :create, :delete
 attribute :service_name, :kind_of => String, :name_attribute => true
 attribute :type, :kind_of => Symbol, :equal_to => [:own, :shared, :interact, :kernel, :filesys, :rec]
 attribute :start, :kind_of => Symbol, :equal_to => [:boot, :system, :auto, :demand, :disabled, :'delayed-auto']
-attribute :error, :kind_of => Symbol, :equal_to => [:normal, :severe, :cirtical, :ignore]
+attribute :error, :kind_of => Symbol, :equal_to => [:normal, :severe, :critical, :ignore]
 attribute :depends, :kind_of => String
 attribute :tag, :kind_of => String
 attribute :group, :kind_of => String
