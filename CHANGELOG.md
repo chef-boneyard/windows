@@ -6,7 +6,10 @@ Unreleased
 --------------------
 - [PR 145](https://github.com/opscode-cookbooks/windows/pull/145) - do not fail on non-existant task
 - [PR 144](https://github.com/opscode-cookbooks/windows/pull/144) - Add a zip example to the README
-- 
+- [PR 110](https://github.com/opscode-cookbooks/windows/pull/110) - More zip documentation
+- [PR 148](https://github.com/opscode-cookbooks/windows/pull/148) - Add an LWRP for font installation
+- [PR 151](https://github.com/opscode-cookbooks/windows/pull/151) - Fix windows_package on Chef 12, add integration tests
+
 v1.34.8 (2014-10-31)
 --------------------
 - [Issue 137](https://github.com/opscode-cookbooks/windows/issues/137) - windows_path resource breaks with ruby 2.x
