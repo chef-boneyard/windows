@@ -28,9 +28,22 @@ action :create do
     cmd << " DisplayName= #{@new_resource.display_name}" if @new_resource.display_name
     Chef::Log.debug(cmd)
     shell_out!(cmd)
+    new_resource.updated_by_last_action true
     Chef::Log.info("#{@new_resource.name} created")
   else
     Chef::Log.debug("#{@new_resource} already exists - nothing to do")
+  end
+end
+
+action :delete do
+  if @current_resource.exists
+    cmd = "sc delete #{@new_resource.name}"
+    Chef::Log.debug(cmd)
+    shell_out!(cmd)
+    new_resource.updated_by_last_action true
+    Chef::Log.info("#{@new_resource.name} deleted")
+  else
+    Chef::Log.debug("#{@new_resource} does not exists - nothing to do")
   end
 end
 

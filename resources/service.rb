@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-actions :create
+actions :create, :delete
 
 attribute :service_name, :kind_of => String, :name_attribute => true
 attribute :type, :kind_of => Symbol, :equal_to => [:own, :shared, :interact, :kernel, :filesys, :rec]
