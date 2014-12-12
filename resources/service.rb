@@ -30,7 +30,7 @@ attribute :binary_path, :kind_of => String
 attribute :display_name, :kind_of => String
 attribute :password, :kind_of => String
 
-attr_accessor :exists
+attr_accessor :exists,:running
 
 def initialize(name, run_context=nil)
   super

@@ -21,16 +21,16 @@ require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
 action :create do
-  unless @current_resource.exists and @new_resource.binary_path.nil?
+  unless @current_resource.exists
     cmd = "sc create #{@new_resource.name} binPath= #{@new_resource.binary_path}"
     cmd << " type= #{@new_resource.type}" if @new_resource.type
     cmd << " start= #{@new_resource.start}" if @new_resource.start
     cmd << " DisplayName= #{@new_resource.display_name}" if @new_resource.display_name
     Chef::Log.debug(cmd)
     shell_out!(cmd)
-    Chef::Log.info("Service #{@new_resource.name} created")
+    Chef::Log.info("#{@new_resource.name} created")
   else
-    Chef::Log.debug("#{@new_resource} service already exists - nothing to do")
+    Chef::Log.debug("#{@new_resource} already exists - nothing to do")
   end
 end
 
@@ -40,6 +40,7 @@ def load_current_resource
 
   service_hash = load_service_hash(@current_resource.name)
   if service_hash[:SERVICE_NAME] == @new_resource.name
+    @current_resource.running = running?(@new_resource.name) ? true : false
     @current_resource.exists = true
     @current_resource.binary_path(service_hash[:BINARY_PATH_NAME])
     @current_resource.display_name(service_hash[:DISPLAY_NAME])
@@ -48,14 +49,16 @@ end
 
 private
 
-def load_service_hash(service_name)
-  Chef::Log.debug "looking for existing service #{ service_name }"
+def running?(service_name)
+  cmd = shell_out!("sc query #{service_name} | FIND \"STATE\" | FIND \"RUNNING\"", {:returns => [0,1]})
+  cmd.stderr.empty? && (cmd.stdout =~ /RUNNING/i)
+end
 
-  # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
+def load_service_hash(service_name)
   output = shell_out("sc qc #{ service_name }").stdout
 
-  if output !~ /OpenService FAILED 1060/i
-    task = Hash.new
+  if output =~ /SUCCESS/i
+    service = Hash.new
 
     output.split("\n").map! do |line|
       line.split(":").map! do |field|
@@ -63,13 +66,12 @@ def load_service_hash(service_name)
       end
     end.each do |field|
       if field.kind_of? Array and field[0].respond_to? :to_sym
-        task[field[0].gsub(/\s+/,"").to_sym] = field[1]
+        service[field[0].gsub(/\s+/,"").to_sym] = field[1]
       end
     end
   else
-    Chef::Log.debug "Service Found"
-    task = false
+    service = false
   end
 
-  task
+  service
 end
