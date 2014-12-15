@@ -99,7 +99,8 @@ action :enable do
       Chef::Log.info "#{@new_resource} task enabled"
     end
   else
-    Chef::Log.debug "#{@new_resource} task doesn't exist - nothing to do"
+    Chef::Log.fatal "#{@new_resource} task doesn't exist - nothing to do"
+    raise Errno::ENOENT, "#{@new_resource}: task does not exist, cannot enable"
   end
 end
 
