@@ -32,7 +32,7 @@ def check_reboot(result, feature)
   	node.run_state[:reboot_requested] = true
   	Chef::Log.warn("Failed installing #{feature} and need to reboot")
   end
-  result.error! # throw for any other bad results
+  result.error! # throw for any other bad results. The above results will also get raised, and should cause a reboot via the handler.
 end
 
 def install_feature(name)

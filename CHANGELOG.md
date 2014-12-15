@@ -11,6 +11,7 @@ Unreleased
 - [PR 151](https://github.com/opscode-cookbooks/windows/pull/151) - Fix windows_package on Chef 12, add integration tests
 - [PR 129](https://github.com/opscode-cookbooks/windows/pull/129) - Add enable/disable actions to task LWRP
 - [PR 115](https://github.com/opscode-cookbooks/windows/pull/115) - require Chef::Mixin::PowershellOut before using it
+- [PR 88](https://github.com/opscode-cookbooks/windows/pull/88) - Code 1003 from servermanagercmd.exe is valid
 
 v1.34.8 (2014-10-31)
 --------------------
