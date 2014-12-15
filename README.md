@@ -500,6 +500,8 @@ Server 2008 due to API usage.
 - :delete: deletes a task
 - :run: runs a task
 - :change: changes the un/pw or command of a task
+- :enable: enable a task
+- :disable: disable a task
 
 #### Attribute Parameters
 - name: name attribute, The task name.
@@ -543,6 +545,20 @@ Delete a taks named 'old task'
 ```ruby
 windows_task 'old task' do
   action :delete
+end
+```
+
+Enable a task named 'Chef client'
+```ruby
+windows_task 'Chef client' do
+  action :enable
+end
+```
+
+Disable a task named 'Chef client'
+```ruby
+windows_task 'Chef client' do
+  action :disable
 end
 ```
 

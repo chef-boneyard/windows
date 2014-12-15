@@ -87,6 +87,39 @@ action :delete do
   end
 end
 
+action :enable do
+  if @current_resource.exists
+    if @current_resource.enabled
+      Chef::Log.debug "#{@new_resource} already enabled - nothing to do"
+    else
+      cmd =  "schtasks /Change /TN \"#{@current_resource.name}\" "
+      cmd += "/ENABLE"
+      shell_out!(cmd, {:returns => [0]})
+      @new_resource.updated_by_last_action true
+      Chef::Log.info "#{@new_resource} task enabled"
+    end
+  else
+    Chef::Log.debug "#{@new_resource} task doesn't exist - nothing to do"
+  end
+end
+
+action :disable do
+  if @current_resource.exists
+    if @current_resource.enabled
+      cmd =  "schtasks /Change /TN \"#{@current_resource.name}\" "
+      cmd += "/DISABLE"
+      shell_out!(cmd, {:returns => [0]})
+      @new_resource.updated_by_last_action true
+      Chef::Log.info "#{@new_resource} task disabled"
+    else
+      Chef::Log.debug "#{@new_resource} already disabled - nothing to do"
+    end
+  else
+    Chef::Log.debug "#{@new_resource} task doesn't exist - nothing to do"
+  end
+end
+
+
 def load_current_resource
   @current_resource = Chef::Resource::WindowsTask.new(@new_resource.name)
   @current_resource.name(@new_resource.name)
@@ -96,6 +129,9 @@ def load_current_resource
     @current_resource.exists = true
     if task_hash[:Status] == "Running"
       @current_resource.status = :running
+    end
+    if task_hash[:ScheduledTaskState] == "Enabled"
+      @current_resource.enabled = true
     end
     @current_resource.cwd(task_hash[:Folder])
     @current_resource.command(task_hash[:TaskToRun])
