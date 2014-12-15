@@ -17,3 +17,15 @@ windows_package 'Mozilla Firefox 5.0 (x86 en-US)' do
 end
 
 windows_font "CodeNewRoman.otf"
+
+windows_task 'create chef test' do
+  name 'chef test'
+  action :create
+  cwd "C:\\"
+  command 'dir'
+end
+
+windows_task 'disable chef test' do
+  name 'chef test'
+  action :disable
+end
