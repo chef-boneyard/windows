@@ -13,9 +13,4 @@ group :development do
 
   # Adds windows support to vagrant-wrapper gem
   gem "vagrant-wrapper", git: 'https://github.com/btm/gem-vagrant-wrapper.git', :branch => 'windows'
-
-  # We should be able to remove those once vagrant 1.7.0+ is fixed (https://github.com/mitchellh/vagrant/issues/4924)
-  #      vagrant (= 1.6.5) x86-mingw32 depends on
-  #      bundler (< 1.7.0, >= 1.5.2) x86-mingw32
-  gem "bundler", "< 1.7.0"
 end
