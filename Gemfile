@@ -10,7 +10,5 @@ group :development do
   gem 'kitchen-vagrant', git: 'https://github.com/btm/kitchen-vagrant.git', :branch => 'afiune/Transport'
 
   gem "berkshelf"
-
-  # Adds windows support to vagrant-wrapper gem
-  gem "vagrant-wrapper", git: 'https://github.com/btm/gem-vagrant-wrapper.git', :branch => 'windows'
+  gem "vagrant-wrapper", ">= 2.0"
 end
