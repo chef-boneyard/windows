@@ -2,7 +2,7 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
-Unreleased
+v1.36.0 (2014-12-16)
 --------------------
 - [PR 145](https://github.com/opscode-cookbooks/windows/pull/145) - do not fail on non-existant task
 - [PR 144](https://github.com/opscode-cookbooks/windows/pull/144) - Add a zip example to the README
