@@ -261,6 +261,6 @@ class Chef
 end
 
 if Gem::Version.new(Chef::VERSION) < Gem::Version.new('12')
-  Chef::Resource.send(:remove_const, :WindowsPackage)
+  Chef::Resource.send(:remove_const, :WindowsPackage) if defined? Chef::Resource::WindowsPackage
   Chef::Resource.const_set("WindowsPackage", Chef::Resource::WindowsCookbookPackage)
 end
