@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.36.1 (2014-12-17)
+--------------------
+- [PR 160](https://github.com/opscode-cookbooks/windows/pull/160) - Fix Chef 11.10 / versions without windows_package in core
+
 v1.36.0 (2014-12-16)
 --------------------
 - [PR 145](https://github.com/opscode-cookbooks/windows/pull/145) - do not fail on non-existant task
