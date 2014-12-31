@@ -29,7 +29,7 @@ class WindowsRebootHandler < Chef::Handler
     log_message, reboot = begin
       if reboot_requested?
         ["chef_handler[#{self.class}] requested reboot will occur in #{timeout} seconds", true]
-      elsif reboot_pending?
+      elsif Windows::Helper.reboot_pending?
         if @allow_pending_reboots
           ["chef_handler[#{self.class}] reboot pending - automatic reboot will occur in #{timeout} seconds", true]
         else
@@ -49,21 +49,6 @@ class WindowsRebootHandler < Chef::Handler
   # reboot explicitly requested in our cookbook code
   def reboot_requested?
     node.run_state[:reboot_requested] == true
-  end
-
-  # reboot cause WIN says so:
-  # reboot pending because of some configuration action we performed
-  def reboot_pending?
-    # Any files listed here means reboot needed
-    (Registry.key_exists?('HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\PendingFileRenameOperations') &&
-      Registry.get_value('HKLM\SYSTEM\CurrentControlSet\Control\Session Manager','PendingFileRenameOperations').any?) ||
-    # 1 for any value means reboot pending
-    # "9306cdfc-c4a1-4a22-9996-848cb67eddc3"=1
-    (Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired') &&
-      Registry.get_values('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired').select{|v| v[2] == 1 }.any?) ||
-    # 1 or 2 for 'Flags' value means reboot pending
-    (Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile') &&
-      [1,2].include?(Registry::get_value('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile','Flags')))
   end
 
   def timeout
