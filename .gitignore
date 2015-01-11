@@ -3,3 +3,5 @@
 Berksfile.lock
 Gemfile.lock
 .bundle
+.rvmrc
+.idea
