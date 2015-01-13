@@ -146,7 +146,7 @@ class Chef
           "/qn /i"
         when :msu
           # this is no-ui and no-restart
-          "/quit /norestart"
+          "/quiet /norestart"
         when :installshield
           "/s /sms"
         when :nsis
