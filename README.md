@@ -601,6 +601,44 @@ windows_zipfile 'c:/foo/baz/the_codez.zip' do
   action :zip
 end
 ```
+Libraries
+-------------------------
+### InstalledProgramsHelper
+
+Helper that allows you to get a list of all installed programs, query if a program is installed
+
+### Functions
+#### installed_packages
+Returns a hash of all DisplayNames installed
+```ruby
+# usage in a recipe
+::Chef::Recipe.send(:include, Windows::InstalledProgramsHelper)
+installed_programs = installed_packages
+```
+
+#### program_installed?
+- `program_name`: The name of the program you want to query to see if it is installed
+- `returns`: true if the program is installed, false if it the program is not installed
+
+Download a file if a program isn't installed
+```ruby
+# usage in a recipe to not download a file if program is already installed
+::Chef::Recipe.send(:include, Windows::InstalledProgramsHelper)
+remote_file 'C:\windows\temp\windows_sdk.zip' do
+  source 'http://url_to_download/windows_sdk.zip'
+  action :create_if_missing
+  not_if {program_installed?('Windows Software Development Kit')}
+end
+```
+Do something if a program is installed
+```ruby
+# usage in a provider
+include Windows::InstalledProgramsHelper
+if program_installed?('Windows Software Development Kit')
+  # do something if program is installed
+end
+```
+
 
 Exception/Report Handlers
 -------------------------
