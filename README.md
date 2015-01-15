@@ -156,6 +156,23 @@ Disable Telnet client/server
 end
 ```
 
+### windows_font
+Installs a font.
+
+Font files should be included in the cookbooks
+
+#### Actions
+- :install: install a font to the system fonts directory.
+
+#### Attribute Parameters
+- file: The name of the font file name to install. It should exist in the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
+
+#### Examples
+
+```ruby
+windows_font 'Code New Roman.otf'
+```
+
 ### windows_package
 Manage Windows application packages in an unattended, idempotent way.
 
@@ -483,6 +500,8 @@ Server 2008 due to API usage.
 - :delete: deletes a task
 - :run: runs a task
 - :change: changes the un/pw or command of a task
+- :enable: enable a task
+- :disable: disable a task
 
 #### Attribute Parameters
 - name: name attribute, The task name.
@@ -529,17 +548,32 @@ windows_task 'old task' do
 end
 ```
 
+Enable a task named 'Chef client'
+```ruby
+windows_task 'Chef client' do
+  action :enable
+end
+```
+
+Disable a task named 'Chef client'
+```ruby
+windows_task 'Chef client' do
+  action :disable
+end
+```
+
 ### windows_zipfile
-Most version of Windows do not ship with native cli utility for managing compressed files.  This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken on the zip file every Chef run.
+Most version of Windows do not ship with native cli utility for managing compressed files.  This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
 
 #### Actions
 - :unzip: unzip a compressed file
+- :zip: zip a directory (recursively)
 
 #### Attribute Parameters
-- path: name attribute. The path where files will be unzipped to.
-- source: The source of the zip file. This can either be a URI or a local path.
-- overwrite: force an overwrite of the files if the already exists.
-- checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
+- path: name attribute. The path where files will be (un)zipped to.
+- source: source of the zip file (either a URI or local path) for :unzip, or directory to be zipped for :zip.
+- overwrite: force an overwrite of the files if they already exist.
+- checksum: for :unzip, useful if source is remote, if the local file matches the SHA-256 checksum, Chef will not download it.
 
 #### Examples
 
@@ -560,6 +594,13 @@ windows_zipfile 'c:/the_codez' do
 end
 ```
 
+Create a local zipfile
+```ruby
+windows_zipfile 'c:/foo/baz/the_codez.zip' do
+  source 'c:/the_codez'
+  action :zip
+end
+```
 
 Exception/Report Handlers
 -------------------------

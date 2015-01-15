@@ -2,13 +2,28 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.36.1 (2014-12-17)
+--------------------
+- [PR 160](https://github.com/opscode-cookbooks/windows/pull/160) - Fix Chef 11.10 / versions without windows_package in core
+
+v1.36.0 (2014-12-16)
+--------------------
+- [PR 145](https://github.com/opscode-cookbooks/windows/pull/145) - do not fail on non-existant task
+- [PR 144](https://github.com/opscode-cookbooks/windows/pull/144) - Add a zip example to the README
+- [PR 110](https://github.com/opscode-cookbooks/windows/pull/110) - More zip documentation
+- [PR 148](https://github.com/opscode-cookbooks/windows/pull/148) - Add an LWRP for font installation
+- [PR 151](https://github.com/opscode-cookbooks/windows/pull/151) - Fix windows_package on Chef 12, add integration tests
+- [PR 129](https://github.com/opscode-cookbooks/windows/pull/129) - Add enable/disable actions to task LWRP
+- [PR 115](https://github.com/opscode-cookbooks/windows/pull/115) - require Chef::Mixin::PowershellOut before using it
+- [PR 88](https://github.com/opscode-cookbooks/windows/pull/88) - Code 1003 from servermanagercmd.exe is valid
+
 v1.34.8 (2014-10-31)
 --------------------
-- [Issue 137] (https://github.com/opscode-cookbooks/windows/issues/137) - windows_path resource breaks with ruby 2.x
+- [Issue 137](https://github.com/opscode-cookbooks/windows/issues/137) - windows_path resource breaks with ruby 2.x
 
 v1.34.6 (2014-09-22)
 --------------------
-- [Chef-2009] (https://github.com/opscode/chef/issues/2009) - Patch to work around a regression in [Chef](https://github.com/opscode/chef)
+- [Chef-2009](https://github.com/opscode/chef/issues/2009) - Patch to work around a regression in [Chef](https://github.com/opscode/chef)
 
 v1.34.2 (2014-08-12)
 --------------------
