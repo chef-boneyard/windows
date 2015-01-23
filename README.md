@@ -90,6 +90,34 @@ windows_batch 'echo some env vars' do
 end
 ```
 
+### windows_certificate
+Installs a certificate into the cert store
+
+#### Actions
+- :add: install a certificate into the current store.
+- :delete: removes a certificate from the store.
+
+#### Attribute Parameters
+- store_name: Certificate store name.
+- cert_id: Certificate or CRL match token. This can be a serial number, an SHA-1 certificate, CRL, CTL or public key hash, a numeric cert index (0, 1, and so on), a numeric CRL index (.0, .1, and so on), a numeric CTL index (..0, ..1, and so on), a public key, signature or extension ObjectId, a certificate subject Common Name, an e-mail address, UPN or DNS name, a key container name or CSP name, a template name or ObjectId, an EKU or Application Policies ObjectId, or a CRL issuer Common Name. Many of these may result in multiple matches.
+- infile: Certificate or CRL file to add to store.
+
+#### Examples
+
+Add certificate to store
+```ruby
+windows_certificate 'example.com' do
+  infile: C:/certificates/example.com.pem
+end
+
+Delete certificate from store
+```ruby
+windows_certificate 'example.com' do
+  action :delete
+  store_id: "089D8C1FD45893D7BF76F3788D3B1ED7E0974100"
+end
+```
+
 ### windows_feature
 Windows Roles and Features can be thought of as built-in operating system packages that ship with the OS.  A server role is a set of software programs that, when they are installed and properly configured, lets a computer perform a specific function for multiple users or other computers within a network.  A Role can have multiple Role Services that provide functionality to the Role.  Role services are software programs that provide the functionality of a role. Features are software programs that, although they are not directly parts of roles, can support or augment the functionality of one or more roles, or improve the functionality of the server, regardless of which roles are installed.  Collectively we refer to all of these attributes as 'features'.
 
