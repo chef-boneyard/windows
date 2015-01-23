@@ -109,6 +109,7 @@ Add certificate to store
 windows_certificate 'example.com' do
   infile: C:/certificates/example.com.pem
 end
+```
 
 Delete certificate from store
 ```ruby
