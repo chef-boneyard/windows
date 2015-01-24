@@ -2,6 +2,7 @@ class Chef
   module Mixin
     module PowershellOut
       include Chef::Mixin::ShellOut
+      include Powershell::Helper
 
       begin
         include Chef::Mixin::WindowsArchitectureHelper
@@ -71,7 +72,7 @@ class Chef
           "-InputFormat None"
         ]
 
-        command = "powershell.exe #{flags.join(' ')} -Command \"#{script}\""
+        command = "#{interpreter} #{flags.join(' ')} -Command \"#{script}\""
         command
       end
     end
