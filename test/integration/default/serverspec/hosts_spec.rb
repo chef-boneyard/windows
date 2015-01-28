@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe 'Host File' do
 
-  describe file('c:/windows/system32/drivers/etc/hosts') do
-  it { should be_file }
+describe file('c:/opscode') do
+  it { should be_directory }
 end
 
 end
