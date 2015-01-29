@@ -30,6 +30,7 @@ action :create do
     cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
     schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
     cmd += "/SC #{schedule} "
+    validate_create_frequency_modifier
     cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
     cmd += "/SD \"#{@new_resource.start_day}\" " unless @new_resource.start_day.nil?
     cmd += "/ST \"#{@new_resource.start_time}\" " unless @new_resource.start_time.nil?
@@ -183,6 +184,36 @@ def validate_create_day
       if not ["mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"].include?(day.strip.downcase) then
         raise "day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma."
       end
+    end
+  end
+end
+
+def validate_create_frequency_modifier 
+  unless @new_resource.frequency.nil? || @new_resource.frequency_modifier.nil?
+    case @new_resource.frequency
+    when :minute
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 1439
+        raise "'frequency_modifier' value #{@new_resource.frequency_modifier} is invalid.  Valid values for :minute frequency are 1 - 1439."
+      end
+    when :hourly
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 23
+        raise "'frequency_modifier' value #{@new_resource.frequency_modifier} is invalid.  Valid values for :hourly frequency are 1 - 23."
+      end
+    when :daily
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 365
+        raise "'frequency_modifier' value #{@new_resource.frequency_modifier} is invalid.  Valid values for :daily frequency are 1 - 365."
+      end
+    when :weekly
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 52
+        raise "'frequency_modifier' value #{@new_resource.frequency_modifier} is invalid.  Valid values for :weekly frequency are 1 - 52."
+      end
+    when :monthly
+      unless ('1'..'12').to_a.push('FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY').include?(@new_resource.frequency_modifier.to_s.upcase)
+        raise "'frequency_modifier' value #{@new_resource.frequency_modifier} is invalid.  Valid values for :monthly frequency are 1 - 12, 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY'."
+      end
+    else
+      # Currently is handled in create action '/MO' line. Does not allow for frequency_modifier for once,onstart,onlogon,onidle
+      # Note that 'OnEvent' is not a supported frequency.
     end
   end
 end
