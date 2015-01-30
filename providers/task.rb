@@ -26,11 +26,13 @@ action :create do
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
     if @new_resource.user and @new_resource.password.nil? then Chef::Log.debug "#{@new_resource} did not specify a password, creating task without a password" end
+    validate_create_frequency_modifier
+    validate_create_day
+    validate_create_months
     use_force = @new_resource.force ? '/F' : ''
     cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
     schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
     cmd += "/SC #{schedule} "
-    validate_create_frequency_modifier
     cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
     cmd += "/SD \"#{@new_resource.start_day}\" " unless @new_resource.start_day.nil?
     cmd += "/ST \"#{@new_resource.start_time}\" " unless @new_resource.start_time.nil?
@@ -38,10 +40,10 @@ action :create do
     cmd += "/RU \"#{@new_resource.user}\" " if @new_resource.user
     cmd += "/RP \"#{@new_resource.password}\" " if @new_resource.user and @new_resource.password
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
-    validate_create_day
     if @new_resource.day then
       cmd += "/D \"#{@new_resource.day}\" "
     end
+    cmd += "/M \"#{@new_resource.months}\" " unless @new_resource.months.nil?
     shell_out!(cmd, {:returns => [0]})
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
@@ -184,6 +186,23 @@ def validate_create_day
       if not ["mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"].include?(day.strip.downcase) then
         raise "day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma."
       end
+    end
+  end
+end
+
+def validate_create_months 
+  unless @new_resource.months
+    return
+  end
+
+  unless :monthly === new_resource.frequency 
+    raise "'months' attribute is only valid for tasks that run monthly"
+  end
+
+  months = @new_resource.months.split(",")
+  months.each do |month|
+    unless ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC", "*"].include?(month.upcase) 
+      raise "'months' attribute is invalid.  Only valid values are: JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC and Wildcard '*'.  Multiple values must be separated by a comma."
     end
   end
 end
