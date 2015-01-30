@@ -46,7 +46,7 @@ action :delete do
 end
 
 def load_current_resource
-  @current_resource = Chef::Resource::WindowsService.new(@new_resource.name)
+  @current_resource = Chef::Resource::WindowsCertificate.new(@new_resource.name)
   @current_resource.name(@new_resource.name)
 
   if cert_exists?(@current_resource.name)
