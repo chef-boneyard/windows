@@ -115,7 +115,7 @@ Delete certificate from store
 ```ruby
 windows_certificate 'example.com' do
   action :delete
-  store_id: "089D8C1FD45893D7BF76F3788D3B1ED7E0974100"
+  cert_id: "089D8C1FD45893D7BF76F3788D3B1ED7E0974100"
 end
 ```
 
