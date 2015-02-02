@@ -1,35 +1,61 @@
+#
+# Author:: Wade Peacock (<wade.peacock@visioncritical.com>)
+# Original Author:: ???
+# Cookbook Name:: windows
+# Library:: feature_base
+#
+# Copyright:: 2011, Opscode, Inc.
+# Copyright:: 2015, Vision Critical, Inc
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 class Chef
   class Provider
     class WindowsFeature
       module Base
 
+        def whyrun_supported?
+          true
+        end
+
         def action_install
           unless installed?
-            install_feature(@new_resource.feature_name)
-            @new_resource.updated_by_last_action(true)
-            Chef::Log.info("#{@new_resource} installed feature")
-          else
-            Chef::Log.debug("#{@new_resource} is already installed - nothing to do")
+            converge_by("Install Feature - #{ @new_resource }") do
+              install_feature(@new_resource.feature_name)
+              @new_resource.updated_by_last_action(true)
+              Chef::Log.info("#{@new_resource} installed feature")
+            end
           end
         end
 
         def action_remove
           if installed?
-            remove_feature(@new_resource.feature_name)
-            @new_resource.updated_by_last_action(true)
-            Chef::Log.info("#{@new_resource} removed")
-          else
-            Chef::Log.debug("#{@new_resource} feature does not exist - nothing to do")
+            converge_by("Remove Feature - #{ @new_resource }") do
+              remove_feature(@new_resource.feature_name)
+              @new_resource.updated_by_last_action(true)
+              Chef::Log.info("#{@new_resource} removed")
+            end
           end
         end
 
         def action_delete
           if available?
-            delete_feature(@new_resource.feature_name)
-            @new_resource.updated_by_last_action(true)
-            Chef::Log.info("#{@new_resource} deleted")
-          else
-            Chef::Log.debug("#{@new_resource} feature is not installed - nothing to do")
+            converge_by("Delete Feature - #{ @new_resource }") do
+              delete_feature(@new_resource.feature_name)
+              @new_resource.updated_by_last_action(true)
+              Chef::Log.info("#{@new_resource} deleted")
+            end
           end
         end
 
@@ -56,4 +82,3 @@ class Chef
     end
   end
 end
-      
