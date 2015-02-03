@@ -499,6 +499,7 @@ Server 2008 due to API usage.
 - :create: creates a task
 - :delete: deletes a task
 - :run: runs a task
+- :end: ends a task
 - :change: changes the un/pw or command of a task
 - :enable: enable a task
 - :disable: disable a task

@@ -87,6 +87,22 @@ action :delete do
   end
 end
 
+action :end do
+  if @current_resource.exists
+    if @current_resource.status != :running
+      Chef::Log.debug "#{@new_resource} is not running - nothing to do"
+    else
+      cmd =  "schtasks /End /TN \"#{@current_resource.name}\" "
+      shell_out!(cmd, {:returns => [0]})
+      @new_resource.updated_by_last_action true
+      Chef::Log.info "#{@new_resource} task ended"
+    end
+  else
+    Chef::Log.fatal "#{@new_resource} task doesn't exist - nothing to do"
+    raise Errno::ENOENT, "#{@new_resource}: task does not exist, cannot end"
+  end
+end
+
 action :enable do
   if @current_resource.exists
     if @current_resource.enabled
