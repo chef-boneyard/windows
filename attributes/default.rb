@@ -22,3 +22,7 @@ default['windows']['allow_pending_reboots'] = true
 default['windows']['allow_reboot_on_failure'] = false
 default['windows']['rubyzipversion'] = nil
 default['windows']['reboot_timeout'] = 60
+
+# Needed for ohai features plugin
+
+default['windows']['ohai_plugins_path'] = 'c:/chef/ohai_plugins'

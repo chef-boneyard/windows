@@ -37,7 +37,14 @@ def locate_default_provider
   if  node['windows'].attribute?(:feature_provider)
     "windows_feature_#{node['windows']['feature_provider']}"
   elsif ::File.exists?(locate_sysnative_cmd('dism.exe'))
-    :windows_feature_dism
+    # Check to see if ohai node["installed_features"] is present.
+    # If not use stock dism provider
+    unless node.has_key?("installed_features")
+      :windows_feature_dism
+    # If present use new dism ohai provider
+    else
+      :windows_feature_dism_ohai
+    end
   elsif ::File.exists?(locate_sysnative_cmd('servermanagercmd.exe'))
     :windows_feature_servermanagercmd
   end
