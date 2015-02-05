@@ -26,7 +26,9 @@ Attributes
 ----------
 * `node['windows']['allow_pending_reboots']` - used to configure the `WindowsRebootHandler` (via the `windows::reboot_handler` recipe) to act on pending reboots. default is true (ie act on pending reboots).  The value of this attribute only has an effect if the `windows::reboot_handler` is in a node's run list.
 * `node['windows']['allow_reboot_on_failure']` - used to register the `WindowsRebootHandler` (via the `windows::reboot_handler` recipe) as an exception handler too to act on reboots not only at the end of successful Chef runs, but even at the end of failed runs. default is false (ie reboot only after successful runs).  The value of this attribute only has an effect if the `windows::reboot_handler` is in a node's run list.
-
+* `node['windows']['upgrade_script_location']` - used during the scheduling of a chef-client upgrade. This value tells the recipe where to place the script that will upgrade Chef.
+* `node['windows']['chef_msi_location']` - used during the scheduling of a chef-client upgrade. This value tells the recipe which MSI to use to upgrade Chef. If installing this MSI would be a downgrade, nothing will happen. This value must be provided.
+* `node['windows']['upgrade_in_seconds']` - used during the scheduling of a chef-client upgrade. This value is used to determine in how many seconds will the script be run.
 
 Resource/Provider
 -----------------

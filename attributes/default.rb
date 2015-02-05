@@ -22,3 +22,5 @@ default['windows']['allow_pending_reboots'] = true
 default['windows']['allow_reboot_on_failure'] = false
 default['windows']['rubyzipversion'] = nil
 default['windows']['reboot_timeout'] = 60
+default['windows']['upgrade_script_location'] = "C:\\chef-upgrade.ps1"
+default['windows']['upgrade_in_seconds'] = 120

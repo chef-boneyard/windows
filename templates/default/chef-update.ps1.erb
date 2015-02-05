@@ -1,0 +1,29 @@
+$ErrorActionPreference = "Stop"
+
+$chef_client_service = Get-WmiObject -Class Win32_Service -Filter "Name='chef-client'"
+$msi = "<%= node['windows']['chef_msi_location'] %>"
+$proc_msi = Start-Process -FilePath 'msiexec.exe' -ArgumentList "/qn /i $msi" -Passthru
+$bar = ""
+while (-Not $proc_msi.HasExited ) {
+    Write-Host -NoNewline "`r`t[MSI] [$bar"
+    Start-Sleep 2
+    $bar += "#"
+}
+Write-Host -NoNewline "`r`t[MSI] [$bar] Completed!\n"
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
+if ($chef_client_service -ne $null) {
+    Write-Host 'Creating chef-client service'
+    $bn = ruby -e "require 'rubygems'; puts File.basename(Gem::Specification.find_by_name('chef').gem_dir)"
+    $binary_path_name = $chef_client_service.PathName -Replace 'gems\\chef-.*\\lib',"gems\$bn\lib"
+    New-Service -Name $chef_client_service.name -BinaryPathName $binary_path_name -Description $chef_client_service.Description -StartupType $chef_client_service.StartMode
+
+    if ($chef_client_service.State -eq "Running") {
+        Write-Host 'Starting chef-client'
+        $new_service = Get-WmiObject -Class Win32_Service -Filter "Name='chef-client'"
+        $new_service.StartService()
+    }
+}
+
+schtasks /delete /TN 'upgrade chef' /F
+$script_path = $MyInvocation.MyCommand.Definition
+Remove-Item $script_path
