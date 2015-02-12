@@ -24,7 +24,8 @@ action :add do
   unless @current_resource.exists
     unless File.file?(@new_resource.infile)
       log "Failed to run windows_certificate action :add, #{@new_resource.infile} does not exist" do
-      level :warn
+        level :warn
+      end
     end
     cmd = "certutil -f -addstore #{@new_resource.name} #{@new_resource.infile}"
     Chef::Log.debug(cmd)
