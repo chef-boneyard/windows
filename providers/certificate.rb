@@ -22,6 +22,10 @@ include Chef::Mixin::ShellOut
 
 action :add do
   unless @current_resource.exists
+    unless File.file?(@new_resource.infile)
+      log "Failed to run windows_certificate action :add, #{@new_resource.infile} does not exist" do
+      level :warn
+    end
     cmd = "certutil -f -addstore #{@new_resource.name} #{@new_resource.infile}"
     Chef::Log.debug(cmd)
     shell_out!(cmd)
@@ -49,15 +53,15 @@ def load_current_resource
   @current_resource = Chef::Resource::WindowsCertificate.new(@new_resource.name)
   @current_resource.name(@new_resource.name)
 
-  if cert_exists?(@current_resource.name)
+  if cert_exists?(@new_resource.name,@new_resource.cert_id)
     @current_resource.exists = true
   end
 end
 
 private
 
-def cert_exists?(name)
+def cert_exists?(name,id)
   Chef::Log.debug "Checking to see if this cert is in the store: '#{ name }'"
-  cmd = shell_out!("certutil -verifystore #{name}", {:returns => [0,-2147024894]})
-  cmd.stderr.empty? && (cmd.stdout =~ /Certificate is valid/i)
+  cmd = shell_out!("certutil -store #{name} #{id}", {:returns => [0]})
+  cmd.stderr.empty? && (cmd.stdout =~ /-store command completed successfully/i)
 end

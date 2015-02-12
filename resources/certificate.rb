@@ -19,7 +19,7 @@
 actions :add, :delete
 
 attribute :store_name, :kind_of => String, :name_attribute => true
-attribute :cert_id, :kind_of => String
+attribute :cert_id, :kind_of => String, :required => true
 attribute :infile, :kind_of => String
 
 attr_accessor :exists
