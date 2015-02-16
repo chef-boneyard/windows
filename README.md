@@ -522,8 +522,8 @@ Run Chef every 15 minutes
 windows_task 'Chef client' do
   user 'Administrator'
   password '$ecR3t'
-  cwd 'C:\chef\bin'
-  command 'chef-client -L C:\tmp\'
+  cwd 'C:\\chef\\bin'
+  command 'chef-client -L C:\\tmp\\'
   run_level :highest
   frequency :minute
   frequency_modifier 15
@@ -535,8 +535,8 @@ Update Chef Client task with new password and log location
 windows_task 'Chef client' do
   user 'Administrator'
   password 'N3wPassW0Rd'
-  cwd 'C:\chef\bin'
-  command 'chef-client -L C:\chef\logs\'
+  cwd 'C:\\chef\\bin'
+  command 'chef-client -L C:\\chef\\logs\\'
   action :change
 end
 ```
