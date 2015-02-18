@@ -33,7 +33,7 @@ action :add do
   # the PATH environment variable. Ruby expects these to be expanded.
   # This is a temporary fix for that.
   #
-  # Follow at https://github.com/opscode/chef/pull/1876
+  # Follow at https://github.com/chef/chef/pull/1876
   #
   ruby_block "fix ruby ENV['PATH']" do
     block do

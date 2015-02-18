@@ -1,6 +1,6 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc
+# Author:: Seth Chisamore (<schisamo@chef.io>)
+# Copyright:: Copyright (c) 2011 Chef Software, Inc
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 class WindowsRebootHandler < Chef::Handler
   include Chef::Mixin::ShellOut
 
-  def initialize(allow_pending_reboots = true, timeout = 60, reason = "Opscode Chef initiated reboot")
+  def initialize(allow_pending_reboots = true, timeout = 60, reason = "Chef Software Chef initiated reboot")
     @allow_pending_reboots = allow_pending_reboots
     @timeout = timeout
     @reason = reason

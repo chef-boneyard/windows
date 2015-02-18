@@ -18,7 +18,7 @@ Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
 The `windows_task` LWRP requires Windows Server 2008 due to its API usage.
 
 ### Cookbooks
-The following cookbooks provided by Opscode are required as noted:
+The following cookbooks provided by Chef Software are required as noted:
 
 * chef_handler (`windows::reboot_handler` leverages the chef_handler LWRP)
 
@@ -53,7 +53,7 @@ end
 ```
 
 ### windows_batch
-(Chef 11.6.0 includes a built-in [batch](http://docs.opscode.com/resource_batch.html) resource, so use that in preference to `windows_batch` if possible.)
+(Chef 11.6.0 includes a built-in [batch](http://docs.chef.io/resource_batch.html) resource, so use that in preference to `windows_batch` if possible.)
 
 Execute a batch script using the cmd.exe interpreter (much like the script resources for bash, csh, powershell, perl, python and ruby). A temporary file is created and executed like other script resources, rather than run inline. By their nature, Script resources are not idempotent, as they are completely up to the user's imagination. Use the `not_if` or `only_if` meta parameters to guard the resource for idempotence.
 
@@ -116,7 +116,7 @@ servermanagercmd -query
 #### Providers
 - **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
 - **Chef::Provider::WindowsFeature::ServerManagerCmd**: Uses Server Manager to manage roles/features.
-- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features. (see [COOK-3714](https://tickets.opscode.com/browse/COOK-3714)
+- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features. (see [COOK-3714](https://tickets.chef.io/browse/COOK-3714)
 
 #### Examples
 Enable the node as a DHCP Server
@@ -375,7 +375,7 @@ Sets required data in the node's run_state to notify `WindowsRebootHandler` a re
 
 #### Attribute Parameters
 - :timeout: Name attribute. timeout delay in seconds to wait before proceeding with the requested reboot. default is 60 seconds
-- :reason: comment on the reason for the reboot. default is 'Opscode Chef initiated reboot'
+- :reason: comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
 
 #### Examples
 If the package installs, schedule a reboot at end of chef run
@@ -399,7 +399,7 @@ end
 ```
 
 ### windows_registry
-(Chef 11.6.0 includes a built-in [registry_key](http://docs.opscode.com/resource_registry_key.html) resource, so use that in preference to `windows_registry` if possible.)
+(Chef 11.6.0 includes a built-in [registry_key](http://docs.chef.io/resource_registry_key.html) resource, so use that in preference to `windows_registry` if possible.)
 
 Creates and modifies Windows registry keys.
 
@@ -649,7 +649,7 @@ Required reboots are a necessary evil of configuring and managing Windows nodes.
 ### Initialization Arguments
 - `allow_pending_reboots`: indicator on whether the handler should act on a the Window's 'pending reboot' state. default is true
 - `timeout`: timeout delay in seconds to wait before proceeding with the reboot. default is 60 seconds
-- `reason`:  comment on the reason for the reboot. default is 'Opscode Chef initiated reboot'
+- `reason`:  comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
 
 
 Windows ChefSpec Matchers
@@ -724,13 +724,13 @@ By default, the handler will only be registered as a report handler, meaning tha
 
 License & Authors
 -----------------
-- Author:: Seth Chisamore (<schisamo@opscode.com>)
+- Author:: Seth Chisamore (<schisamo@chef.io>)
 - Author:: Doug MacEachern (<dougm@vmware.com>)
 - Author:: Paul Morton (<pmorton@biaprotect.com>)
 - Author:: Doug Ireton (<doug.ireton@nordstrom.com>)
 
 ```text
-Copyright 2011-2013, Opscode, Inc.
+Copyright 2011-2013, Chef Software, Inc.
 Copyright 2010, VMware, Inc.
 Copyright 2011, Business Intelligence Associates, Inc
 Copyright 2012, Nordstrom, Inc.
