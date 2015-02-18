@@ -1,9 +1,9 @@
 #
-# Author:: Paul Mooring (<paul@opscode.com>)
+# Author:: Paul Mooring (<paul@chef.io>)
 # Cookbook Name:: windows
 # Resource:: task
 #
-# Copyright:: 2012, Opscode, Inc.
+# Copyright:: 2012, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

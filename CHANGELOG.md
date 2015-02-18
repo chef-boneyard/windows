@@ -4,34 +4,34 @@ This file is used to list changes made in each version of the windows cookbook.
 
 v1.36.1 (2014-12-17)
 --------------------
-- [PR 160](https://github.com/opscode-cookbooks/windows/pull/160) - Fix Chef 11.10 / versions without windows_package in core
+- [PR 160](https://github.com/chef-cookbooks/windows/pull/160) - Fix Chef 11.10 / versions without windows_package in core
 
 v1.36.0 (2014-12-16)
 --------------------
-- [PR 145](https://github.com/opscode-cookbooks/windows/pull/145) - do not fail on non-existant task
-- [PR 144](https://github.com/opscode-cookbooks/windows/pull/144) - Add a zip example to the README
-- [PR 110](https://github.com/opscode-cookbooks/windows/pull/110) - More zip documentation
-- [PR 148](https://github.com/opscode-cookbooks/windows/pull/148) - Add an LWRP for font installation
-- [PR 151](https://github.com/opscode-cookbooks/windows/pull/151) - Fix windows_package on Chef 12, add integration tests
-- [PR 129](https://github.com/opscode-cookbooks/windows/pull/129) - Add enable/disable actions to task LWRP
-- [PR 115](https://github.com/opscode-cookbooks/windows/pull/115) - require Chef::Mixin::PowershellOut before using it
-- [PR 88](https://github.com/opscode-cookbooks/windows/pull/88) - Code 1003 from servermanagercmd.exe is valid
+- [PR 145](https://github.com/chef-cookbooks/windows/pull/145) - do not fail on non-existant task
+- [PR 144](https://github.com/chef-cookbooks/windows/pull/144) - Add a zip example to the README
+- [PR 110](https://github.com/chef-cookbooks/windows/pull/110) - More zip documentation
+- [PR 148](https://github.com/chef-cookbooks/windows/pull/148) - Add an LWRP for font installation
+- [PR 151](https://github.com/chef-cookbooks/windows/pull/151) - Fix windows_package on Chef 12, add integration tests
+- [PR 129](https://github.com/chef-cookbooks/windows/pull/129) - Add enable/disable actions to task LWRP
+- [PR 115](https://github.com/chef-cookbooks/windows/pull/115) - require Chef::Mixin::PowershellOut before using it
+- [PR 88](https://github.com/chef-cookbooks/windows/pull/88) - Code 1003 from servermanagercmd.exe is valid
 
 v1.34.8 (2014-10-31)
 --------------------
-- [Issue 137](https://github.com/opscode-cookbooks/windows/issues/137) - windows_path resource breaks with ruby 2.x
+- [Issue 137](https://github.com/chef-cookbooks/windows/issues/137) - windows_path resource breaks with ruby 2.x
 
 v1.34.6 (2014-09-22)
 --------------------
-- [Chef-2009](https://github.com/opscode/chef/issues/2009) - Patch to work around a regression in [Chef](https://github.com/opscode/chef)
+- [Chef-2009](https://github.com/chef/chef/issues/2009) - Patch to work around a regression in [Chef](https://github.com/chef/chef)
 
 v1.34.2 (2014-08-12)
 --------------------
-- [Issue 99](https://github.com/opscode-cookbooks/windows/issues/99) - Remove rubygems / Internet wmi-lite dependency (PR #108)
+- [Issue 99](https://github.com/chef-cookbooks/windows/issues/99) - Remove rubygems / Internet wmi-lite dependency (PR #108)
 
 v1.34.0 (2014-08-04)
 --------------------
-- [Issue 99](https://github.com/opscode-cookbooks/windows/issues/99) - Use wmi-lite to fix Chef 11.14.2 break in rdp-ruby-wmi dependency
+- [Issue 99](https://github.com/chef-cookbooks/windows/issues/99) - Use wmi-lite to fix Chef 11.14.2 break in rdp-ruby-wmi dependency
 
 v1.32.1 (2014-07-15)
 --------------------
@@ -73,33 +73,33 @@ Fixing depend/depends typo in metadata.rb
 v1.12.2
 -------
 ### Bug
-- **[COOK-4110](https://tickets.opscode.com/browse/COOK-4110)** - feature_servermanager installed? method regex bug
+- **[COOK-4110](https://tickets.chef.io/browse/COOK-4110)** - feature_servermanager installed? method regex bug
 
 
 v1.12.0
 -------
 ### Bug
-- **[COOK-3793](https://tickets.opscode.com/browse/COOK-3793)** - parens inside parens of README.md don't render
+- **[COOK-3793](https://tickets.chef.io/browse/COOK-3793)** - parens inside parens of README.md don't render
 
 ### New Feature
-- **[COOK-3714](https://tickets.opscode.com/browse/COOK-3714)** - Powershell features provider and delete support.
+- **[COOK-3714](https://tickets.chef.io/browse/COOK-3714)** - Powershell features provider and delete support.
 
 
 v1.11.0
 -------
 ### Improvement
-- **[COOK-3724](https://tickets.opscode.com/browse/COOK-3724)** - Rrecommend built-in resources over cookbook resources
-- **[COOK-3515](https://tickets.opscode.com/browse/COOK-3515)** - Remove unprofessional comment from library
-- **[COOK-3455](https://tickets.opscode.com/browse/COOK-3455)** - Add Windows Server 2012R2 to windows cookbook version helper
+- **[COOK-3724](https://tickets.chef.io/browse/COOK-3724)** - Rrecommend built-in resources over cookbook resources
+- **[COOK-3515](https://tickets.chef.io/browse/COOK-3515)** - Remove unprofessional comment from library
+- **[COOK-3455](https://tickets.chef.io/browse/COOK-3455)** - Add Windows Server 2012R2 to windows cookbook version helper
 
 ### Bug
-- **[COOK-3542](https://tickets.opscode.com/browse/COOK-3542)** - Fix an issue where `windows_zipfile` fails with LoadError
-- **[COOK-3447](https://tickets.opscode.com/browse/COOK-3447)** - Allow Overriding Of The Default Reboot Timeout In windows_reboot_handler
-- **[COOK-3382](https://tickets.opscode.com/browse/COOK-3382)** - Allow windows_task to create `on_logon` tasks
-- **[COOK-2098](https://tickets.opscode.com/browse/COOK-2098)** - Fix and issue where the `windows_reboot` handler is ignoring the reboot time
+- **[COOK-3542](https://tickets.chef.io/browse/COOK-3542)** - Fix an issue where `windows_zipfile` fails with LoadError
+- **[COOK-3447](https://tickets.chef.io/browse/COOK-3447)** - Allow Overriding Of The Default Reboot Timeout In windows_reboot_handler
+- **[COOK-3382](https://tickets.chef.io/browse/COOK-3382)** - Allow windows_task to create `on_logon` tasks
+- **[COOK-2098](https://tickets.chef.io/browse/COOK-2098)** - Fix and issue where the `windows_reboot` handler is ignoring the reboot time
 
 ### New Feature
-- **[COOK-3458](https://tickets.opscode.com/browse/COOK-3458)** - Add support for `start_date` and `start_time` in `windows_task`
+- **[COOK-3458](https://tickets.chef.io/browse/COOK-3458)** - Add support for `start_date` and `start_time` in `windows_task`
 
 
 v1.10.0
