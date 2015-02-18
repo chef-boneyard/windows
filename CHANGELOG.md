@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.36.3 (2014-12-18)
+--------------------
+- Fix Chef chef_gem below 12.1.0
+
 v1.36.2 (2014-12-17)
 --------------------
 - Being explicit about usage of the chef_gem's compile_time property.
