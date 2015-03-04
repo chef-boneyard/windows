@@ -471,7 +471,7 @@ Creates and modifies Windows shortcuts.
 - arguments: arguments to pass to the target when the shortcut is executed
 - description:
 - cwd: Working directory to used when the target is executed
-- iconlocation: Icon to use, in the format allowed by [WshShortcut.IconLocation](https://msdn.microsoft.com/en-us/library/3s9bx7at.aspx)
+- iconlocation: Icon to use, in the format of ```"path, index"``` where index is which icon in that file to use (See [WshShortcut.IconLocation](https://msdn.microsoft.com/en-us/library/3s9bx7at.aspx))
 
 #### Examples
 
