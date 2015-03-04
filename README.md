@@ -15,7 +15,7 @@ Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
 * Windows 7
 * Windows Server 2008 (R1, R2)
 
-The `windows_task` LWRP requires Windows Server 2008 due to its API usage.
+The `windows_task` and `windows_home` LWRPs require Windows Server 2008 or higher due to its API usage.
 
 ### Cookbooks
 The following cookbooks provided by Chef Software are required as noted:
@@ -171,6 +171,30 @@ Font files should be included in the cookbooks
 
 ```ruby
 windows_font 'Code New Roman.otf'
+```
+
+### windows_home
+Creates and populates the user's home directory (e.g C:\Users\<username>) without requiring a logon.
+
+Note that the user will have to be created before calling windows_home.
+
+#### Actions
+- :create: creates and populates home directory.
+
+#### Attribute Parameters
+- username: Name attribute. Name of user to create and populate home directory for.
+- password: The password of the user.
+
+#### Examples
+
+```ruby
+user 'newuser' do
+  password 'N3wPassW0Rd'
+end
+
+windows_home 'newuser' do
+  password 'N3wPassW0Rd'
+end
 ```
 
 ### windows_package

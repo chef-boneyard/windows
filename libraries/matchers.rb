@@ -18,6 +18,7 @@ if defined?(ChefSpec)
   define_method.call :windows_printer
   define_method.call :windows_printer_port
   define_method.call :windows_reboot
+  define_method.call :windows_home
   #
   # Assert that a +windows_package+ resource exists in the Chef run with the
   # action +:install+. Given a Chef Recipe that installs "Node.js" as a
@@ -424,7 +425,6 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_zipfile, :zip, resource_name)
   end
 
-
   # All the other less commonly used LWRPs
   def create_windows_shortcut(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_shortcut, :create, resource_name)
@@ -462,4 +462,7 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_reboot, :cancel, resource_name)
   end
 
+  def create_windows_home(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_home, :create, resource_name)
+  end
 end
