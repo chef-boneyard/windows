@@ -459,6 +459,34 @@ windows_registry 'HKCU\Software\Test' do
 end
 ```
 
+### windows_shortcut
+Creates and modifies Windows shortcuts.
+
+#### Actions
+- :create: create or modify a windows shortcut
+
+#### Attribute Parameters
+- name: name attribute. The shortcut to create/modify.
+- target: what the shortcut links to
+- arguments: arguments to pass to the target when the shortcut is executed
+- description:
+- cwd: Working directory to used when the target is executed
+- iconlocation: Icon to use, in the format of ```"path, index"``` where index is which icon in that file to use (See [WshShortcut.IconLocation](https://msdn.microsoft.com/en-us/library/3s9bx7at.aspx))
+
+#### Examples
+
+Add a shortcut all users desktop:
+```ruby
+require 'win32ole'
+all_users_desktop = WIN32OLE.new("WScript.Shell").SpecialFolders("AllUsersDesktop")
+
+windows_shortcut "#{all_users_desktop}/Notepad.lnk" do
+    target "C:\\WINDOWS\\notepad.exe"
+    description "Launch Notepad"
+    iconlocation "C:\\windows\\notepad.exe, 0"
+end
+```
+
 #### Library Methods
 
 ```ruby
