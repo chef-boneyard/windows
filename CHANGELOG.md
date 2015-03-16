@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.37.0 (2015-03-04)
+--------------------
+- Add home resource that creates and populates user's home directory
+
 v1.36.6 (2014-12-18)
 --------------------
 - reverting all chef_gem compile_time work

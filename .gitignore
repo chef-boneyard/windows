@@ -3,3 +3,4 @@
 Berksfile.lock
 Gemfile.lock
 .bundle
+.idea
