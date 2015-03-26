@@ -1,8 +1,8 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
 group :development do
-  gem "test-kitchen", :git => 'https://github.com/test-kitchen/test-kitchen.git', :branch => 'windows-guest-support'
-  gem 'kitchen-vagrant', git: 'https://github.com/test-kitchen/kitchen-vagrant.git', :branch => 'windows-guest-support'
-  gem "berkshelf"
-  gem "vagrant-wrapper", ">= 2.0"
+  gem 'test-kitchen',     '1.4.0.beta.2'
+  gem 'kitchen-vagrant',  '0.17.0.beta.3'
+  gem 'berkshelf'
+  gem 'vagrant-wrapper',  '>= 2.0'
 end
