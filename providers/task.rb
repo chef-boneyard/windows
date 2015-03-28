@@ -37,6 +37,8 @@ action :create do
     cmd += "/RU \"#{@new_resource.user}\" " if @new_resource.user
     cmd += "/RP \"#{@new_resource.password}\" " if @new_resource.user and @new_resource.password
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
+    it_enabled = @new_resource.interactive_enabled ? "/IT " : ""
+    cmd += it_enabled
     shell_out!(cmd, {:returns => [0]})
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
@@ -62,6 +64,8 @@ action :change do
   if @current_resource.exists
     cmd =  "schtasks /Change /TN \"#{@current_resource.name}\" "
     cmd += "/TR \"#{@new_resource.command}\" " if @new_resource.command
+    it_enabled = @new_resource.interactive_enabled ? "/IT " : ""
+    cmd += it_enabled
     if @new_resource.user && @new_resource.password
       cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
     elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)

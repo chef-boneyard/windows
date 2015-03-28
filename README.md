@@ -542,6 +542,7 @@ Server 2008 due to API usage.
 - frequency_modifier: Multiple for frequency. (15 minutes, 2 days)
 - start_day: Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
 - start_time: Specifies the start time to run the task. Optional string (HH:mm)
+- interactive_enabled: Show interactive window.
 
 #### Examples
 
