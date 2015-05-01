@@ -5,6 +5,7 @@ This file is used to list changes made in each version of the windows cookbook.
 Unreleased
 --------------------
 - fix `windows_package` `Chef.set_resource_priority_array` warning
+- update windows_task to support tasks in folders
 
 v1.36.6 (2014-12-18)
 --------------------

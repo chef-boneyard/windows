@@ -29,3 +29,26 @@ windows_task 'disable chef test' do
   name 'chef test'
   action :disable
 end
+
+windows_task 'create chef test' do
+  name 'chef\chef test'
+  action :create
+  command 'dir'
+end
+
+windows_task 'disable chef test' do
+  name 'chef\chef test'
+  action :disable
+end
+
+windows_task 'create chef test' do
+  name '\chef\chef test2'
+  action :create
+  command 'dir'
+end
+
+windows_task 'disable chef test' do
+  name '\chef\chef test2'
+  action :disable
+end
+
