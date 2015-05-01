@@ -125,8 +125,9 @@ def load_current_resource
   @current_resource = Chef::Resource::WindowsTask.new(@new_resource.name)
   @current_resource.name(@new_resource.name)
 
+  pathed_task_name = @new_resource.name[0,1] == '\\' ? @new_resource.name : @new_resource.name.prepend('\\')
   task_hash = load_task_hash(@current_resource.name)
-  if task_hash[:TaskName] == '\\' + @new_resource.name
+  if task_hash[:TaskName] == pathed_task_name
     @current_resource.exists = true
     if task_hash[:Status] == "Running"
       @current_resource.status = :running
