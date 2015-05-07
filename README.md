@@ -35,6 +35,7 @@ As of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included
 - `name` - Name attribute. The name of the value to be stored in the registry
 - `program` - The program to be run at login
 - `args` - The arguments for the program
+- `root` - The registry root key to put the entry under--`:machine` (default) or `:user`
 
 #### Examples
 
