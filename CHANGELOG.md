@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+Unreleased
+--------------------
+- fix `windows_package` `Chef.set_resource_priority_array` warning
+
 v1.36.6 (2014-12-18)
 --------------------
 - reverting all chef_gem compile_time work
