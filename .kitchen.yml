@@ -12,6 +12,9 @@ transport:
 provisioner:
   name: chef_zero
 
+verifier:
+  name: pester
+
 platforms:
   - name: windows-8.1-chef11.10.4
     driver_config:
@@ -33,7 +36,7 @@ platforms:
       require_chef_omnibus: 12
 
 suites:
-  - name: default
+  - name: minimal
     run_list:
       - recipe[windows::default]
       - recipe[minimal::default]
