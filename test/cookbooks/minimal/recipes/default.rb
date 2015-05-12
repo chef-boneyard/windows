@@ -18,15 +18,12 @@ end
 
 windows_font "CodeNewRoman.otf"
 
-windows_task 'create chef test' do
-  name 'chef test'
-  action :create
-  cwd "C:\\"
+windows_task 'chef test' do
   command 'dir'
 end
 
 windows_task 'disable chef test' do
-  name 'chef test'
+  task_name 'chef test'
   action :disable
 end
 

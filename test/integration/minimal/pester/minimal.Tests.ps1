@@ -37,11 +37,5 @@ describe 'minimal::default' {
       $missing_task | should BeNullOrEmpty
     }
   }
-  context 'windows_path' {
-    it "added 'C:\path_test_path' to the path" {
-      $env:path | should match ([regex]::escape('C:\path_test_path'))
-    }
-  }
-
 }
 
