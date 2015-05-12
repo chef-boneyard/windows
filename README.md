@@ -532,7 +532,7 @@ Server 2008 due to API usage.
 - :disable: disable a task
 
 #### Attribute Parameters
-- name: name attribute, The task name. ("Task Name" or "/Task Name")
+- task_name: name attribute, The task name. ("Task Name" or "/Task Name")
 - command: The command the task will run.
 - cwd: The directory the task will be run from.
 - user: The user to run the task as. (requires password)
