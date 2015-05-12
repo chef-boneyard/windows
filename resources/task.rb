@@ -20,7 +20,7 @@
 
 # Passwords can't be loaded for existing tasks, making :modify both confusing
 # and not very useful
-actions :create, :delete, :run, :change, :enable, :disable
+actions :create, :delete, :run, :end, :change, :enable, :disable
 
 
 attribute :task_name, :kind_of => String, :name_attribute => true, :regex => [ /\A[^\/\:\*\?\<\>\|]+\z/ ]
