@@ -27,7 +27,7 @@ action :create do
   else
     if @new_resource.user and @new_resource.password.nil? then Chef::Log.debug "#{@new_resource} did not specify a password, creating task without a password" end
     use_force = @new_resource.force ? '/F' : ''
-    cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.name}\" "
+    cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.task_name}\" "
     schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
     cmd += "/SC #{schedule} "
     cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
@@ -48,7 +48,7 @@ action :run do
     if @current_resource.status == :running
       Chef::Log.info "#{@new_resource} task is currently running, skipping run"
     else
-      cmd = "schtasks /Run /TN \"#{@current_resource.name}\""
+      cmd = "schtasks /Run /TN \"#{@current_resource.task_name}\""
       shell_out!(cmd, {:returns => [0]})
       new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task ran"
@@ -60,12 +60,12 @@ end
 
 action :change do
   if @current_resource.exists
-    cmd =  "schtasks /Change /TN \"#{@current_resource.name}\" "
+    cmd =  "schtasks /Change /TN \"#{@current_resource.task_name}\" "
     cmd += "/TR \"#{@new_resource.command}\" " if @new_resource.command
     if @new_resource.user && @new_resource.password
       cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
     elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
-      Chef::Log.fatal "#{@new_resource.name}: Can't specify user or password without both!"
+      Chef::Log.fatal "#{@new_resource.task_name}: Can't specify user or password without both!"
     end
     shell_out!(cmd, {:returns => [0]})
     new_resource.updated_by_last_action true
@@ -77,7 +77,8 @@ end
 
 action :delete do
   if @current_resource.exists
-    cmd = "schtasks /Delete /F /TN \"#{@current_resource.name}\""
+	  # always need to force deletion
+    cmd = "schtasks /Delete /F /TN \"#{@current_resource.task_name}\""
     shell_out!(cmd, {:returns => [0]})
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
@@ -91,7 +92,7 @@ action :enable do
     if @current_resource.enabled
       Chef::Log.debug "#{@new_resource} already enabled - nothing to do"
     else
-      cmd =  "schtasks /Change /TN \"#{@current_resource.name}\" "
+      cmd =  "schtasks /Change /TN \"#{@current_resource.task_name}\" "
       cmd += "/ENABLE"
       shell_out!(cmd, {:returns => [0]})
       @new_resource.updated_by_last_action true
@@ -106,7 +107,7 @@ end
 action :disable do
   if @current_resource.exists
     if @current_resource.enabled
-      cmd =  "schtasks /Change /TN \"#{@current_resource.name}\" "
+      cmd =  "schtasks /Change /TN \"#{@current_resource.task_name}\" "
       cmd += "/DISABLE"
       shell_out!(cmd, {:returns => [0]})
       @new_resource.updated_by_last_action true
@@ -122,10 +123,11 @@ end
 
 def load_current_resource
   @current_resource = Chef::Resource::WindowsTask.new(@new_resource.name)
-  @current_resource.name(@new_resource.name)
+  @current_resource.task_name(@new_resource.task_name)
 
-  pathed_task_name = @new_resource.name[0,1] == '\\' ? @new_resource.name : @new_resource.name.prepend('\\')
-  task_hash = load_task_hash(@current_resource.name)
+
+  pathed_task_name = @new_resource.task_name[0,1] == '\\' ? @new_resource.task_name : @new_resource.task_name.prepend('\\')
+  task_hash = load_task_hash(@current_resource.task_name)
   if task_hash[:TaskName] == pathed_task_name
     @current_resource.exists = true
     if task_hash[:Status] == "Running"

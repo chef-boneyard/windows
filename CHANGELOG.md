@@ -7,6 +7,7 @@ Unreleased
 - fix `windows_package` `Chef.set_resource_priority_array` warning
 - update `windows_task` to support tasks in folders
 - fix `windows_task` delete action
+- replace `windows_task` name attribute with 'task_name'
 
 v1.36.6 (2014-12-18)
 --------------------
