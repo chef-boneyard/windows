@@ -77,8 +77,7 @@ end
 
 action :delete do
   if @current_resource.exists
-    use_force = @new_resource.force ? '/F' : ''
-    cmd = "schtasks /Delete #{use_force} /TN \"#{@current_resource.name}\""
+    cmd = "schtasks /Delete /F /TN \"#{@current_resource.name}\""
     shell_out!(cmd, {:returns => [0]})
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
