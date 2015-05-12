@@ -38,15 +38,20 @@ windows_task 'disable chef test' do
   action :disable
 end
 
-windows_task 'create chef test' do
-  name '\chef\chef test2'
+windows_task 'create long running task loop' do
+  name '\chef\longtask'
   action :create
-  command 'dir'
+  command 'powershell.exe -command while ($true) {start-sleep -seconds 5}'
 end
 
-windows_task 'disable chef test' do
-  name '\chef\chef test2'
-  action :disable
+windows_task 'run long running task' do
+  name '\chef\longtask'
+  action :run
+end
+
+windows_task 'stop long running task' do
+  name '\chef\longtask'
+  action :end
 end
 
 windows_task 'create task delete_me' do
@@ -54,8 +59,10 @@ windows_task 'create task delete_me' do
   action :create
   command 'dir'
 end
+
 windows_task 'delete task delete_me' do
   name 'delete_me'
   action :delete
 end
+
 

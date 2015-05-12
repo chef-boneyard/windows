@@ -96,7 +96,7 @@ action :end do
     if @current_resource.status != :running
       Chef::Log.debug "#{@new_resource} is not running - nothing to do"
     else
-      cmd =  "schtasks /End /TN \"#{@current_resource.name}\" "
+      cmd =  "schtasks /End /TN \"#{@current_resource.task_name}\" "
       shell_out!(cmd, {:returns => [0]})
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task ended"
