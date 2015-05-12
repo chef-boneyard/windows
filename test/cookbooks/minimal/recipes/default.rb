@@ -52,3 +52,13 @@ windows_task 'disable chef test' do
   action :disable
 end
 
+windows_task 'create task delete_me' do
+  name 'delete_me'
+  action :create
+  command 'dir'
+end
+windows_task 'delete task delete_me' do
+  name 'delete_me'
+  action :delete
+end
+
