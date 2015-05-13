@@ -10,6 +10,8 @@ Unreleased
 - replace `windows_task` name attribute with 'task_name'
 - add :end action to 'windows_task'
 - Tasks created with the `windows_task` resource default to the SYSTEM account
+- The force attribute for `windows_task` makes the :create action update the definition.
+- 'windows_task' :create action will force an update of the task if the user or command differs from the currently configured setting.
 
 v1.36.6 (2014-12-18)
 --------------------

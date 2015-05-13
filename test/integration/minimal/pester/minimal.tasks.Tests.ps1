@@ -7,6 +7,7 @@ describe 'minimal::default' {
     [xml]$second_level_task_leading_slash = schtasks /query /tn '\chef\longtask' /XML 2> $null
     $second_level_task = schtasks /query /tn '\chef\longtask' /FO csv /v | convertfrom-csv 2> $null
     [xml]$missing_task = schtasks /query /tn 'delete_me' /XML 2> $null
+    [xml]$task_changed_by_create = schtasks /query /tn '\chef\change_me' /XML 2> $null
 
     it "task 'task_from_name' was created"  {
       $top_level_task | Should Not BeNullOrEmpty
@@ -25,6 +26,13 @@ describe 'minimal::default' {
       $second_level_task_no_leading_slash | Should Not BeNullOrEmpty
     }
 
+    it "task 'chef\nested task' was changed to command 'dir /s" {
+      $Command = $second_level_task_no_leading_slash.Task.Actions.Exec.Command
+      $second_level_task_no_leading_slash.Task.Actions.Exec.Arguments |
+        foreach {$Command += " $_"}
+      $Command | should be 'dir /s'
+    }
+
     it 'task \chef\longtask was created (with leading \)' {
       $second_level_task_leading_slash | Should Not BeNullOrEmpty
     }
@@ -39,6 +47,13 @@ describe 'minimal::default' {
 
     it 'task delete_me should not exist' {
       $missing_task | should BeNullOrEmpty
+    }
+
+    it "task 'chef\change_me' was changed via create to command 'dir /s" {
+      $Command = $task_changed_by_create.Task.Actions.Exec.Command
+      $task_changed_by_create.Task.Actions.Exec.Arguments |
+        foreach {$Command += " $_"}
+      $Command | should be 'dir /s'
     }
   }
 }
