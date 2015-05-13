@@ -17,7 +17,8 @@ end
 
 windows_task 'disable chef\nested task' do
   name 'chef\nested task'
-  action :disable
+  command 'dir /s'
+  action :change
 end
 
 windows_task 'create long running task loop' do
@@ -34,6 +35,16 @@ end
 windows_task 'stop long running task' do
   task_name '\chef\longtask'
   action :end
+end
+
+windows_task 'create task to change via create' do
+  task_name 'chef\change_me'
+  command 'dir'
+end
+
+windows_task 'change task change_me via create' do
+  task_name 'chef\change_me'
+  command 'dir /s'
 end
 
 windows_task 'create task delete_me' do

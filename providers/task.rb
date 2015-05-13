@@ -24,7 +24,7 @@ include Chef::Mixin::ShellOut
 use_inline_resources
 
 action :create do
-  if @current_resource.exists
+  if @current_resource.exists && (not (task_need_update? || @new_resource.force))
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
     validate_user_and_password
@@ -32,11 +32,11 @@ action :create do
     validate_create_day
 
     schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
-    frequency_modifier = [:minute, :hourly, :daily, :weekly, :monthly]
+    frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
     options = Hash.new
-    options['F'] = '' if @new_resource.force #|| task_needs_update?
+    options['F'] = '' if @new_resource.force || task_need_update?
     options['SC'] = schedule
-    options['MO'] = @new_resource.frequency_modifier if frequency_modifier.include?(@new_resource.frequency)
+    options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed.include?(@new_resource.frequency)
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
     options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
     options['TR'] = "\"#{@new_resource.command}\" "
@@ -173,6 +173,11 @@ def run_schtasks(task_action, options={})
   Chef::Log.debug("running: ")
   Chef::Log.debug("    #{cmd}")
   shell_out!(cmd, {:returns => [0]})
+end
+
+def task_need_update?
+  @current_resource.command != @new_resource.command ||
+    @current_resource.user != @new_resource.user
 end
 
 def load_task_hash(task_name)
