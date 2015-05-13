@@ -1,13 +1,9 @@
 ---
 driver:
-  forward_agent: yes
   name: vagrant
   customize:
     cpus: 2
     memory: 4096
-
-transport:
-  name: winrm
 
 provisioner:
   name: chef_zero
