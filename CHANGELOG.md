@@ -9,6 +9,7 @@ Unreleased
 - fix `windows_task` delete action
 - replace `windows_task` name attribute with 'task_name'
 - add :end action to 'windows_task'
+- Tasks created with the `windows_task` resource default to the SYSTEM account
 
 v1.36.6 (2014-12-18)
 --------------------
