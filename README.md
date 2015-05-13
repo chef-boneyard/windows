@@ -524,24 +524,28 @@ Creates, deletes or runs a Windows scheduled task. Requires Windows
 Server 2008 due to API usage.
 
 #### Actions
-- :create: creates a task
+- :create: creates a task (or updates existing if user or command has changed)
 - :delete: deletes a task
 - :run: runs a task
+- :end: ends a task
 - :change: changes the un/pw or command of a task
 - :enable: enable a task
 - :disable: disable a task
 
 #### Attribute Parameters
-- name: name attribute, The task name.
+- task_name: name attribute, The task name. ("Task Name" or "/Task Name")
+- force: When used with create, will update the task.
 - command: The command the task will run.
 - cwd: The directory the task will be run from.
-- user: The user to run the task as. (requires password)
+- user: The user to run the task as. (defaults to 'SYSTEM')
 - password: The user's password. (requires user)
 - run_level: Run with limited or highest privileges.
-- frequency: Frequency with which to run the task. (hourly, daily, ect.)
+- frequency: Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle)
 - frequency_modifier: Multiple for frequency. (15 minutes, 2 days)
 - start_day: Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
 - start_time: Specifies the start time to run the task. Optional string (HH:mm)
+- interactive_enabled: (Allow task to run interactively or non-interactively.  Requires user and password.)
+- day: For monthly or weekly tasks, the day(s) on which the task runs.  (MON - SUN, *, 1 - 31)
 
 #### Examples
 
