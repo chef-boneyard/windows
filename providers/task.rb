@@ -21,6 +21,8 @@
 require 'chef/mixin/shell_out'
 include Chef::Mixin::ShellOut
 
+use_inline_resources
+
 action :create do
   if @current_resource.exists
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
@@ -38,7 +40,16 @@ action :create do
     cmd += "/RP \"#{@new_resource.password}\" " if @new_resource.user and @new_resource.password
     cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
     it_enabled = @new_resource.interactive_enabled ? "/IT " : ""
+    if @new_resource.interactive_enabled && @new_resource.password.nil?
+      Chef::Log.error "#{new_resource} did not provide a password when attempting to set interactive/non-interactive."
+    end
     cmd += it_enabled
+    validate_create_day
+    if @new_resource.day then
+      cmd += "/D \"#{@new_resource.day}\" "
+    end
+    Chef::Log.debug("running: ")
+    Chef::Log.debug("    #{cmd}")
     shell_out!(cmd, {:returns => [0]})
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
@@ -186,4 +197,21 @@ def load_task_hash(task_name)
   end
 
   task
+end
+
+def validate_create_day
+  if not @new_resource.day then
+    return
+  end
+  if not [:weekly, :monthly].include?(@new_resource.frequency) then
+    raise "day attribute is only valid for tasks that run weekly or monthly"
+  end
+  if @new_resource.day.is_a? String then
+    days = @new_resource.day.split(",")
+    days.each do |day|
+      if not ["mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"].include?(day.strip.downcase) then
+        raise "day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma."
+      end
+    end
+  end
 end
