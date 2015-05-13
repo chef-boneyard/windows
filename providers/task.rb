@@ -27,30 +27,26 @@ action :create do
   if @current_resource.exists
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
-    if @new_resource.user and @new_resource.password.nil? then Chef::Log.debug "#{@new_resource} did not specify a password, creating task without a password" end
-    use_force = @new_resource.force ? '/F' : ''
-    cmd =  "schtasks /Create #{use_force} /TN \"#{@new_resource.task_name}\" "
-    schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
-    cmd += "/SC #{schedule} "
-    cmd += "/MO #{@new_resource.frequency_modifier} " if [:minute, :hourly, :daily, :weekly, :monthly].include?(@new_resource.frequency)
-    cmd += "/SD \"#{@new_resource.start_day}\" " unless @new_resource.start_day.nil?
-    cmd += "/ST \"#{@new_resource.start_time}\" " unless @new_resource.start_time.nil?
-    cmd += "/TR \"#{@new_resource.command}\" "
-    cmd += "/RU \"#{@new_resource.user}\" " if @new_resource.user
-    cmd += "/RP \"#{@new_resource.password}\" " if @new_resource.user and @new_resource.password
-    cmd += "/RL HIGHEST " if @new_resource.run_level == :highest
-    it_enabled = @new_resource.interactive_enabled ? "/IT " : ""
-    if @new_resource.interactive_enabled && @new_resource.password.nil?
-      Chef::Log.error "#{new_resource} did not provide a password when attempting to set interactive/non-interactive."
-    end
-    cmd += it_enabled
+    validate_user_and_password
+    validate_interactive_setting
     validate_create_day
-    if @new_resource.day then
-      cmd += "/D \"#{@new_resource.day}\" "
-    end
-    Chef::Log.debug("running: ")
-    Chef::Log.debug("    #{cmd}")
-    shell_out!(cmd, {:returns => [0]})
+
+    schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
+    frequency_modifier = [:minute, :hourly, :daily, :weekly, :monthly]
+    options = Hash.new
+    options['F'] = '' if @new_resource.force #|| task_needs_update?
+    options['SC'] = schedule
+    options['MO'] = @new_resource.frequency_modifier if frequency_modifier.include?(@new_resource.frequency)
+    options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
+    options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
+    options['TR'] = "\"#{@new_resource.command}\" "
+    options['RU'] = @new_resource.user
+    options['RP'] = @new_resource.password if @new_resource.password
+    options['RL'] = 'HIGHEST' if @new_resource.run_level == :highest
+    options['IT'] = '' if @new_resource.interactive_enabled
+    options['D'] = @new_resource.day if @new_resource.day
+
+    run_schtasks 'CREATE', options
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
   end
@@ -61,8 +57,7 @@ action :run do
     if @current_resource.status == :running
       Chef::Log.info "#{@new_resource} task is currently running, skipping run"
     else
-      cmd = "schtasks /Run /TN \"#{@current_resource.task_name}\""
-      shell_out!(cmd, {:returns => [0]})
+      run_schtasks 'RUN'
       new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task ran"
     end
@@ -73,16 +68,18 @@ end
 
 action :change do
   if @current_resource.exists
-    cmd =  "schtasks /Change /TN \"#{@current_resource.task_name}\" "
-    cmd += "/TR \"#{@new_resource.command}\" " if @new_resource.command
-    it_enabled = @new_resource.interactive_enabled ? "/IT " : ""
-    cmd += it_enabled
-    if @new_resource.user && @new_resource.password
-      cmd += "/RU \"#{@new_resource.user}\" /RP \"#{@new_resource.password}\" "
-    elsif (@new_resource.user and !@new_resource.password) || (@new_resource.password and !@new_resource.user)
-      Chef::Log.fatal "#{@new_resource.task_name}: Can't specify user or password without both!"
-    end
-    shell_out!(cmd, {:returns => [0]})
+    validate_user_and_password
+    validate_interactive_setting
+
+    options = Hash.new
+    options['TR'] = "\"#{@new_resource.command}\" " if @new_resource.command
+    options['RU'] = @new_resource.user if @new_resource.user
+    options['RP'] = @new_resource.password if @new_resource.password
+    options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
+    options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
+    options['IT'] = '' if @new_resource.interactive_enabled
+
+    run_schtasks 'CHANGE', options
     new_resource.updated_by_last_action true
     Chef::Log.info "Change #{@new_resource} task ran"
   else
@@ -93,8 +90,7 @@ end
 action :delete do
   if @current_resource.exists
 	  # always need to force deletion
-    cmd = "schtasks /Delete /F /TN \"#{@current_resource.task_name}\""
-    shell_out!(cmd, {:returns => [0]})
+    run_schtasks 'DELETE', {'F' => ''}
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
   else
@@ -107,8 +103,7 @@ action :end do
     if @current_resource.status != :running
       Chef::Log.debug "#{@new_resource} is not running - nothing to do"
     else
-      cmd =  "schtasks /End /TN \"#{@current_resource.task_name}\" "
-      shell_out!(cmd, {:returns => [0]})
+      run_schtasks 'END'
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task ended"
     end
@@ -123,9 +118,7 @@ action :enable do
     if @current_resource.enabled
       Chef::Log.debug "#{@new_resource} already enabled - nothing to do"
     else
-      cmd =  "schtasks /Change /TN \"#{@current_resource.task_name}\" "
-      cmd += "/ENABLE"
-      shell_out!(cmd, {:returns => [0]})
+      run_schtasks 'CHANGE', {'ENABLE' => ''}
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task enabled"
     end
@@ -138,9 +131,7 @@ end
 action :disable do
   if @current_resource.exists
     if @current_resource.enabled
-      cmd =  "schtasks /Change /TN \"#{@current_resource.task_name}\" "
-      cmd += "/DISABLE"
-      shell_out!(cmd, {:returns => [0]})
+      run_schtasks 'CHANGE', {'DISABLE' => ''}
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task disabled"
     else
@@ -174,6 +165,15 @@ def load_current_resource
 end
 
 private
+def run_schtasks(task_action, options={})
+  cmd = "schtasks /#{task_action} /TN \"#{@new_resource.task_name}\" "
+  options.keys.each do |option|
+    cmd += "/#{option} #{options[option]} "
+  end
+  Chef::Log.debug("running: ")
+  Chef::Log.debug("    #{cmd}")
+  shell_out!(cmd, {:returns => [0]})
+end
 
 def load_task_hash(task_name)
   Chef::Log.debug "looking for existing tasks"
@@ -197,6 +197,27 @@ def load_task_hash(task_name)
   end
 
   task
+end
+
+def validate_user_and_password
+  system_users = ['NT AUTHORITY\SYSTEM', 'SYSTEM', 'NT AUTHORITY\LOCALSERVICE', 'NT AUTHORITY\NETWORKSERVICE']
+
+  if @new_resource.user
+    if system_users.include? @new_resource.user.upcase
+      @new_resource.password = nil if @new_resource.password
+      return
+    end
+    if @new_resource.password.nil?
+      Chef::Log.fatal "#{@new_resource.task_name}: Can't specify a non-system user without a password!"
+    end
+  end
+
+end
+
+def validate_interactive_setting
+  if @new_resource.interactive_enabled && @new_resource.password.nil?
+    Chef::Log.fatal "#{new_resource} did not provide a password when attempting to set interactive/non-interactive."
+  end
 end
 
 def validate_create_day
