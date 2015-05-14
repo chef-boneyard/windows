@@ -2,7 +2,7 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
-Unreleased
+v1.37.0 (2015-05-14)
 --------------------
 - fix `windows_package` `Chef.set_resource_priority_array` warning
 - update `windows_task` to support tasks in folders
@@ -11,7 +11,12 @@ Unreleased
 - add :end action to 'windows_task'
 - Tasks created with the `windows_task` resource default to the SYSTEM account
 - The force attribute for `windows_task` makes the :create action update the definition.
-- 'windows_task' :create action will force an update of the task if the user or command differs from the currently configured setting.
+- `windows_task` :create action will force an update of the task if the user or command differs from the currently configured setting.
+- add default provider for `windows_feature`
+- add a helper to make sure `WindowsRebootHandler` works in ChefSpec
+- added a source and issues url to the metadata for Supermarket
+- updated the Gemfile and .kitchen.yml to reflect the latest test-kitchen windows guest support
+- started tests using the kitchen-pester verifier
 
 v1.36.6 (2014-12-18)
 --------------------
