@@ -16,5 +16,10 @@ describe 'minimal::default' {
     it "'C:\path_test_another_path' was added to the path" {
       ($Paths -contains 'C:\path_test_another_path') | should be $true
     }
+
+    it 'Child processes and shellouts have an updated path' {
+      'c:\paths.txt' | should contain 'C:\\path_test_another_path'
+      'c:\paths.txt' | should contain 'C:\\path_test_path'
+    }
   }
 }
