@@ -9,8 +9,4 @@ windows_package 'Mozilla Firefox 5.0 (x86 en-US)' do
   action :install
 end
 
-windows_path 'C:\path_test_path' do
-  action :add
-end
-
 windows_font "CodeNewRoman.otf"
