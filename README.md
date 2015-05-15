@@ -16,6 +16,7 @@ Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
 * Windows Server 2008 (R1, R2)
 
 The `windows_task` LWRP requires Windows Server 2008 due to its API usage.
+The `windows_dns` LWRP requires DNSCMD.exe to be installed.
 
 ### Cookbooks
 The following cookbooks provided by Chef Software are required as noted:
@@ -87,6 +88,47 @@ windows_batch 'echo some env vars' do
   echo %PATH%
   echo %WINDIR%
   EOH
+end
+```
+
+### windows_dns
+Configures A and CNAME records in Windows DNS. This requires the DNSCMD to be installed, which is done by adding the DNS role to the server or installing the Remote Server Admin Tools.
+
+#### Actions
+- :create: creates/updates the DNS entry
+- :delete: deletes the DNS entry
+
+#### Attribute Parameters
+- host_name: name attribute. FQDN of the entry to act on.
+- dns_server: the DNS server to update. Default is local machine (.)
+- record_type: the type of record to create. One of A (default) or CNAME
+- target: for A records an array of IP addresses to associate with the host; for CNAME records the FQDN of the host to alias
+- ttl: if > 0 then set the time to live of the record
+
+#### Examples
+
+```ruby
+# Create A record linked to 2 addresses with a 10 minute ttl
+windows_dns "m1.chef.test" do
+	target 		['10.9.8.7', '1.2.3.4']
+	ttl			600
+end
+```
+
+```ruby
+# Delete records. target is mandatory although not used
+windows_dns "m1.chef.test" do
+	action	:delete
+	target	[]
+end
+```
+
+```ruby
+# Set an alias against the node in a role
+nodes = search( :node, "role:my_service" )
+windows_dns "myservice.chef.test" do
+	record_type	'CNAME'
+	target		nodes[0]['fqdn']
 end
 ```
 
