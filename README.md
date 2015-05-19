@@ -90,6 +90,78 @@ windows_batch 'echo some env vars' do
 end
 ```
 
+### windows_certificate
+
+Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts
+
+#### Actions
+- :create: creates or updates a certificate
+- :delete: deletes a certificate
+- :acl_add: adds read-only entries to a certificte's private key ACL
+
+#### Attribute Parameters
+- source: name attribute. The source file (for create and acl_add) or thumprint/subject (for delete and acl_add).
+- pfx_password: the password to access the source if it is a pfx file.
+- private_key_acl: array of 'domain\account' entries to be granted read-only access to the certificte's private key. This is not idempotent.
+- store_name: the certificate store to maniplate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store)
+- user_store: if false (default) then use the local machine store; if true then use the current user's store.
+
+#### Examples
+```ruby
+# Add PFX cert to local machine personal store and grant accounts read-only access to private key
+windows_certificate "c:/test/mycert.pfx" do
+	pfx_password	"password"
+	private_key_acl	["acme\fred", "pc\jane"]
+end
+```
+
+```ruby
+# Add cert to trusted intermediate store
+windows_certificate "c:/test/mycert.cer" do
+	store_name	"CA"
+end
+```
+
+```ruby
+# Remove all certicates matching the subject
+windows_certificate "me.acme.com" do
+	action :delete
+end
+```
+
+### windows_certificate_binding
+
+Binds a certificate to an HTTP port in order to enable TLS communication.
+
+#### Actions
+- :create: creates or updates a binding
+- :delete: deletes a binding
+
+#### Attribute Parameters
+- cert_name: name attribute. The thumprint(hash) or subject that identifies the certicate to be bound.
+- name_kind: indicates the type of cert_name. One of :subject (default) or :hash
+- address: the address to bind against. Default is 0.0.0.0 (all IP addresses)
+- port: the port to bind against. Default is 443.
+- app_id: the GUID that defines the application that owns the binding. Default is the values used by IIS.
+- store_name: the store to locate the certificate in. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store)
+
+#### Examples
+```ruby
+# Bind the first certificate matching the subject to the default TLS port
+windows_certificate_binding "me.acme.com" do
+end
+```
+
+```ruby
+# Bind a cert from the CA store with the given hash to port 4334
+windows_certificate_binding "me.acme.com" do
+	cert_name	"d234567890a23f567c901e345bc8901d34567890"
+	name_kind	:hash
+	store_name	"CA"
+	port		4334
+end
+```
+
 ### windows_feature
 Windows Roles and Features can be thought of as built-in operating system packages that ship with the OS.  A server role is a set of software programs that, when they are installed and properly configured, lets a computer perform a specific function for multiple users or other computers within a network.  A Role can have multiple Role Services that provide functionality to the Role.  Role services are software programs that provide the functionality of a role. Features are software programs that, although they are not directly parts of roles, can support or augment the functionality of one or more roles, or improve the functionality of the server, regardless of which roles are installed.  Collectively we refer to all of these attributes as 'features'.
 
