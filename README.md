@@ -173,6 +173,31 @@ Font files should be included in the cookbooks
 windows_font 'Code New Roman.otf'
 ```
 
+### windows_http_acl
+Sets the Access Control List for an http URL to grant non-admin accounts permission to open HTTP endpoints
+
+#### Actions
+- :create: creates or updates the ACL for a URL
+- :delete: deletes the ACL from a URL.
+
+#### Attribute Parameters
+- url: the name of the url to be created/deleted.
+- user: the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create. Only one user or group can be granted permission.
+
+#### Examples
+
+```ruby
+windows_http_acl 'http://+:50051/' do
+	user 'pc\\fred'
+end
+```
+
+```ruby
+windows_http_acl 'http://+:50051/' do
+	action :delete
+end
+```
+
 ### windows_package
 Manage Windows application packages in an unattended, idempotent way.
 
