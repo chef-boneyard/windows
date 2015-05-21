@@ -21,5 +21,10 @@ describe 'minimal::default' {
       'c:\paths.txt' | should contain 'C:\\path_test_another_path'
       'c:\paths.txt' | should contain 'C:\\path_test_path'
     }
+
+    it 'Updates the path for new external processes' {
+      'c:\external_paths.txt' | should contain 'C:\\path_test_another_path'
+      'c:\external_paths.txt' | should contain 'C:\\path_test_path'
+    }
   }
 }
