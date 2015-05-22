@@ -93,7 +93,6 @@ end
 ### windows_certificate
 
 Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts.
-Note that this resource generates powershell_script resources with the same name to carry out the changes. Consequently updated_by_last_action? is not set. Subscribe to the inner powershell_script to chain resources.
 
 #### Actions
 - :create: creates or updates a certificate
