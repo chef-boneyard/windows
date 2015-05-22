@@ -92,7 +92,8 @@ end
 
 ### windows_certificate
 
-Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts
+Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts.
+Note that this resource generates powershell_script resources with the same name to carry out the changes. Consequently updated_by_last_action? is not set. Subscribe to the inner powershell_script to chain resources.
 
 #### Actions
 - :create: creates or updates a certificate
@@ -100,7 +101,7 @@ Installs a certificate into the Windows certificate store from a file, and grant
 - :acl_add: adds read-only entries to a certificte's private key ACL
 
 #### Attribute Parameters
-- source: name attribute. The source file (for create and acl_add) or thumprint/subject (for delete and acl_add).
+- source: name attribute. The source file (for create and acl_add), thumprint (for delete and acl_add) or subject (for delete).
 - pfx_password: the password to access the source if it is a pfx file.
 - private_key_acl: array of 'domain\account' entries to be granted read-only access to the certificte's private key. This is not idempotent.
 - store_name: the certificate store to maniplate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store)
