@@ -28,6 +28,8 @@ def whyrun_supported?
   true
 end
 
+use_inline_resources
+
 action :create do
   # We can do everything in a powershell script resource
   file = win_friendly_path(@new_resource.source)
