@@ -32,8 +32,12 @@ platforms:
       require_chef_omnibus: 12
 
 suites:
-  - name: minimal
+  - name: tasks
     run_list:
       - recipe[windows::default]
       - recipe[minimal::tasks]
+  - name: path
+    run_list:
+      - recipe[windows::default]
+      - recipe[minimal::path]
 
