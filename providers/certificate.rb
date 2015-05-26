@@ -86,9 +86,14 @@ action :acl_add do
 end
 
 action :delete do
-  # We can do everything in a powershell script resource
-  subject = @current_resource.source.sub(/\*/, '`*') # escape any * in the source
-  certCommand = "gci cert:\\#{@location}\\#{@new_resource.store_name} | where { $_.Subject -like '*#{subject}*' -or $_.Thumbprint -eq '#{subject}'}"
+  # do we have a hash or a subject?
+  search = nil
+  if m = @new_resource.source.match(/^[a-fA-F0-9]{40}$/)
+    search = "Thumbprint -eq '#{@new_resource.source}'"
+  else
+    search = "Subject -like '*#{@new_resource.source.sub(/\*/, '`*')}*'" # escape any * in the source
+  end
+  certCommand = "gci cert:\\#{@location}\\#{@new_resource.store_name} | where { $_.#{search} }"
   
   codeScript = <<-EOH
     $store = New-Object System.Security.Cryptography.X509Certificates.X509Store "#{@new_resource.store_name}", ([System.Security.Cryptography.X509Certificates.StoreLocation]::#{@location})
@@ -103,6 +108,7 @@ action :delete do
     (#{certCommand}).Count -gt 0
   EOH
   
+  # We can do everything in a powershell script resource
   powershell_script @new_resource.name do
     code codeScript
     only_if onlyifScript
