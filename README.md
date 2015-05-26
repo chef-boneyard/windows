@@ -174,15 +174,15 @@ windows_font 'Code New Roman.otf'
 ```
 
 ### windows_http_acl
-Sets the Access Control List for an http URL to grant non-admin accounts permission to open HTTP endpoints
+Sets the Access Control List for an http URL to grant non-admin accounts permission to open HTTP endpoints.
 
 #### Actions
-- :create: creates or updates the ACL for a URL
+- :create: creates or updates the ACL for a URL.
 - :delete: deletes the ACL from a URL.
 
 #### Attribute Parameters
 - url: the name of the url to be created/deleted.
-- user: the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create. Only one user or group can be granted permission.
+- user: the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create. Only one user or group can be granted permission so this replaces any previously defined entry.
 
 #### Examples
 
