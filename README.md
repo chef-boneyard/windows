@@ -95,15 +95,15 @@ end
 Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts.
 
 #### Actions
-- :create: creates or updates a certificate
-- :delete: deletes a certificate
-- :acl_add: adds read-only entries to a certificte's private key ACL
+- :create: creates or updates a certificate.
+- :delete: deletes a certificate.
+- :acl_add: adds read-only entries to a certificate's private key ACL.
 
 #### Attribute Parameters
 - source: name attribute. The source file (for create and acl_add), thumprint (for delete and acl_add) or subject (for delete).
 - pfx_password: the password to access the source if it is a pfx file.
-- private_key_acl: array of 'domain\account' entries to be granted read-only access to the certificte's private key. This is not idempotent.
-- store_name: the certificate store to maniplate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store)
+- private_key_acl: array of 'domain\account' entries to be granted read-only access to the certificate's private key. This is not idempotent.
+- store_name: the certificate store to maniplate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
 - user_store: if false (default) then use the local machine store; if true then use the current user's store.
 
 #### Examples
@@ -134,16 +134,16 @@ end
 Binds a certificate to an HTTP port in order to enable TLS communication.
 
 #### Actions
-- :create: creates or updates a binding
-- :delete: deletes a binding
+- :create: creates or updates a binding.
+- :delete: deletes a binding.
 
 #### Attribute Parameters
 - cert_name: name attribute. The thumprint(hash) or subject that identifies the certicate to be bound.
-- name_kind: indicates the type of cert_name. One of :subject (default) or :hash
-- address: the address to bind against. Default is 0.0.0.0 (all IP addresses)
+- name_kind: indicates the type of cert_name. One of :subject (default) or :hash.
+- address: the address to bind against. Default is 0.0.0.0 (all IP addresses).
 - port: the port to bind against. Default is 443.
 - app_id: the GUID that defines the application that owns the binding. Default is the values used by IIS.
-- store_name: the store to locate the certificate in. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store)
+- store_name: the store to locate the certificate in. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
 
 #### Examples
 ```ruby

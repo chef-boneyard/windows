@@ -77,7 +77,7 @@ def getCurrentHash()
   Chef::Log.debug "netsh reports: #{cmd.stdout}"
 
   if cmd.exitstatus == 0
-    m = cmd.stdout.scan(/Certificate Hash\s+:\s?(\w{40})/)
+    m = cmd.stdout.scan(/Certificate Hash\s+:\s?([A-Fa-f0-9]{40})/)
     if m.length == 0
       raise "Failed to extract hash from command output #{cmd.stdout}"
     else
