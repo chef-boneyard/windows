@@ -21,7 +21,7 @@
 actions :request, :cancel
 
 attribute :timeout, :kind_of => Integer, :name_attribute => true
-attribute :reason, :kind_of => String, :default => ''
+attribute :reason, :kind_of => String, :default => 'Chef Software Chef initiated reboot'
 
 def initialize(name,run_context=nil)
   super
