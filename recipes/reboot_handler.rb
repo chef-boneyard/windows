@@ -24,19 +24,6 @@ remote_directory node['chef_handler']['handler_path'] do
   action :create
 end
 
-# This was primarily done to prevent others from having to stub
-# `include_recipe "reboot_handler"` inside ChefSpec.  ChefSpec
-# doesn't seem to handle the following well on convergence.
-ruby_block "load namespace" do
-  block do
-    begin
-      require "#{node['chef_handler']['handler_path']}/windows_reboot_handler"
-    rescue LoadError
-      log 'Unable to require the windows reboot handler!'
-    end
-  end
-end
-
 chef_handler 'WindowsRebootHandler' do
   source "#{node['chef_handler']['handler_path']}/windows_reboot_handler.rb"
   arguments node['windows']['allow_pending_reboots']
