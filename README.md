@@ -14,8 +14,10 @@ Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
 * Windows Server 2003 R2
 * Windows 7
 * Windows Server 2008 (R1, R2)
+* Windows 8, 8.1
+* Windows Server 2012 (R2)
 
-The `windows_task` LWRP requires Windows Server 2008 due to its API usage.
+The `windows_task` LWRP requires Windows Server 2008 and above due to its API usage.
 
 ### Cookbooks
 The following cookbooks provided by Chef Software are required as noted:
