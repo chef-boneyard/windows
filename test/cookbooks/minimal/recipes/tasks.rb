@@ -1,5 +1,3 @@
-include_recipe 'minimal::default'
-
 windows_task 'task_from_name' do
   command 'dir'
 end
