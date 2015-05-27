@@ -8,6 +8,7 @@ describe 'minimal::default' {
     $second_level_task = schtasks /query /tn '\chef\longtask' /FO csv /v | convertfrom-csv 2> $null
     [xml]$missing_task = schtasks /query /tn 'delete_me' /XML 2> $null
     [xml]$task_changed_by_create = schtasks /query /tn '\chef\change_me' /XML 2> $null
+    [xml]$system_task = schtasks /query /tn 'task_for_system' /XML 2> $null
 
     it "task 'task_from_name' was created"  {
       $top_level_task | Should Not BeNullOrEmpty
@@ -54,6 +55,10 @@ describe 'minimal::default' {
       $task_changed_by_create.Task.Actions.Exec.Arguments |
         foreach {$Command += " $_"}
       $Command | should be 'dir /s'
+    }
+
+    it "task 'task_for_system' was created"  {
+      $system_task | Should Not BeNullOrEmpty
     }
   }
 }
