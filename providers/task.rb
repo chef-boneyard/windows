@@ -41,7 +41,7 @@ action :create do
     options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
     options['TR'] = "\"#{@new_resource.command}\" "
     options['RU'] = @new_resource.user
-    options['RP'] = @new_resource.password if @new_resource.password
+    options['RP'] = @new_resource.password if use_password?
     options['RL'] = 'HIGHEST' if @new_resource.run_level == :highest
     options['IT'] = '' if @new_resource.interactive_enabled
     options['D'] = @new_resource.day if @new_resource.day
@@ -204,14 +204,10 @@ def load_task_hash(task_name)
   task
 end
 
-def validate_user_and_password
-  system_users = ['NT AUTHORITY\SYSTEM', 'SYSTEM', 'NT AUTHORITY\LOCALSERVICE', 'NT AUTHORITY\NETWORKSERVICE']
+SYSTEM_USERS = ['NT AUTHORITY\SYSTEM', 'SYSTEM', 'NT AUTHORITY\LOCALSERVICE', 'NT AUTHORITY\NETWORKSERVICE']
 
-  if @new_resource.user
-    if system_users.include? @new_resource.user.upcase
-      @new_resource.password = nil if @new_resource.password
-      return
-    end
+def validate_user_and_password
+  if @new_resource.user && use_password?
     if @new_resource.password.nil?
       Chef::Log.fatal "#{@new_resource.task_name}: Can't specify a non-system user without a password!"
     end
@@ -220,7 +216,7 @@ def validate_user_and_password
 end
 
 def validate_interactive_setting
-  if @new_resource.interactive_enabled && @new_resource.password.nil?
+  if @new_resource.interactive_enabled && password.nil?
     Chef::Log.fatal "#{new_resource} did not provide a password when attempting to set interactive/non-interactive."
   end
 end
@@ -240,4 +236,8 @@ def validate_create_day
       end
     end
   end
+end
+
+def use_password?
+  @use_password ||= !SYSTEM_USERS.include?(@new_resource.user.upcase)
 end
