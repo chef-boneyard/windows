@@ -56,4 +56,10 @@ windows_task 'delete task delete_me' do
   action :delete
 end
 
+windows_task 'task_for_system' do
+  command 'dir'
+  user 'system'
+  password 'ignored'
+end
+
 
