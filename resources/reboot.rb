@@ -26,4 +26,9 @@ attribute :reason, :kind_of => String, :default => ''
 def initialize(name,run_context=nil)
   super
   @action = :request
+  Chef::Log.warn <<-EOF
+The windows_reboot resource is deprecated. Please use the reboot resource in
+Chef Client 12. windows_reboot will be removed in the next major version 
+release of the Windows cookbook.
+EOF
 end
