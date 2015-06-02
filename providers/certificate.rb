@@ -105,7 +105,7 @@ action :delete do
     $store.Close()
   EOH
   onlyifScript = <<-EOH
-    (#{certCommand}).Count -gt 0
+    @(#{certCommand}).Count -gt 0
   EOH
   
   # We can do everything in a powershell script resource
