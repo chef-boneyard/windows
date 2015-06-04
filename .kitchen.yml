@@ -27,6 +27,11 @@ platforms:
       box: windows-8.1
     provisioner:
       require_chef_omnibus: 12
+  - name: windows-2012r2-chef12
+    driver_config:
+      box: windows-2012r2
+    provisioner:
+      require_chef_omnibus: 12
 
 suites:
   - name: tasks
@@ -37,4 +42,3 @@ suites:
     run_list:
       - recipe[windows::default]
       - recipe[minimal::path]
-
