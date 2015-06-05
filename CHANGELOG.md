@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+Unreleased
+--------------------
+- Do not set new_resource.password to nil, Fixes #219, Fixes #220
+
 v1.37.0 (2015-05-14)
 --------------------
 - fix `windows_package` `Chef.set_resource_priority_array` warning
