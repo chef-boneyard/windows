@@ -122,7 +122,7 @@ def load_current_resource
   @current_resource.private_key_acl(@new_resource.private_key_acl)
   @current_resource.store_name(@new_resource.store_name)
   @current_resource.user_store(@new_resource.user_store)
-  @location = @current_resource.user_store ? 'CurrrentUser' : 'LocalMachine'
+  @location = @current_resource.user_store ? 'CurrentUser' : 'LocalMachine'
 end
 
 private
