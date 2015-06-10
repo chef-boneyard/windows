@@ -35,7 +35,7 @@ action :create do
   file = win_friendly_path(@new_resource.source)
   isPfx = file.downcase.end_with?('pfx')
   password = ", \"#{@new_resource.pfx_password}\"" if isPfx
-  persistKeySet = ', ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet)' if isPfx
+  persistKeySet = ', ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet -bor [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::MachineKeyset)' if isPfx
 
   codeScript = <<-EOH
     $store = New-Object System.Security.Cryptography.X509Certificates.X509Store "#{@new_resource.store_name}", ([System.Security.Cryptography.X509Certificates.StoreLocation]::#{@location})
