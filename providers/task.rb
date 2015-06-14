@@ -36,7 +36,7 @@ action :create do
     options['F'] = '' if @new_resource.force || task_need_update?
 
     options['SC'] = schedule
-    options['MO'] = @new_resource.frequency_modifier if @frequency_modifier_allowed.include?(@new_resource.frequency)
+    options['MO'] = @new_resource.frequency_modifier if allowed_frequency_modifier().include?(@new_resource.frequency)
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
     options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
     options['TR'] = "\"#{@new_resource.command}\" "
@@ -158,14 +158,12 @@ def load_current_resource
     if task_hash[:ScheduledTaskState] == "Enabled"
       @current_resource.enabled = true
     end
-    @frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
-    @frequency_modifier_allowed.each do |modifier|
+    allowed_frequency_modifier().each do |modifier|
       if task_hash[:ScheduleType].downcase.include? modifier.to_s
         @current_resource.frequency(modifier)
         break
       end
     end
-
     if @current_resource.frequency == :minute
       # hash output looks like this "0 Hour(s), 12 Minute(s)"
       @current_resource.frequency_modifier(task_hash[:"Repeat:Every"].split(',')[1].strip.split(' ')[0].to_i)
@@ -174,15 +172,23 @@ def load_current_resource
       @current_resource.frequency_modifier(task_hash[:"Repeat:Every"].split(',')[0].strip.split(' ')[0].to_i)
     elsif @current_resource.frequency == :daily
       # hash output looks like this "Every 3 day(s)"
-      @current_resource.frequency_modifier(task_hash[:Days].split('')[1].to_i)
+      @current_resource.frequency_modifier(task_hash[:Days].split(' ')[1].to_i)
     elsif @current_resource.frequency == :weekly
       # hash output looks like this "Every 2 week(s)"
-      @current_resource.frequency_modifier(task_hash[:Months].split('')[1].to_i)
+      @current_resource.frequency_modifier(task_hash[:Months].split(' ')[1].to_i)
     elsif @current_resource.frequency == :monthly
       # hash output looks like this "JUN, DEC"
       # not sure how to parse this easily yet so leaving it nil
       @current_resource.frequency_modifier(nil)
     end
+
+    start_time_parts = task_hash[:StartTime].split(':')
+    start_time_hour = start_time_parts[0].to_i
+    if start_time_parts[2].include? 'p.m.'
+      start_time_hour = start_time_parts[0].to_i + 12
+    end
+    start_time = start_time_hour.to_s.rjust(2, '0') + ':' + start_time_parts[1]
+    @current_resource.start_time(start_time)
     @current_resource.cwd(task_hash[:Folder])
     @current_resource.command(task_hash[:TaskToRun])
     @current_resource.user(task_hash[:RunAsUser])
@@ -205,7 +211,8 @@ def task_need_update?
     @current_resource.user != @new_resource.user ||
       @current_resource.frequency != @new_resource.frequency ||
         ( (@current_resource.frequency_modifier != @new_resource.frequency_modifier) &&
-          @current_resource != :monthly)
+          @current_resource != :monthly) ||
+            @current_resource.start_time != @new_resource.start_time
 end
 
 def load_task_hash(task_name)
@@ -218,8 +225,8 @@ def load_task_hash(task_name)
   else
     task = Hash.new
     output.split("\n").map! do |line|
-      line = line.rpartition(':')
-      line.delete_at(1)
+      split_line = [line.slice(0..37), line.slice(37..-1)]
+      line = [split_line[0].rpartition(':')[0], split_line[1] || ""]
       line.map! do |field|
         field.strip
       end
@@ -269,4 +276,8 @@ end
 
 def use_password?
   @use_password ||= !SYSTEM_USERS.include?(@new_resource.user.upcase)
+end
+
+def allowed_frequency_modifier
+  [:minute, :hourly, :daily, :weekly, :monthly]
 end
