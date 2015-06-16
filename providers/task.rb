@@ -19,6 +19,7 @@
 #
 
 require 'chef/mixin/shell_out'
+require 'time'
 include Chef::Mixin::ShellOut
 
 use_inline_resources
@@ -164,31 +165,28 @@ def load_current_resource
         break
       end
     end
-    if @current_resource.frequency == :minute
+    case @current_resource.frequency
+    when :minute
       # hash output looks like this "0 Hour(s), 12 Minute(s)"
-      @current_resource.frequency_modifier(task_hash[:"Repeat:Every"].split(',')[1].strip.split(' ')[0].to_i)
-    elsif @current_resource.frequency == :hourly
+      @current_resource.frequency_modifier(task_hash[:"Repeat:Every"][/(\d+) Hour\(s\), (\d+) Minute\(s\)/, 2].to_i)
+    when :hourly
       # hash output looks like this "12 Hour(s), 0 Minute(s)"
-      @current_resource.frequency_modifier(task_hash[:"Repeat:Every"].split(',')[0].strip.split(' ')[0].to_i)
-    elsif @current_resource.frequency == :daily
+      @current_resource.frequency_modifier(task_hash[:"Repeat:Every"][/(\d+) Hour\(s\), (\d+) Minute\(s\)/, 1].to_i)
+    when :daily
       # hash output looks like this "Every 3 day(s)"
-      @current_resource.frequency_modifier(task_hash[:Days].split(' ')[1].to_i)
-    elsif @current_resource.frequency == :weekly
+      @current_resource.frequency_modifier(task_hash[:Days][/Every (\d+) day\(s\)/, 1].to_i)
+    when :weekly
       # hash output looks like this "Every 2 week(s)"
-      @current_resource.frequency_modifier(task_hash[:Months].split(' ')[1].to_i)
-    elsif @current_resource.frequency == :monthly
+      @current_resource.frequency_modifier(task_hash[:Months][/Every (\d+) week\(s\)/, 1].to_i)
+    when :monthly
       # hash output looks like this "JUN, DEC"
       # not sure how to parse this easily yet so leaving it nil
       @current_resource.frequency_modifier(nil)
     end
 
-    start_time_parts = task_hash[:StartTime].split(':')
-    start_time_hour = start_time_parts[0].to_i
-    if start_time_parts[2].include? 'p.m.'
-      start_time_hour = start_time_parts[0].to_i + 12
-    end
-    start_time = start_time_hour.to_s.rjust(2, '0') + ':' + start_time_parts[1]
+    start_time = Time.parse(task_hash[:StartTime]).strftime('%H:%M')
     @current_resource.start_time(start_time)
+
     @current_resource.cwd(task_hash[:Folder])
     @current_resource.command(task_hash[:TaskToRun])
     @current_resource.user(task_hash[:RunAsUser])
