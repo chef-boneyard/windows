@@ -1,3 +1,11 @@
+
+#
+# WARNING
+#
+# THIS CODE HAS BEEN MOVED TO CORE CHEF.  DO NOT SUMBIT PULL REQUESTS AGAINST THIS
+# CODE.  IT WILL BE REMOVED IN THE FUTURE.
+#
+
 unless defined Chef::Mixin::PowerShellOut
   class Chef
     module Mixin
