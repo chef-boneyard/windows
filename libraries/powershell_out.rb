@@ -6,7 +6,7 @@
 # CODE.  IT WILL BE REMOVED IN THE FUTURE.
 #
 
-unless defined Chef::Mixin::PowerShellOut
+unless defined Chef::Mixin::PowershellOut
   class Chef
     module Mixin
       module PowershellOut
