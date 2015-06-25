@@ -63,9 +63,9 @@ class WindowsRebootHandler < Chef::Handler
       Registry.get_values('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired').select{|v| v[2] == 1 }.any?) ||
     # this key will only exit if the system is pending a reboot
     Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending') ||
-    # 1 or 2 for 'Flags' value means reboot pending
+    # 1, 2 or 3 for 'Flags' value means reboot pending
     (Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile') &&
-      [1,2].include?(Registry::get_value('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile','Flags')))
+      [1, 2, 3].include?(Registry.get_value('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile', 'Flags')))
   end
 
   def timeout
