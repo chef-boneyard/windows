@@ -33,9 +33,13 @@ use_inline_resources
 action :create do
   # We can do everything in a powershell script resource
   file = win_friendly_path(@new_resource.source)
-  isPfx = file.downcase.end_with?('pfx')
-  password = ", \"#{@new_resource.pfx_password}\"" if isPfx
-  persistKeySet = ', ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet -bor [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::MachineKeyset)' if isPfx
+  password, persistKeySet = nil, nil
+  if file.downcase.end_with?('pfx')
+    password = ", \"#{@new_resource.pfx_password}\""
+    persistKeySet = '[System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet'
+    persistKeySet = "(#{persistKeySet} -bor [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::MachineKeyset)" unless @new_resource.user_store
+    persistKeySet = ', ' + persistKeySet
+  end
 
   codeScript = <<-EOH
     $store = New-Object System.Security.Cryptography.X509Certificates.X509Store "#{@new_resource.store_name}", ([System.Security.Cryptography.X509Certificates.StoreLocation]::#{@location})
