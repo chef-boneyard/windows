@@ -20,7 +20,7 @@ describe 'minimal::default' {
     }
 
     it "task 'task_from_name' has command set to dir" {
-      $top_level_task.Task.Actions.Exec.Command | should be 'dir'
+      $top_level_task.Task.Actions.Exec.Command | Should Be 'dir'
     }
 
     it "task 'chef\nested task' was created (no leading \)" {
@@ -31,7 +31,7 @@ describe 'minimal::default' {
       $Command = $second_level_task_no_leading_slash.Task.Actions.Exec.Command
       $second_level_task_no_leading_slash.Task.Actions.Exec.Arguments |
         foreach {$Command += " $_"}
-      $Command | should be 'dir /s'
+      $Command | Should Be 'dir /s'
     }
 
     it 'task \chef\longtask was created (with leading \)' {
@@ -39,22 +39,22 @@ describe 'minimal::default' {
     }
 
     it 'task \chef\longtask was started and stopped' {
-      $second_level_task.'Last Run Time' | should Not Match 'N/A'
+      $second_level_task.'Last Run Time' | Should Not Match 'N/A'
     }
 
     it 'task \chef\longtask was started and stopped and is ready' {
-      $second_level_task.'Status' | should Be 'Ready'
+      $second_level_task.'Status' | Should Be 'Ready'
     }
 
     it 'task delete_me should not exist' {
-      $missing_task | should BeNullOrEmpty
+      $missing_task | Should BeNullOrEmpty
     }
 
     it "task 'chef\change_me' was changed via create to command 'dir /s" {
       $Command = $task_changed_by_create.Task.Actions.Exec.Command
       $task_changed_by_create.Task.Actions.Exec.Arguments |
         foreach {$Command += " $_"}
-      $Command | should be 'dir /s'
+      $Command | Should Be 'dir /s'
     }
 
     it "task 'task_for_system' was created"  {
