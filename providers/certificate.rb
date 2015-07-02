@@ -66,6 +66,8 @@ end
 
 action :delete do
   # do we have a hash or a subject?
+  # TODO: It's a bit annoying to know the thumbprint of a cert you want to remove when you already
+  # have the file.  Support reading the hash directly from the file if provided.
   if new_resource.source.match(/^[a-fA-F0-9]{40}$/)
     search = "Thumbprint -eq '#{new_resource.source}'"
   else
@@ -89,7 +91,14 @@ EOH
 end
 
 def load_current_resource
+  # Currently we don't read out the cert acl here and converge it in a very Chef-y way.
+  # We also don't read if the private key is available or populate "exists".  This means
+  # that if you converged a cert without persisting the private key once, we won't do it
+  # again, even if you have a cert with the keys now.
+  # TODO:  Make this more Chef-y and follow a more state-based patten of convergence.
   @current_resource = Chef::Resource::WindowsCertificate.new(new_resource.name)
+  # TODO: Change to allow source to be read from the cookbook.  It makes testing
+  # and loading certs from the cookbook much easier.
   @current_resource.source(new_resource.source)
   @current_resource.pfx_password(new_resource.pfx_password)
   @current_resource.private_key_acl(new_resource.private_key_acl)
@@ -133,10 +142,10 @@ EOH
 end
 
 def acl_script(hash)
-  if !new_resource.private_key_acl.nil? && new_resource.private_key_acl.length > 0
-    # this PS came from http://blogs.technet.com/b/operationsguy/archive/2010/11/29/provide-access-to-private-keys-commandline-vs-powershell.aspx
-    # and from https://msdn.microsoft.com/en-us/library/windows/desktop/bb204778(v=vs.85).aspx
-    set_acl_script = <<-EOH
+  return '' if new_resource.private_key_acl.nil? || new_resource.private_key_acl.length == 0
+  # this PS came from http://blogs.technet.com/b/operationsguy/archive/2010/11/29/provide-access-to-private-keys-commandline-vs-powershell.aspx
+  # and from https://msdn.microsoft.com/en-us/library/windows/desktop/bb204778(v=vs.85).aspx
+  set_acl_script = <<-EOH
 $hash = #{hash}
 $storeCert = Get-ChildItem "cert:\\#{@location}\\#{@new_resource.store_name}\\$hash"
 if ($storeCert -eq $null) { throw 'no key exists.' }
@@ -144,19 +153,17 @@ $keyname = $storeCert.PrivateKey.CspKeyContainerInfo.UniqueKeyContainerName
 if ($keyname -eq $null) { throw 'no private key exists.' }
 if ($storeCert.PrivateKey.CspKeyContainerInfo.MachineKeyStore)
 {
-  $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys\\$keyname"
+$fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys\\$keyname"
 }
 else
 {
-  $currentUser = New-Object System.Security.Principal.NTAccount($Env:UserDomain, $Env:UserName)
-  $userSID = $currentUser.Translate([System.Security.Principal.SecurityIdentifier]).Value
-  $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\$userSID\\$keyname"
+$currentUser = New-Object System.Security.Principal.NTAccount($Env:UserDomain, $Env:UserName)
+$userSID = $currentUser.Translate([System.Security.Principal.SecurityIdentifier]).Value
+$fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\$userSID\\$keyname"
 }
 EOH
-    new_resource.private_key_acl.each do | name |
-      set_acl_script << "$uname='#{name}'; icacls $fullpath /grant $uname`:RX\n"
-    end
-    
-    set_acl_script
+  new_resource.private_key_acl.each do | name |
+    set_acl_script << "$uname='#{name}'; icacls $fullpath /grant $uname`:RX\n"
   end
+  set_acl_script
 end
