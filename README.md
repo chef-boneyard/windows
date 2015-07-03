@@ -1,3 +1,4 @@
+[![Supermarket](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)  [![Github](https://img.shields.io/github/tag/opscode-cookbooks/windows.svg)](https://github.com/opscode-cookbooks/windows/tags)  
 Windows Cookbook
 ================
 Provides a set of Windows-specific primitives (Chef resources) meant to aid in the creation of cookbooks/recipes targeting the Windows platform.
