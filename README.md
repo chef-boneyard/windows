@@ -855,6 +855,18 @@ This will still allow a reboot to be explicitly requested via the `windows_reboo
 By default, the handler will only be registered as a report handler, meaning that it will only fire at the end of successful Chef runs. If the run fails, pending or requested reboots will be ignored. This can lead to a situation where some package was installed and notified a reboot request via the `windows_reboot` LWRP, and then the run fails for some unrelated reason, and the reboot request gets dropped because the resource that notified the reboot request will already be up-to-date at the next run and will not request a reboot again, and thus the requested reboot will never be performed. To change this behavior and register the handler as an exception handler that fires at the end of failed runs too, override `node['windows']['allow_reboot_on_failure']` and set the value to true.
 
 
+Testing with Test Kitchen
+=========================
+
+### Vagrant with VirtualBox or VMware
+
+First you'll need to obtain licensed images. The [BoxCutter Project](https://github.com/boxcutter/windows) will build Vagrant boxes for you from evaluation ISOs. If you work for Chef Inc., note that Atlas will have boxes at https://atlas.hashicorp.com/vagrant.
+
+### Vagrant EC2
+
+(content needed)
+
+
 License & Authors
 -----------------
 - Author:: Seth Chisamore (<schisamo@chef.io>)
