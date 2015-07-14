@@ -26,5 +26,3 @@ attribute :pfx_password, :kind_of => String
 attribute :private_key_acl, :kind_of => Array
 attribute :store_name, :kind_of => String, :default => 'MY', :regex => /^(?:MY|CA|ROOT)$/
 attribute :user_store, :kind_of => [TrueClass, FalseClass], :default => false
-
-attr_accessor :exists

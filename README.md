@@ -95,6 +95,7 @@ end
 ### windows_certificate
 
 Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts.
+Due to current limitations in winrm, installing certificated remotely may not work if the operation requires a user profile.  Operations on the local machine store should still work.
 
 #### Actions
 - :create: creates or updates a certificate.
