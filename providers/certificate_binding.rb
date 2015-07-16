@@ -95,12 +95,22 @@ def setBinding(hash)
   cmd << " certhash=#{hash}"
   cmd << " appid=#{@current_resource.app_id}"
   cmd << " certstorename=#{@current_resource.store_name}"
-  
+  checkHash hash 
+
   shell_out!(cmd)
 end
 
 def deleteBinding()
   shell_out!("#{@command} http delete sslcert ipport=#{@current_resource.address}:#{@current_resource.port}")
+end
+
+def checkHash(hash)
+  p = powershell_out!("Test-Path \"cert:\\LocalMachine\\#{@current_resource.store_name}\\#{hash}\"")
+  
+  if !(p.stderr.empty? &&  p.stdout =~ /True/i)
+   raise "A Cert with hash of #{hash} doesn't exist in keystore LocalMachine\\#{@current_resource.store_name}"
+  end
+  return 
 end
 
 def getHashFromSubject()
