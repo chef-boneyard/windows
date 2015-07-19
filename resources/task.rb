@@ -24,8 +24,10 @@ actions :create, :delete, :run, :end, :change, :enable, :disable
 
 
 attribute :task_name, :kind_of => String, :name_attribute => true, :regex => [ /\A[^\/\:\*\?\<\>\|]+\z/ ]
+attribute :channel_name, :kind_of => String, :default => nil
 attribute :command, :kind_of => String
 attribute :cwd, :kind_of => String
+attribute :event_modifier, :kind_of => String, :default => nil
 attribute :user, :kind_of => String, :default => 'SYSTEM'
 attribute :password, :kind_of => String, :default => nil
 attribute :run_level, :equal_to => [:highest, :limited], :default => :limited

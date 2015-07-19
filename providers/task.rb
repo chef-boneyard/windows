@@ -45,6 +45,8 @@ action :create do
     options['RL'] = 'HIGHEST' if @new_resource.run_level == :highest
     options['IT'] = '' if @new_resource.interactive_enabled
     options['D'] = @new_resource.day if @new_resource.day
+    options['EC'] = "\"#{@new_resource.channel_name}\" " unless @new_resource.channel_name.nil?
+  	options['MO'] = "\"#{@new_resource.event_modifier}\" " unless @new_resource.event_modifier.nil?
 
     run_schtasks 'CREATE', options
     new_resource.updated_by_last_action true

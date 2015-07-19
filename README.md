@@ -637,6 +637,8 @@ Server 2008 due to API usage.
 #### Attribute Parameters
 - task_name: name attribute, The task name. ("Task Name" or "/Task Name")
 - force: When used with create, will update the task.
+- channel_name: Specifies an eventlog channel name for triggering tasks.
+- event_modifier: Specifies an eventlog modifier for triggering tasks.
 - command: The command the task will run.
 - cwd: The directory the task will be run from.
 - user: The user to run the task as. (defaults to 'SYSTEM')
