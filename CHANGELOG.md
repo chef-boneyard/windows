@@ -2,9 +2,11 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
-Unreleased
+v1.38.0 (2015-07-27)
 --------------------
 - Do not set new_resource.password to nil, Fixes #219, Fixes #220
+- Add `windows_certificate` resource #212
+- Add `windows_http_acl` resource #214
 
 v1.37.0 (2015-05-14)
 --------------------
