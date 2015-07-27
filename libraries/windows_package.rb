@@ -193,8 +193,10 @@ end
 class Chef
   class Resource
     class WindowsCookbookPackage < Chef::Resource::LWRPBase
-      if Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12')
+      if Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12.4.0')
         provides :windows_package, os: "windows", override: true
+      elsif Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12')
+        provides :windows_package, os: "windows"
       end
       actions :install, :remove
 
