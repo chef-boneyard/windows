@@ -8,4 +8,5 @@ group :development do
   gem 'vagrant-wrapper', '>= 2.0'
   gem 'winrm-transport'
   gem "berkshelf"
+  gem "stove"
 end
