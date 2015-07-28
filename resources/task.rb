@@ -45,8 +45,6 @@ attribute :start_time, kind_of: String, default: nil
 attribute :day, kind_of: [String, Integer], default: nil
 attribute :months, kind_of: String, default: nil
 
-attr_accessor :exists, :status, :enabled
-
 def initialize(name, run_context = nil)
   super
   @action = :create
