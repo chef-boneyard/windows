@@ -46,3 +46,7 @@ suites:
     run_list:
       - recipe[windows::default]
       - recipe[minimal::certificate]
+  - name: package
+    run_list:
+      - recipe[windows::default]
+      - recipe[minimal::package]
