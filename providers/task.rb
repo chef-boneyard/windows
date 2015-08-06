@@ -96,6 +96,13 @@ end
 
 def compute_exec_action
   # Splits path and arguments from given command
+  if new_resource.command.include? '\"'
+    Chef::Log.warn "#{new_resource} has escaped command: `#{new_resource.command}'"
+    if new_resource.unescape_command
+      new_resource.command new_resource.command.gsub '\"', '"'
+      Chef::Log.warn "#{new_resource} command has been unescaped automaticaly, use the `unescape_command' windows_task's attribute to control this behavior"
+    end
+  end
   path, args = new_resource.command.match(/("[^"]+"|[^"\s]+)\s*(.*)/).captures
   Windows::TaskSchedulerHelper.new_ole_hash :exec_action, 'Arguments' => args, 'Path' => path, 'WorkingDirectory' => new_resource.cwd
 end
