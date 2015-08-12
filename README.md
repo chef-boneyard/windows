@@ -766,9 +766,9 @@ Extends functionality of original "windows_service" resouce/provider with abilli
 - display_name
 - description
 - bin_path
-- recovery_first_failure, can be [:run, :reboot, :restart, :run_command], default :run
-- recovery_second_failure, can be [:run, :reboot, :restart, :run_command], default :run
-- recovery_subsequent_failures, can be [:run, :reboot, :restart, :run_command], default :run
+- recovery_first_failure, can be [:none, :reboot, :restart, :run_command], default :run
+- recovery_second_failure, can be [:none, :reboot, :restart, :run_command], default :run
+- recovery_subsequent_failures, can be [:none, :reboot, :restart, :run_command], default :run
 - restart_after_min, default 0
 - reset_fail_counter_days, default 0
 - host, default "localhost"
@@ -781,7 +781,7 @@ Extends functionality of original "windows_service" resouce/provider with abilli
   bin_path "C:/test_dir/test_bin.exe"
   recovery_first_failure :restart
   recovery_second_failure :restart
-  recovery_subsequent_failures :restart
+  recovery_subsequent_failures :none
   restart_after_min 1
   reset_fail_counter_days 1
   startup_type :automatic

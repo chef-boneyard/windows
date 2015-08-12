@@ -28,7 +28,7 @@ class Chef::Provider::WindowsCookbookService < Chef::Provider::Service::Windows
                             :manual    => Win32::Service::DEMAND_START,
                             :disabled  => Win32::Service::DISABLED }
 
-  ALLOWED_FAILURE_ACTIONS = { :run => Win32::Service::ACTION_NONE,
+  ALLOWED_FAILURE_ACTIONS = { :none => Win32::Service::ACTION_NONE,
                               :reboot    => Win32::Service::ACTION_REBOOT,
                               :restart    => Win32::Service::ACTION_RESTART,
                               :run_command  => Win32::Service::ACTION_RUN_COMMAND }
@@ -127,7 +127,7 @@ class Chef::Provider::WindowsCookbookService < Chef::Provider::Service::Windows
         :display_name         => @new_resource.display_name,
         :description          => @new_resource.description,
         :binary_path_name     => @new_resource.bin_path,
-        :service_start_name   => @new_resource.run_as_user,
+        :service_start_name   => @new_resource.run_as_user.empty? ? "LOCALSYSTEM" : @new_resource.run_as_user,
         :password             => @new_resource.run_as_password,
         :failure_reset_period => @new_resource.reset_fail_counter_days*60*60*24,
         :failure_delay        => @new_resource.restart_after_min*60*1000,

@@ -33,7 +33,6 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
     @exist = nil
     @configured = nil
     @action = :create
-    @run_as_user = "LOCALSYSTEM"
     @allowed_actions.push(:create, :delete, :config)
     @provider = Chef::Provider::WindowsCookbookService
   end
@@ -67,8 +66,8 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
         :recovery_first_failure,
         arg,
         :kind_of => [ Symbol ],
-        :equal_to => [:run, :reboot, :restart, :run_command],
-        :default => :run
+        :equal_to => [:none, :reboot, :restart, :run_command],
+        :default => :none
     )
   end
 
@@ -77,8 +76,8 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
         :recovery_second_failure,
         arg,
         :kind_of => [ Symbol ],
-        :equal_to => [:run, :reboot, :restart, :run_command],
-        :default => :run
+        :equal_to => [:none, :reboot, :restart, :run_command],
+        :default => :none
     )
   end
 
@@ -87,8 +86,8 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
         :recovery_subsequent_failures,
         arg,
         :kind_of => [ Symbol ],
-        :equal_to => [:run, :reboot, :restart, :run_command],
-        :default => :run
+        :equal_to => [:none, :reboot, :restart, :run_command],
+        :default => :none
     )
   end
 
