@@ -33,6 +33,7 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
     @exist = nil
     @configured = nil
     @action = :create
+    @run_as_user = "LOCALSYSTEM"
     @allowed_actions.push(:create, :delete, :config)
     @provider = Chef::Provider::WindowsCookbookService
   end
