@@ -23,7 +23,7 @@ require 'chef/resource/windows_service'
 class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
 
   if Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12')
-    provides :windows_service, os: "windows"
+    provides :windows_service, os: "windows", override: true
   end
 
   state_attrs :enabled, :running, :exist, :configured
@@ -66,8 +66,7 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
         :recovery_first_failure,
         arg,
         :kind_of => [ Symbol ],
-        :equal_to => [:none, :reboot, :restart, :run_command],
-        :default => :none
+        :equal_to => [:none, :reboot, :restart, :run_command]
     )
   end
 
@@ -76,8 +75,7 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
         :recovery_second_failure,
         arg,
         :kind_of => [ Symbol ],
-        :equal_to => [:none, :reboot, :restart, :run_command],
-        :default => :none
+        :equal_to => [:none, :reboot, :restart, :run_command]
     )
   end
 
@@ -86,8 +84,7 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
         :recovery_subsequent_failures,
         arg,
         :kind_of => [ Symbol ],
-        :equal_to => [:none, :reboot, :restart, :run_command],
-        :default => :none
+        :equal_to => [:none, :reboot, :restart, :run_command]
     )
   end
 
@@ -95,8 +92,7 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
     set_or_return(
         :restart_after_min,
         arg,
-        :kind_of => [ Integer ],
-        :default => 0
+        :kind_of => [ Integer ]
     )
   end
 
@@ -104,8 +100,7 @@ class Chef::Resource::WindowsCookbookService < Chef::Resource::WindowsService
     set_or_return(
         :reset_fail_counter_days,
         arg,
-        :kind_of => [ Integer ],
-        :default => 0
+        :kind_of => [ Integer ]
     )
   end
 

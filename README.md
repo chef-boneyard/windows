@@ -766,11 +766,11 @@ Extends functionality of original "windows_service" resouce/provider with abilli
 - display_name
 - description
 - bin_path
-- recovery_first_failure, can be [:none, :reboot, :restart, :run_command], default :run
-- recovery_second_failure, can be [:none, :reboot, :restart, :run_command], default :run
-- recovery_subsequent_failures, can be [:none, :reboot, :restart, :run_command], default :run
-- restart_after_min, default 0
-- reset_fail_counter_days, default 0
+- recovery_first_failure, can be [:none, :reboot, :restart, :run_command]
+- recovery_second_failure, can be [:none, :reboot, :restart, :run_command]
+- recovery_subsequent_failures, can be [:none, :reboot, :restart, :run_command]
+- restart_after_min
+- reset_fail_counter_days
 - host, default "localhost"
 - rest is the same as original
 

@@ -122,32 +122,35 @@ class Chef::Provider::WindowsCookbookService < Chef::Provider::Service::Windows
   end
 
   def fill_config_hash
-    {
-        :service_name         => @new_resource.service_name,
-        :display_name         => @new_resource.display_name,
-        :description          => @new_resource.description,
-        :binary_path_name     => @new_resource.bin_path,
-        :service_start_name   => @new_resource.run_as_user.empty? ? "LOCALSYSTEM" : @new_resource.run_as_user,
-        :password             => @new_resource.run_as_password,
-        :failure_reset_period => @new_resource.reset_fail_counter_days*60*60*24,
-        :failure_delay        => @new_resource.restart_after_min*60*1000,
-        :failure_actions      => get_failure_actions,
-        :start_type           => ALLOWED_STARTUP_TYPES[@new_resource.startup_type],
-        :host                 => @new_resource.host,
-
-        :service_type         => Win32::Service::WIN32_OWN_PROCESS,
-        :error_control        => Win32::Service::ERROR_NORMAL,
-    }
+    config = {
+              :service_name         => @new_resource.service_name,
+              :display_name         => @new_resource.display_name,
+              :description          => @new_resource.description,
+              :binary_path_name     => @new_resource.bin_path,
+              :start_type           => ALLOWED_STARTUP_TYPES[@new_resource.startup_type],
+              :host                 => @new_resource.host,
+              :service_type         => Win32::Service::WIN32_OWN_PROCESS,
+              :error_control        => Win32::Service::ERROR_NORMAL
+              }
+    config[:service_start_name]   = @new_resource.run_as_user unless @new_resource.run_as_user.empty?
+    config[:password]             = @new_resource.run_as_password unless @new_resource.run_as_user.empty?
+    config[:failure_reset_period] = @new_resource.reset_fail_counter_days*60*60*24 if @new_resource.reset_fail_counter_days
+    config[:failure_delay]        = @new_resource.restart_after_min*60*1000 if @new_resource.restart_after_min
+    actions = get_failure_actions
+    config[:failure_actions]      = actions if actions
+    config
   end
 
   def get_failure_actions
-    actions = [
-        ALLOWED_FAILURE_ACTIONS[@new_resource.recovery_first_failure],
-        ALLOWED_FAILURE_ACTIONS[@new_resource.recovery_second_failure],
-        ALLOWED_FAILURE_ACTIONS[@new_resource.recovery_subsequent_failures]
-    ]
-    Chef::Log.debug("failure actions: #{actions}")
-    actions
+    if @new_resource.recovery_first_failure && @new_resource.recovery_second_failure && @new_resource.recovery_subsequent_failures
+      [
+          ALLOWED_FAILURE_ACTIONS[@new_resource.recovery_first_failure],
+          ALLOWED_FAILURE_ACTIONS[@new_resource.recovery_second_failure],
+          ALLOWED_FAILURE_ACTIONS[@new_resource.recovery_subsequent_failures]
+      ]
+    else
+      nil
+    end
   end
 
   def load_new_resource_state
