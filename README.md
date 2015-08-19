@@ -655,7 +655,7 @@ Server 2008 due to API usage.
 - `cwd` - The directory the task will be run from.
 - `user` - The user to run the task as. (defaults to 'SYSTEM')
 - `password` - The user's password. (requires user)
-- `run_level` - Run with limited or highest privileges.
+- `run_level` - Run with `:limited` or `:highest` privileges.
 - `frequency` - Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle) \*:once requires start_time
 - `frequency_modifier` - Multiple for frequency. (15 minutes, 2 days)
 - `start_day` - Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
@@ -665,9 +665,9 @@ Server 2008 due to API usage.
 
 #### Examples
 
-Run Chef every 15 minutes
+Create a `chef-client` task with TaskPath `\` running every 15 minutes
 ```ruby
-windows_task 'Chef client' do
+windows_task 'chef-client' do
   user 'Administrator'
   password '$ecR3t'
   cwd 'C:\\chef\\bin'
@@ -678,9 +678,9 @@ windows_task 'Chef client' do
 end
 ```
 
-Update Chef Client task with new password and log location
+Update `chef-client` task with new password and log location
 ```ruby
-windows_task 'Chef client' do
+windows_task 'chef-client' do
   user 'Administrator'
   password 'N3wPassW0Rd'
   cwd 'C:\\chef\\bin'
@@ -689,23 +689,23 @@ windows_task 'Chef client' do
 end
 ```
 
-Delete a taks named 'old task'
+Delete a taks named `old task`
 ```ruby
 windows_task 'old task' do
   action :delete
 end
 ```
 
-Enable a task named 'Chef client'
+Enable a task named `chef-client`
 ```ruby
-windows_task 'Chef client' do
+windows_task 'chef-client' do
   action :enable
 end
 ```
 
-Disable a task named 'Chef client'
+Disable a task named `ProgramDataUpdater` with TaskPath `\Microsoft\Windows\Application Experience\`
 ```ruby
-windows_task 'Chef client' do
+windows_task '\Microsoft\Windows\Application Experience\ProgramDataUpdater' do
   action :disable
 end
 ```
