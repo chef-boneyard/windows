@@ -314,7 +314,7 @@ For maximum flexibility the `source` attribute supports both remote and local in
 #### Attribute Parameters
 - `package_name` - name attribute. The 'DisplayName' of the application installation package.
 - `source` - The source of the windows installer.  This can either be a URI or a local path.
-- `installer_type` - They type of windows installation package. valid values are: :msi, :inno, :nsis, :wise, :installshield, :custom.  If this value is not provided, the provider will do it's best to identify the installer type through introspection of the file.
+- `installer_type` - They type of windows installation package. Valid values include :msi, :inno, :nsis, :wise, :installshield, :custom.  If this value is not provided, the provider will do it's best to identify the installer type through introspection of the file.
 - `checksum` - useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
 - `options` - Additional options to pass the underlying installation command
 - `timeout` - set a timeout for the package download (default 600 seconds)
@@ -401,7 +401,7 @@ Create and delete TCP/IPv4 printer ports.
 
 #### Attribute Parameters
 - `ipv4_address` - Name attribute. Required. IPv4 address, e.g. '10.0.24.34'
-- `port_name` - Port name. Optional. Defaults to 'IP_' + :ipv4_address
+- `port_name` - Port name. Optional. Defaults to 'IP_' + `ipv4_address`
 - `port_number` - Port number. Optional. Defaults to 9100.
 - `port_description` - Port description. Optional.
 - `snmp_enabled` - Boolean. Optional. Defaults to false.
@@ -412,6 +412,7 @@ Create and delete TCP/IPv4 printer ports.
 Create a TCP/IP printer port named 'IP_10.4.64.37' with all defaults
 ```ruby
 windows_printer_port '10.4.64.37' do
+  action :create
 end
 ```
 
@@ -585,7 +586,7 @@ Creates and modifies Windows shortcuts.
 - `target` - what the shortcut links to
 - `arguments` - arguments to pass to the target when the shortcut is executed
 - `description` - description of the shortcut
-- `cwd: Working` - directory to used when the target is executed
+- `cwd` - Working directory to use when the target is executed
 - `iconlocation` - Icon to use, in the format of ```"path, index"``` where index is which icon in that file to use (See [WshShortcut.IconLocation](https://msdn.microsoft.com/en-us/library/3s9bx7at.aspx))
 
 #### Examples
