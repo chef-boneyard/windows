@@ -22,8 +22,10 @@
 require 'chef/provider/link'
 require 'chef/resource/link'
 require 'chef/scan_access_control'
-require 'chef/win32/error'
-require 'win32/dir'
+if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+  require 'chef/win32/error'
+  require 'win32/dir'
+if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
 class Chef
   class Provider::WindowsLink < Provider::Link
