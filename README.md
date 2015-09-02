@@ -231,6 +231,16 @@ Disable Telnet client/server
 end
 ```
 
+Add SMTP Feature with powershell provider 
+
+```ruby
+windows_feature "smtp-server" do
+  action :install
+  all true
+  provider :windows_feature_powershell
+end
+```
+
 ### windows_font
 Installs a font.
 
