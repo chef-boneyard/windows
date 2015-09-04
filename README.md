@@ -648,7 +648,6 @@ Server 2008 due to API usage.
 - task_name: name attribute, The task name. ("Task Name" or "/Task Name")
 - force: When used with create, will update the task.
 - command: The command the task will run.
-- cwd: The directory the task will be run from.
 - user: The user to run the task as. (defaults to 'SYSTEM')
 - password: The user's password. (requires user)
 - run_level: Run with limited or highest privileges.
