@@ -1,5 +1,8 @@
 Windows Cookbook
 ================
+[![Build Status](https://travis-ci.org/opscode-cookbooks/windows.svg?branch=master)](http://travis-ci.org/opscode-cookbooks/windows)
+[![Cookbook Version](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)
+
 Provides a set of Windows-specific primitives (Chef resources) meant to aid in the creation of cookbooks/recipes targeting the Windows platform.
 
 
@@ -874,7 +877,7 @@ License & Authors
 - Author:: Doug Ireton (<doug.ireton@nordstrom.com>)
 
 ```text
-Copyright 2011-2013, Chef Software, Inc.
+Copyright 2011-2015, Chef Software, Inc.
 Copyright 2010, VMware, Inc.
 Copyright 2011, Business Intelligence Associates, Inc
 Copyright 2012, Nordstrom, Inc.
