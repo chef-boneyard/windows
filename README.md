@@ -1,3 +1,4 @@
+[![Supermarket](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)  [![Github](https://img.shields.io/github/tag/opscode-cookbooks/windows.svg)](https://github.com/opscode-cookbooks/windows/tags)  
 Windows Cookbook
 ================
 [![Build Status](https://travis-ci.org/opscode-cookbooks/windows.svg?branch=master)](http://travis-ci.org/opscode-cookbooks/windows)
