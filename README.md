@@ -1,6 +1,6 @@
 Windows Cookbook
 ================
-[![Build Status](https://travis-ci.org/opscode-cookbooks/windows.svg?branch=master)](http://travis-ci.org/opscode-cookbooks/windows)
+[![Build Status](https://travis-ci.org/chef-cookbooks/windows.svg?branch=master)](http://travis-ci.org/chef-cookbooks/windows)
 [![Cookbook Version](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)
 
 Provides a set of Windows-specific primitives (Chef resources) meant to aid in the creation of cookbooks/recipes targeting the Windows platform.
