@@ -10,5 +10,5 @@ LineLength:
   Enabled: false
 MethodLength:
   Enabled: false
-SpecialGlobalVars:
+SingleSpaceBeforeFirstArg:
   Enabled: false
