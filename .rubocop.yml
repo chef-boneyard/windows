@@ -10,5 +10,27 @@ LineLength:
   Enabled: false
 MethodLength:
   Enabled: false
+Documentation:
+  Enabled: false
+PerceivedComplexity:
+  Enabled: false
+CyclomaticComplexity:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/MultilineTernaryOperator:
+  Enabled: false
 SingleSpaceBeforeFirstArg:
+  Enabled: false
+Lint/RescueException:
+  Enabled: false
+ClassLength:
+  Enabled: false
+Style/MethodName: # todo: fix these
+  Enabled: false
+Style/VariableName: # todo: fix these
+  Enabled: false
+Metrics/ModuleLength:
   Enabled: false
