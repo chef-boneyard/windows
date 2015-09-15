@@ -2,7 +2,6 @@ class Chef
   class Provider
     class WindowsFeature
       module Base
-
         def action_install
           unless installed?
             install_feature(@new_resource.feature_name)
@@ -33,27 +32,26 @@ class Chef
           end
         end
 
-        def install_feature(name)
-          raise Chef::Exceptions::UnsupportedAction, "#{self.to_s} does not support :install"
+        def install_feature(_name)
+          fail Chef::Exceptions::UnsupportedAction, "#{self} does not support :install"
         end
 
-        def remove_feature(name)
-          raise Chef::Exceptions::UnsupportedAction, "#{self.to_s} does not support :remove"
+        def remove_feature(_name)
+          fail Chef::Exceptions::UnsupportedAction, "#{self} does not support :remove"
         end
 
-        def delete_feature(name)
-          raise Chef::Exceptions::UnsupportedAction, "#{self.to_s} does not support :delete"
+        def delete_feature(_name)
+          fail Chef::Exceptions::UnsupportedAction, "#{self} does not support :delete"
         end
 
         def installed?
-          raise Chef::Exceptions::Override, "You must override installed? in #{self.to_s}"
+          fail Chef::Exceptions::Override, "You must override installed? in #{self}"
         end
 
         def available?
-          raise Chef::Exceptions::Override, "You must override available? in #{self.to_s}"
+          fail Chef::Exceptions::Override, "You must override available? in #{self}"
         end
       end
     end
   end
 end
-      

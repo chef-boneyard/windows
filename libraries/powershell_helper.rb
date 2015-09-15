@@ -35,25 +35,19 @@ module Powershell
       elsif ::File.exist?("#{ENV['WINDIR']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe")
         "#{ENV['WINDIR']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe"
       else
-        "powershell.exe"
+        'powershell.exe'
       end
     end
 
     def powershell_version
-      begin
-        cmd = shell_out("#{interpreter} -InputFormat none -Command \"& echo $PSVersionTable.psversion.major\"")
-        if cmd.stdout.empty? # PowerShell 1.0 doesn't have a $PSVersionTable
-          1
-        else
-          if cmd.stdout =~ /^(\d+)/
-            $1.to_i
-          else
-            nil
-          end
-        end
-      rescue Errno::ENOENT
-        nil
+      cmd = shell_out("#{interpreter} -InputFormat none -Command \"& echo $PSVersionTable.psversion.major\"")
+      if cmd.stdout.empty? # PowerShell 1.0 doesn't have a $PSVersionTable
+        1
+      else
+        Regexp.last_match(1).to_i if cmd.stdout =~ /^(\d+)/
       end
+    rescue Errno::ENOENT
+      nil
     end
   end
 end
