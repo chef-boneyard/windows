@@ -649,7 +649,6 @@ Server 2008 due to API usage.
 - task_name: name attribute, The task name. ("Task Name" or "/Task Name")
 - force: When used with create, will update the task.
 - command: The command the task will run.
-- cwd: The directory the task will be run from.
 - user: The user to run the task as. (defaults to 'SYSTEM')
 - password: The user's password. (requires user)
 - run_level: Run with limited or highest privileges.
@@ -667,7 +666,6 @@ Run Chef every 15 minutes
 windows_task 'Chef client' do
   user 'Administrator'
   password '$ecR3t'
-  cwd 'C:\\chef\\bin'
   command 'chef-client -L C:\\tmp\\'
   run_level :highest
   frequency :minute
@@ -680,7 +678,6 @@ Update Chef Client task with new password and log location
 windows_task 'Chef client' do
   user 'Administrator'
   password 'N3wPassW0Rd'
-  cwd 'C:\\chef\\bin'
   command 'chef-client -L C:\\chef\\logs\\'
   action :change
 end
