@@ -30,4 +30,5 @@ end
 
 group :development do
   gem 'winrm-transport'
+  gem 'stove'
 end
