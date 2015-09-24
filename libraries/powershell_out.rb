@@ -22,8 +22,8 @@ unless defined? Chef::Mixin::PowershellOut
         end
 
         def powershell_out(*command_args)
-          Chef::Log.warn "The powershell_out library in the windows cookbook is deprecated."
-          Chef::Log.warn "Please upgrade to Chef 12.4.0 or later where it is built-in to core chef."
+          Chef::Log.warn 'The powershell_out library in the windows cookbook is deprecated.'
+          Chef::Log.warn 'Please upgrade to Chef 12.4.0 or later where it is built-in to core chef.'
           script = command_args.first
           options = command_args.last.is_a?(Hash) ? command_args.last : nil
 
@@ -37,6 +37,7 @@ unless defined? Chef::Mixin::PowershellOut
         end
 
         private
+
         def run_command(script, options)
           if options && options[:architecture]
             architecture = options[:architecture]
@@ -69,17 +70,17 @@ unless defined? Chef::Mixin::PowershellOut
         def build_command(script)
           flags = [
             # Hides the copyright banner at startup.
-            "-NoLogo",
+            '-NoLogo',
             # Does not present an interactive prompt to the user.
-            "-NonInteractive",
+            '-NonInteractive',
             # Does not load the Windows PowerShell profile.
-            "-NoProfile",
+            '-NoProfile',
             # always set the ExecutionPolicy flag
             # see http://technet.microsoft.com/en-us/library/ee176961.aspx
-            "-ExecutionPolicy RemoteSigned",
+            '-ExecutionPolicy RemoteSigned',
             # Powershell will hang if STDIN is redirected
             # http://connect.microsoft.com/PowerShell/feedback/details/572313/powershell-exe-can-hang-if-stdin-is-redirected
-            "-InputFormat None"
+            '-InputFormat None'
           ]
 
           command = "powershell.exe #{flags.join(' ')} -Command \"#{script}\""
