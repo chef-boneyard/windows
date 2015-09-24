@@ -8,13 +8,11 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 
 Requirements
 -------------
-Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
+Chef 11+ is required to run this cookbook
 
 
 ### Platforms
-* Windows XP
 * Windows Vista
-* Windows Server 2003 R2
 * Windows 7
 * Windows Server 2008 (R1, R2)
 * Windows 8, 8.1
