@@ -654,7 +654,7 @@ Server 2008 due to API usage.
 - password: The user's password. (requires user)
 - run_level: Run with limited or highest privileges.
 - frequency: Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle) \*:once requires start_time
-- frequency_modifier: Multiple for frequency. (15 minutes, 2 days)
+- frequency_modifier: Multiple for frequency. Valid values are numerical values dependant on the specified frequency (1-1439 for minutes, 1-23 for hours, 1-365 for days, 1-52 for weeks or 1-12 for months) or 'LASTDAY', 'FIRST', 'SECOND', 'THIRD', 'FOURTH' or 'LAST' if targeting a specific week and day.
 - start_day: Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
 - start_time: Specifies the start time to run the task. Optional string (HH:mm) 24 Hour time
 - interactive_enabled: (Allow task to run interactively or non-interactively.  Requires user and password.)
