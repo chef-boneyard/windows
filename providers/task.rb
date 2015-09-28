@@ -30,6 +30,7 @@ action :create do
     validate_user_and_password
     validate_interactive_setting
     validate_create_day
+    validate_frequency_modifier
 
     schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
     frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
@@ -234,6 +235,31 @@ def validate_create_day
       if not ["mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"].include?(day.strip.downcase) then
         raise "day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma."
       end
+    end
+  end
+end
+
+def validate_frequency_modifier
+  case @new_resource.frequency
+  when :minute
+    unless (1...1439).include?(@new_resource.frequency_modifier)
+      raise "Minute frequency modifier is invalid. Please specifiy a value between 1-1439"
+    end
+  when :hourly
+    unless (1...23).include?(@new_resource.frequency_modifier)
+      raise "Hourly frequency modifier is invalid. Please specifiy a value between 1-23"
+    end
+  when :daily
+    unless (1...365).include?(@new_resource.frequency_modifier)
+      raise "Daily frequency modifier is invalid. Please specifiy a value between 1-365"
+    end
+  when :weekly
+    unless (1...52).include?(@new_resource.frequency_modifier)
+      raise "Weekly frequency modifier is invalid. Please specifiy a value between 1-52"
+    end
+  when :monthly
+    unless (1...12).include?(@new_resource.frequency_modifier) || ["lastday", "first", "second", "third", "fourth", "last"].include?(@new_resource.frequency_modifier.to_s.strip.downcase)
+      raise "Monthly frequency modifier is invalid. Please specifiy a value between 1-12, LASTDAY, FIRST, SECOND, THIRD, FOURTH or LAST."
     end
   end
 end
