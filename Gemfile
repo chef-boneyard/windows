@@ -1,9 +1,13 @@
 source 'https://rubygems.org'
 
+group :rake do
+  gem 'rake'
+  gem 'tomlrb'
+end
+
 group :lint do
   gem 'foodcritic', '~> 5.0'
   gem 'rubocop', '~> 0.34'
-  gem 'rake'
 end
 
 group :unit do
