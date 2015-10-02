@@ -35,13 +35,13 @@ Resource/Provider
 -----------------
 ### windows_auto_run
 #### Actions
-- :create: Create an item to be run at login
-- :remove: Remove an item that was previously setup to run at login
+- `:create` - Create an item to be run at login
+- `:remove` - Remove an item that was previously setup to run at login
 
 #### Attribute Parameters
-- :name: Name attribute. The name of the value to be stored in the registry
-- :program: The program to be run at login
-- :args: The arguments for the program
+- `name` - Name attribute. The name of the value to be stored in the registry
+- `program` - The program to be run at login
+- `args` - The arguments for the program
 
 #### Examples
 Run BGInfo at login
@@ -61,16 +61,16 @@ This resource is now deprecated and will be removed in a future version of this 
 Execute a batch script using the cmd.exe interpreter (much like the script resources for bash, csh, powershell, perl, python and ruby). A temporary file is created and executed like other script resources, rather than run inline. By their nature, Script resources are not idempotent, as they are completely up to the user's imagination. Use the `not_if` or `only_if` meta parameters to guard the resource for idempotence.
 
 #### Actions
-- :run: run the batch file
+- `:run` - run the batch file
 
 #### Attribute Parameters
-- command: name attribute. Name of the command to execute.
-- code: quoted string of code to execute.
-- creates: a file this command creates - if the file exists, the command will not be run.
-- cwd: current working directory to run the command from.
-- flags: command line flags to pass to the interpreter when invoking.
-- user: A user name or user ID that we should change to before running this command.
-- group: A group name or group ID that we should change to before running this command.
+- `command` - name attribute. Name of the command to execute.
+- `code` - quoted string of code to execute.
+- `creates` - a file this command creates - if the file exists, the command will not be run.
+- `cwd` - current working directory to run the command from.
+- `flags` - command line flags to pass to the interpreter when invoking.
+- `user` - A user name or user ID that we should change to before running this command.
+- `group` - A group name or group ID that we should change to before running this command.
 
 #### Examples
 ```ruby
@@ -99,16 +99,16 @@ Installs a certificate into the Windows certificate store from a file, and grant
 Due to current limitations in winrm, installing certificated remotely may not work if the operation requires a user profile.  Operations on the local machine store should still work.
 
 #### Actions
-- :create: creates or updates a certificate.
-- :delete: deletes a certificate.
-- :acl_add: adds read-only entries to a certificate's private key ACL.
+- `:create` - creates or updates a certificate.
+- `:delete` - deletes a certificate.
+- `:acl_add` - adds read-only entries to a certificate's private key ACL.
 
 #### Attribute Parameters
-- source: name attribute. The source file (for create and acl_add), thumprint (for delete and acl_add) or subject (for delete).
-- pfx_password: the password to access the source if it is a pfx file.
-- private_key_acl: array of 'domain\account' entries to be granted read-only access to the certificate's private key. This is not idempotent.
-- store_name: the certificate store to maniplate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
-- user_store: if false (default) then use the local machine store; if true then use the current user's store.
+- `source` - name attribute. The source file (for create and acl_add), thumprint (for delete and acl_add) or subject (for delete).
+- `pfx_password` - the password to access the source if it is a pfx file.
+- `private_key_acl` - array of 'domain\account' entries to be granted read-only access to the certificate's private key. This is not idempotent.
+- `store_name` - the certificate store to maniplate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
+- `user_store` - if false (default) then use the local machine store; if true then use the current user's store.
 
 #### Examples
 ```ruby
@@ -138,16 +138,16 @@ end
 Binds a certificate to an HTTP port in order to enable TLS communication.
 
 #### Actions
-- :create: creates or updates a binding.
-- :delete: deletes a binding.
+- `:create` - creates or updates a binding.
+- `:delete` - deletes a binding.
 
 #### Attribute Parameters
-- cert_name: name attribute. The thumprint(hash) or subject that identifies the certicate to be bound.
-- name_kind: indicates the type of cert_name. One of :subject (default) or :hash.
-- address: the address to bind against. Default is 0.0.0.0 (all IP addresses).
-- port: the port to bind against. Default is 443.
-- app_id: the GUID that defines the application that owns the binding. Default is the values used by IIS.
-- store_name: the store to locate the certificate in. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
+- `cert_name` - name attribute. The thumprint(hash) or subject that identifies the certicate to be bound.
+- `name_kind` - indicates the type of cert_name. One of :subject (default) or :hash.
+- `address` - the address to bind against. Default is 0.0.0.0 (all IP addresses).
+- `port` - the port to bind against. Default is 443.
+- `app_id` - the GUID that defines the application that owns the binding. Default is the values used by IIS.
+- `store_name` - the store to locate the certificate in. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
 
 #### Examples
 ```ruby
@@ -181,13 +181,13 @@ servermanagercmd -query
 ```
 
 #### Actions
-- :install: install a Windows role/feature
-- :remove: remove a Windows role/feature
+- `:install` - install a Windows role/feature
+- `:remove` - remove a Windows role/feature
 
 #### Attribute Parameters
-- feature_name: name of the feature/role to install.  The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
-- all: Boolean. Optional. Default: false. DISM provider only. Forces all dependencies to be installed.
-- source: String. Optional. DISM provider only. Uses local repository for feature install.
+- `feature_name` - name of the feature/role to install.  The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
+- `all` - Boolean. Optional. Default: false. DISM provider only. Forces all dependencies to be installed.
+- `source` - String. Optional. DISM provider only. Uses local repository for feature install.
 
 #### Providers
 - **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
@@ -248,10 +248,10 @@ Installs a font.
 Font files should be included in the cookbooks
 
 #### Actions
-- :install: install a font to the system fonts directory.
+- `:install` - install a font to the system fonts directory.
 
 #### Attribute Parameters
-- file: The name of the font file name to install. It should exist in the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
+- `file` - The name of the font file name to install. It should exist in the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
 
 #### Examples
 
@@ -263,12 +263,12 @@ windows_font 'Code New Roman.otf'
 Sets the Access Control List for an http URL to grant non-admin accounts permission to open HTTP endpoints.
 
 #### Actions
-- :create: creates or updates the ACL for a URL.
-- :delete: deletes the ACL from a URL.
+- `:create` - creates or updates the ACL for a URL.
+- `:delete` - deletes the ACL from a URL.
 
 #### Attribute Parameters
-- url: the name of the url to be created/deleted.
-- user: the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create. Only one user or group can be granted permission so this replaces any previously defined entry.
+- `url` - the name of the url to be created/deleted.
+- `user` - the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create. Only one user or group can be granted permission so this replaces any previously defined entry.
 
 #### Examples
 
@@ -306,18 +306,18 @@ __PLEASE NOTE__ - For proper idempotence the resource's `package_name` should be
 For maximum flexibility the `source` attribute supports both remote and local installation packages.
 
 #### Actions
-- :install: install a package
-- :remove: remove a package. The remove action is completely hit or miss as many application uninstallers do not support a full silent/quiet mode.
+- `:install` - install a package
+- `:remove` - remove a package. The remove action is completely hit or miss as many application uninstallers do not support a full silent/quiet mode.
 
 #### Attribute Parameters
-- package_name: name attribute. The 'DisplayName' of the application installation package.
-- source: The source of the windows installer.  This can either be a URI or a local path.
-- installer_type: They type of windows installation package. valid values are: :msi, :inno, :nsis, :wise, :installshield, :custom.  If this value is not provided, the provider will do it's best to identify the installer type through introspection of the file.
-- checksum: useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
-- options: Additional options to pass the underlying installation command
-- timeout: set a timeout for the package download (default 600 seconds)
-- version: The version number of this package, as indicated by the 'DisplayVersion' value in one of the 'Uninstall' registry keys.  If the given version number does equal the 'DisplayVersion' in the registry, the package will be installed.
-- success_codes: set an array of possible successful installation
+- `package_name` - name attribute. The 'DisplayName' of the application installation package.
+- `source` - The source of the windows installer.  This can either be a URI or a local path.
+- `installer_type` - They type of windows installation package. Valid values include :msi, :inno, :nsis, :wise, :installshield, :custom.  If this value is not provided, the provider will do it's best to identify the installer type through introspection of the file.
+- `checksum` - useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
+- `options` - Additional options to pass the underlying installation command
+- `timeout` - set a timeout for the package download (default 600 seconds)
+- `version` - The version number of this package, as indicated by the 'DisplayVersion' value in one of the 'Uninstall' registry keys.  If the given version number does equal the 'DisplayVersion' in the registry, the package will be installed.
+- `success_codes` - set an array of possible successful installation
   return codes. Previously this was hardcoded, but certain MSIs may
   have a different return code, e.g. 3010 for reboot required. Must be
   an array, and defaults to `[0, 42, 127]`.
@@ -394,22 +394,23 @@ end
 Create and delete TCP/IPv4 printer ports.
 
 #### Actions
-- :create: Create a TCIP/IPv4 printer port. This is the default action.
-- :delete: Delete a TCIP/IPv4 printer port
+- `:create` - Create a TCIP/IPv4 printer port. This is the default action.
+- `:delete` - Delete a TCIP/IPv4 printer port
 
 #### Attribute Parameters
-- :ipv4_address: Name attribute. Required. IPv4 address, e.g. '10.0.24.34'
-- :port_name: Port name. Optional. Defaults to 'IP_' + :ipv4_address
-- :port_number: Port number. Optional. Defaults to 9100.
-- :port_description: Port description. Optional.
-- :snmp_enabled: Boolean. Optional. Defaults to false.
-- :port_protocol: Port protocol, 1 (RAW), or 2 (LPR). Optional. Defaults to 1.
+- `ipv4_address` - Name attribute. Required. IPv4 address, e.g. '10.0.24.34'
+- `port_name` - Port name. Optional. Defaults to 'IP_' + `ipv4_address`
+- `port_number` - Port number. Optional. Defaults to 9100.
+- `port_description` - Port description. Optional.
+- `snmp_enabled` - Boolean. Optional. Defaults to false.
+- `port_protocol` - Port protocol, 1 (RAW), or 2 (LPR). Optional. Defaults to 1.
 
 #### Examples
 
 Create a TCP/IP printer port named 'IP_10.4.64.37' with all defaults
 ```ruby
 windows_printer_port '10.4.64.37' do
+  action :create
 end
 ```
 
@@ -445,18 +446,18 @@ driver. You must already have the driver installed on the system.
 The Windows Printer LWRP will automatically create a TCP/IP printer port for you using the `ipv4_address` property. If you want more granular control over the printer port, just create it using the `windows_printer_port` LWRP before creating the printer.
 
 #### Actions
-- :create: Create a new printer
-- :delete: Delete a new printer
+- `:create` - Create a new printer
+- `:delete` - Delete a new printer
 
 #### Attribute Parameters
-- :device_id: Name attribute. Required. Printer queue name, e.g. 'HP LJ 5200 in fifth floor copy room'
-- :comment: Optional string describing the printer queue.
-- :default: Boolean. Optional. Defaults to false. Note that Windows sets the first printer defined to the default printer regardless of this setting.
-- :driver_name: String. Required. Exact name of printer driver. Note that the printer driver must already be installed on the node.
-- :location: Printer location, e.g. 'Fifth floor copy room', or 'US/NYC/Floor42/Room4207'
-- :shared: Boolean. Defaults to false.
-- :share_name: Printer share name.
-- :ipv4_address: Printer IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP addresss to set it. Required.
+- `device_id` - Name attribute. Required. Printer queue name, e.g. 'HP LJ 5200 in fifth floor copy room'
+- `comment` - Optional string describing the printer queue.
+- `default` - Boolean. Optional. Defaults to false. Note that Windows sets the first printer defined to the default printer regardless of this setting.
+- `driver_name` - String. Required. Exact name of printer driver. Note that the printer driver must already be installed on the node.
+- `location` - Printer location, e.g. 'Fifth floor copy room', or 'US/NYC/Floor42/Room4207'
+- `shared` - Boolean. Defaults to false.
+- `share_name` - Printer share name.
+- `ipv4_address` - Printer IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP addresss to set it. Required.
 
 An error of "Set-WmiInstance : Generic failure" is most likely due to the printer driver name not matching or not being installed.
 
@@ -483,12 +484,12 @@ This resource is now deprecated and will be removed in a future version of this 
 Sets required data in the node's run_state to notify `WindowsRebootHandler` a reboot is requested.  If Chef run completes successfully a reboot will occur if the `WindowsRebootHandler` is properly registered as a report handler.  As an action of `:request` will cause a node to reboot every Chef run, this resource is usually notified by other resources...ie restart node after a package is installed (see example below).
 
 #### Actions
-- :request: requests a reboot at completion of successful Cher run.  requires `WindowsRebootHandler` to be registered as a report handler.
-- :cancel: remove reboot request from node.run_state.  this will cancel *ALL* previously requested reboots as this is a binary state.
+- `:request` - requests a reboot at completion of successful Cher run.  requires `WindowsRebootHandler` to be registered as a report handler.
+- `:cancel` - remove reboot request from node.run_state.  this will cancel *ALL* previously requested reboots as this is a binary state.
 
 #### Attribute Parameters
-- :timeout: Name attribute. timeout delay in seconds to wait before proceeding with the requested reboot. default is 60 seconds
-- :reason: comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
+- `timeout` - Name attribute. timeout delay in seconds to wait before proceeding with the requested reboot. default is 60 seconds
+- `reason` - comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
 
 #### Examples
 If the package installs, schedule a reboot at end of chef run
@@ -519,24 +520,24 @@ Creates and modifies Windows registry keys.
 *Change in v1.3.0: The Win32 classes use `::Win32` to avoid namespace conflict with `Chef::Win32` (introduced in Chef 0.10.10).*
 
 #### Actions
-- :create: create a new registry key with the provided values.
-- :modify: modify an existing registry key with the provided values.
-- :force_modify: modify an existing registry key with the provided values.  ensures the value is actually set by checking multiple times. useful for fighting race conditions where two processes are trying to set the same registry key.  This will be updated in the near future to use 'RegNotifyChangeKeyValue' which is exposed by the WinAPI and allows a process to register for notification on a registry key change.
-- :remove: removes a value from an existing registry key
+- `:create` - create a new registry key with the provided values.
+- `:modify` - modify an existing registry key with the provided values.
+- `:force_modify` - modify an existing registry key with the provided values.  ensures the value is actually set by checking multiple times. useful for fighting race conditions where two processes are trying to set the same registry key.  This will be updated in the near future to use 'RegNotifyChangeKeyValue' which is exposed by the WinAPI and allows a process to register for notification on a registry key change.
+- `:remove` - removes a value from an existing registry key
 
 #### Attribute Parameters
-- key_name: name attribute. The registry key to create/modify.
-- values: hash of the values to set under the registry key. The individual hash items will become respective 'Value name' => 'Value data' items in the registry key.
-- type: Type of key to create, defaults to REG_SZ. Must be a symbol, see the overview below for valid values.
+- `key_name` - name attribute. The registry key to create/modify.
+- `values` - hash of the values to set under the registry key. The individual hash items will become respective 'Value name' => 'Value data' items in the registry key.
+- `type` - Type of key to create, defaults to REG_SZ. Must be a symbol, see the overview below for valid values.
 
 #### Registry key types
-- :binary: REG_BINARY
-- :string: REG_SZ
-- :multi_string: REG_MULTI_SZ
-- :expand_string: REG_EXPAND_SZ
-- :dword: REG_DWORD
-- :dword_big_endian: REG_DWORD_BIG_ENDIAN
-- :qword: REG_QWORD
+- `:binary` - REG_BINARY
+- `:string` - REG_SZ
+- `:multi_string` - REG_MULTI_SZ
+- `:expand_string` - REG_EXPAND_SZ
+- `:dword` - REG_DWORD
+- `:dword_big_endian` - REG_DWORD_BIG_ENDIAN
+- `:qword` - REG_QWORD
 
 #### Examples
 
@@ -576,15 +577,15 @@ end
 Creates and modifies Windows shortcuts.
 
 #### Actions
-- :create: create or modify a windows shortcut
+- `:create` - create or modify a windows shortcut
 
 #### Attribute Parameters
-- name: name attribute. The shortcut to create/modify.
-- target: what the shortcut links to
-- arguments: arguments to pass to the target when the shortcut is executed
-- description:
-- cwd: Working directory to used when the target is executed
-- iconlocation: Icon to use, in the format of ```"path, index"``` where index is which icon in that file to use (See [WshShortcut.IconLocation](https://msdn.microsoft.com/en-us/library/3s9bx7at.aspx))
+- `name` - name attribute. The shortcut to create/modify.
+- `target` - what the shortcut links to
+- `arguments` - arguments to pass to the target when the shortcut is executed
+- `description` - description of the shortcut
+- `cwd` - Working directory to use when the target is executed
+- `iconlocation` - Icon to use, in the format of ```"path, index"``` where index is which icon in that file to use (See [WshShortcut.IconLocation](https://msdn.microsoft.com/en-us/library/3s9bx7at.aspx))
 
 #### Examples
 
@@ -594,9 +595,9 @@ require 'win32ole'
 all_users_desktop = WIN32OLE.new("WScript.Shell").SpecialFolders("AllUsersDesktop")
 
 windows_shortcut "#{all_users_desktop}/Notepad.lnk" do
-    target "C:\\WINDOWS\\notepad.exe"
-    description "Launch Notepad"
-    iconlocation "C:\\windows\\notepad.exe, 0"
+  target "C:\\WINDOWS\\notepad.exe"
+  description "Launch Notepad"
+  iconlocation "C:\\windows\\notepad.exe, 0"
 end
 ```
 
@@ -610,11 +611,11 @@ BgInfo = Registry.get_value('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
 
 ### windows_path
 #### Actions
-- :add: Add an item to the system path
-- :remove: Remove an item from the system path
+- `:add` - Add an item to the system path
+- `:remove` - Remove an item from the system path
 
 #### Attribute Parameters
-- :path: Name attribute. The name of the value to add to the system path
+- `path` - Name attribute. The name of the value to add to the system path
 
 #### Examples
 
@@ -637,34 +638,34 @@ Creates, deletes or runs a Windows scheduled task. Requires Windows
 Server 2008 due to API usage.
 
 #### Actions
-- :create: creates a task (or updates existing if user or command has changed)
-- :delete: deletes a task
-- :run: runs a task
-- :end: ends a task
-- :change: changes the un/pw or command of a task
-- :enable: enable a task
-- :disable: disable a task
+- `:create` - creates a task (or updates existing if user or command has changed)
+- `:delete` - deletes a task
+- `:run` - runs a task
+- `:end` - ends a task
+- `:change` - changes the un/pw or command of a task
+- `:enable` - enable a task
+- `:disable` - disable a task
 
 #### Attribute Parameters
-- task_name: name attribute, The task name. ("Task Name" or "/Task Name")
-- force: When used with create, will update the task.
-- command: The command the task will run.
-- cwd: The directory the task will be run from.
-- user: The user to run the task as. (defaults to 'SYSTEM')
-- password: The user's password. (requires user)
-- run_level: Run with limited or highest privileges.
-- frequency: Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle) \*:once requires start_time
-- frequency_modifier: Multiple for frequency. (15 minutes, 2 days)
-- start_day: Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
-- start_time: Specifies the start time to run the task. Optional string (HH:mm) 24 Hour time
-- interactive_enabled: (Allow task to run interactively or non-interactively.  Requires user and password.)
-- day: For monthly or weekly tasks, the day(s) on which the task runs.  (MON - SUN, *, 1 - 31)
+- `task_name` - name attribute, The task name. ("Task Name" or "/Task Name")
+- `force` - When used with create, will update the task.
+- `command` - The command the task will run.
+- `cwd` - The directory the task will be run from.
+- `user` - The user to run the task as. (defaults to 'SYSTEM')
+- `password` - The user's password. (requires user)
+- `run_level` - Run with `:limited` or `:highest` privileges.
+- `frequency` - Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle) \*:once requires start_time
+- `frequency_modifier` - Multiple for frequency. (15 minutes, 2 days)
+- `start_day` - Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
+- `start_time` - Specifies the start time to run the task. Optional string (HH:mm)
+- `interactive_enabled` - (Allow task to run interactively or non-interactively.  Requires user and password.)
+- `day` - For monthly or weekly tasks, the day(s) on which the task runs.  (MON - SUN, *, 1 - 31)
 
 #### Examples
 
-Run Chef every 15 minutes
+Create a `chef-client` task with TaskPath `\` running every 15 minutes
 ```ruby
-windows_task 'Chef client' do
+windows_task 'chef-client' do
   user 'Administrator'
   password '$ecR3t'
   cwd 'C:\\chef\\bin'
@@ -675,9 +676,9 @@ windows_task 'Chef client' do
 end
 ```
 
-Update Chef Client task with new password and log location
+Update `chef-client` task with new password and log location
 ```ruby
-windows_task 'Chef client' do
+windows_task 'chef-client' do
   user 'Administrator'
   password 'N3wPassW0Rd'
   cwd 'C:\\chef\\bin'
@@ -686,23 +687,23 @@ windows_task 'Chef client' do
 end
 ```
 
-Delete a taks named 'old task'
+Delete a taks named `old task`
 ```ruby
 windows_task 'old task' do
   action :delete
 end
 ```
 
-Enable a task named 'Chef client'
+Enable a task named `chef-client`
 ```ruby
-windows_task 'Chef client' do
+windows_task 'chef-client' do
   action :enable
 end
 ```
 
-Disable a task named 'Chef client'
+Disable a task named `ProgramDataUpdater` with TaskPath `\Microsoft\Windows\Application Experience\`
 ```ruby
-windows_task 'Chef client' do
+windows_task '\Microsoft\Windows\Application Experience\ProgramDataUpdater' do
   action :disable
 end
 ```
@@ -711,14 +712,14 @@ end
 Most version of Windows do not ship with native cli utility for managing compressed files.  This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
 
 #### Actions
-- :unzip: unzip a compressed file
-- :zip: zip a directory (recursively)
+- `:unzip` - unzip a compressed file
+- `:zip` - zip a directory (recursively)
 
 #### Attribute Parameters
-- path: name attribute. The path where files will be (un)zipped to.
-- source: source of the zip file (either a URI or local path) for :unzip, or directory to be zipped for :zip.
-- overwrite: force an overwrite of the files if they already exist.
-- checksum: for :unzip, useful if source is remote, if the local file matches the SHA-256 checksum, Chef will not download it.
+- `path` - name attribute. The path where files will be (un)zipped to.
+- `source` - source of the zip file (either a URI or local path) for :unzip, or directory to be zipped for :zip.
+- `overwrite` - force an overwrite of the files if they already exist.
+- `checksum` - for :unzip, useful if source is remote, if the local file matches the SHA-256 checksum, Chef will not download it.
 
 #### Examples
 
@@ -762,8 +763,8 @@ hash_of_installed_packages = installed_packages
 ```
 
 #### is_package_installed?
-- `package_name`: The name of the package you want to query to see if it is installed
-- `returns`: true if the package is installed, false if it the package is not installed
+- `package_name` - The name of the package you want to query to see if it is installed
+- `returns` - true if the package is installed, false if it the package is not installed
 
 Download a file if a package isn't installed
 ```ruby
@@ -792,9 +793,9 @@ Exception/Report Handlers
 Required reboots are a necessary evil of configuring and managing Windows nodes.  This report handler (ie fires at the end of Chef runs) acts on requested (Chef initiated) or pending (as determined by the OS per configuration action we performed) reboots.  The `allow_pending_reboots` initialization argument should be set to false if you do not want the handler to automatically reboot a node if it has been determined a reboot is pending.  Reboots can still be requested explicitly via the `windows_reboot` LWRP.
 
 ### Initialization Arguments
-- `allow_pending_reboots`: indicator on whether the handler should act on a the Window's 'pending reboot' state. default is true
-- `timeout`: timeout delay in seconds to wait before proceeding with the reboot. default is 60 seconds
-- `reason`:  comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
+- `allow_pending_reboots` - indicator on whether the handler should act on a the Window's 'pending reboot' state. default is true
+- `timeout` - timeout delay in seconds to wait before proceeding with the reboot. default is 60 seconds
+- `reason` -  comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
 
 
 Windows ChefSpec Matchers
