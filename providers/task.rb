@@ -176,7 +176,8 @@ def run_schtasks(task_action, options={})
 end
 
 def task_need_update?
-  @current_resource.command != @new_resource.command ||
+  # gsub needed as schtasks converts single quotes to double quotes on creation
+  @current_resource.command != @new_resource.command.gsub(/'/,"\"") ||
     @current_resource.user != @new_resource.user
 end
 
