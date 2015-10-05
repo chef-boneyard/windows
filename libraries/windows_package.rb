@@ -130,6 +130,8 @@ class Chef
         case installer_type
         when :msi
           "msiexec%2$s \"%1$s\"%3$s"
+        when :msu
+          "musa%2$s \"%1$s\"%3$s"
         else
           "start \"\" /wait \"%1$s\"%2$s%3$s & exit %%%%ERRORLEVEL%%%%"
         end
@@ -142,6 +144,9 @@ class Chef
         when :msi
           # this is no-ui
           "/qn /i"
+        when :msu
+          # this is no-ui and no-restart
+          "/quiet /norestart"
         when :installshield
           "/s /sms"
         when :nsis
@@ -163,6 +168,8 @@ class Chef
             basename = ::File.basename(cached_file(@new_resource.source, @new_resource.checksum))
             if basename.split(".").last.downcase == "msi" # Microsoft MSI
               :msi
+            elsif basename.split(".").last.downcase == "msu" # Microsoft MSU
+              :msu
             else
               # search the binary file for installer type
               contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), "rb") {|io| io.read } # TODO limit data read in
