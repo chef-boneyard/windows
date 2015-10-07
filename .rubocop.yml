@@ -1,6 +1,7 @@
 AllCops:
   Exclude:
     - vendor/**/*
+    - Guardfile
 
 AlignParameters:
   Enabled: false
