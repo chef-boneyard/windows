@@ -174,7 +174,7 @@ module Windows
     end
 
     # Server Type checks
-    %w{ core full datacenter }.each do |m|
+    %w( core full datacenter ).each do |m|
       define_method("server_#{m}?") do
         if @sku
           !(SKU[@sku][:name] =~ /#{m}/i).nil?
@@ -194,7 +194,7 @@ module Windows
 
     # query WMI Win32_OperatingSystem for required OS info
     def get_os_info
-      cols = %w{ Version ProductType OSProductSuite OperatingSystemSKU ServicePackMajorVersion ServicePackMinorVersion }
+      cols = %w( Version ProductType OSProductSuite OperatingSystemSKU ServicePackMajorVersion ServicePackMinorVersion )
       os_info = execute_wmi_query('select * from Win32_OperatingSystem').each.next
       cols.map do |c|
         begin
