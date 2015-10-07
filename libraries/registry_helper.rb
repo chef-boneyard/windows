@@ -327,7 +327,7 @@ module Windows
           profile_path = get_user_hive_location(sid)
           if profile_path != nil
             ntuser_dat = "#{profile_path}\\NTUSER.DAT"
-            if ::File.exists?(ntuser_dat)
+            if ::File.exist?(ntuser_dat)
               priv = Chef::WindowsPrivileged.new
               if priv.reg_load_key(sid, ntuser_dat)
                 Chef::Log.debug("RegLoadKey(#{sid}, #{user_hive}, #{ntuser_dat})")

@@ -47,7 +47,7 @@ end
 
 # acl_add is a modify-if-exists operation : not idempotent
 action :acl_add do
-  if ::File.exists?(new_resource.source)
+  if ::File.exist?(new_resource.source)
     hash = '$cert.GetCertHashString()'
     code_script = guard_script = cert_script(false)
   else

@@ -33,7 +33,7 @@ end
 # <true>:: If the font is installed
 # <false>:: If the font is not instaled
 def font_exists?
-  ::File.exists?(@current_resource.file)
+  ::File.exist?(@current_resource.file)
 end
 
 def get_cookbook_font
