@@ -196,7 +196,7 @@ def load_task_hash(task_name)
         field.strip
       end
     end.each do |field|
-      if field.kind_of? Array and field[0].respond_to? :to_sym
+      if field.kind_of?(Array) && field[0].respond_to?(:to_sym)
         task[field[0].gsub(/\s+/, "").to_sym] = field[1]
       end
     end

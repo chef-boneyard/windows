@@ -33,7 +33,7 @@ def remove_feature(name)
 end
 
 def delete_feature(name)
-  if win_version.major_version >= 6 and win_version.minor_version >=2
+  if win_version.major_version >= 6 && win_version.minor_version >=2
     shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /Remove /norestart", { returns: [0, 42, 127, 3010] })
   else
     raise Chef::Exceptions::UnsupportedAction, "#{self.to_s} :delete action not support on #{win_version.sku}"
