@@ -90,7 +90,7 @@ end
 action :delete do
   if @current_resource.exists
 	  # always need to force deletion
-    run_schtasks 'DELETE', {'F' => ''}
+    run_schtasks 'DELETE', { 'F' => '' }
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
   else
@@ -118,7 +118,7 @@ action :enable do
     if @current_resource.enabled
       Chef::Log.debug "#{@new_resource} already enabled - nothing to do"
     else
-      run_schtasks 'CHANGE', {'ENABLE' => ''}
+      run_schtasks 'CHANGE', { 'ENABLE' => '' }
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task enabled"
     end
@@ -131,7 +131,7 @@ end
 action :disable do
   if @current_resource.exists
     if @current_resource.enabled
-      run_schtasks 'CHANGE', {'DISABLE' => ''}
+      run_schtasks 'CHANGE', { 'DISABLE' => '' }
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task disabled"
     else
@@ -148,7 +148,7 @@ def load_current_resource
   @current_resource.task_name(@new_resource.task_name)
 
 
-  pathed_task_name = @new_resource.task_name[0,1] == '\\' ? @new_resource.task_name : @new_resource.task_name.prepend('\\')
+  pathed_task_name = @new_resource.task_name[0, 1] == '\\' ? @new_resource.task_name : @new_resource.task_name.prepend('\\')
   task_hash = load_task_hash(@current_resource.task_name)
   if task_hash[:TaskName] == pathed_task_name
     @current_resource.exists = true
@@ -165,19 +165,19 @@ def load_current_resource
 end
 
 private
-def run_schtasks(task_action, options={})
+def run_schtasks(task_action, options = {})
   cmd = "schtasks /#{task_action} /TN \"#{@new_resource.task_name}\" "
   options.keys.each do |option|
     cmd += "/#{option} #{options[option]} "
   end
   Chef::Log.debug("running: ")
   Chef::Log.debug("    #{cmd}")
-  shell_out!(cmd, {returns: [0]})
+  shell_out!(cmd, { returns: [0] })
 end
 
 def task_need_update?
   # gsub needed as schtasks converts single quotes to double quotes on creation
-  @current_resource.command != @new_resource.command.gsub(/'/,"\"") ||
+  @current_resource.command != @new_resource.command.gsub(/'/, "\"") ||
     @current_resource.user != @new_resource.user
 end
 
@@ -197,7 +197,7 @@ def load_task_hash(task_name)
       end
     end.each do |field|
       if field.kind_of? Array and field[0].respond_to? :to_sym
-        task[field[0].gsub(/\s+/,"").to_sym] = field[1]
+        task[field[0].gsub(/\s+/, "").to_sym] = field[1]
       end
     end
   end

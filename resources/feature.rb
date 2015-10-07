@@ -24,9 +24,9 @@ actions :install, :remove, :delete
 
 attribute :feature_name, kind_of: String, name_attribute: true
 attribute :source, kind_of: String
-attribute :all, kind_of: [ TrueClass, FalseClass ], default: false
+attribute :all, kind_of: [TrueClass, FalseClass], default: false
 
-def initialize(name, run_context=nil)
+def initialize(name, run_context = nil)
   super
   @action = :install
   @provider = lookup_provider_constant(locate_default_provider)

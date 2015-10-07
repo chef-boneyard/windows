@@ -101,12 +101,12 @@ class Chef
         end
       end
 
-      def install_package(name,version)
+      def install_package(name, version)
         Chef::Log.debug("Processing #{@new_resource} as a #{installer_type} installer.")
         install_args = [cached_file(@new_resource.source, @new_resource.checksum), expand_options(unattended_installation_flags), expand_options(@new_resource.options)]
         Chef::Log.info("Starting installation...this could take awhile.")
         Chef::Log.debug "Install command: #{ sprintf(install_command_template, *install_args) }"
-        shell_out!(sprintf(install_command_template, *install_args), {timeout: @new_resource.timeout, returns: @new_resource.success_codes})
+        shell_out!(sprintf(install_command_template, *install_args), { timeout: @new_resource.timeout, returns: @new_resource.success_codes })
       end
 
       def remove_package(name, version)
@@ -116,12 +116,12 @@ class Chef
           if uninstall_string =~ /msiexec/i
             "#{uninstall_string} /qn"
           else
-            uninstall_string.gsub!('"','')
+            uninstall_string.gsub!('"', '')
             "start \"\" /wait /d\"#{::File.dirname(uninstall_string)}\" #{::File.basename(uninstall_string)}#{expand_options(@new_resource.options)} /S & exit %%%%ERRORLEVEL%%%%"
           end
         end
         Chef::Log.info("Removing #{@new_resource} with uninstall command '#{uninstall_command}'")
-        shell_out!(uninstall_command, {returns: @new_resource.success_codes})
+        shell_out!(uninstall_command, { returns: @new_resource.success_codes })
       end
 
       private
@@ -231,7 +231,7 @@ else
     # the internal version (but the internal Chef::Resource::WindowsPackage is still the internal version
     # and a wrapper cookbook can override this e.g. for users that want to use the windows cookbook but
     # want the internal windows_package resource)
-    Chef.set_resource_priority_array(:windows_package, [ Chef::Resource::WindowsCookbookPackage ], platform: "windows")
+    Chef.set_resource_priority_array(:windows_package, [Chef::Resource::WindowsCookbookPackage], platform: "windows")
   end
 end
 

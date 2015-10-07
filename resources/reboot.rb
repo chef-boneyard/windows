@@ -23,7 +23,7 @@ actions :request, :cancel
 attribute :timeout, kind_of: Integer, name_attribute: true
 attribute :reason, kind_of: String, default: 'Chef client run'
 
-def initialize(name,run_context=nil)
+def initialize(name, run_context = nil)
   super
   @action = :request
   Chef::Log.warn <<-EOF

@@ -23,13 +23,13 @@ actions :run
 attribute :command, kind_of: String, name_attribute: true
 attribute :cwd, kind_of: String, default: nil
 attribute :code, kind_of: String, default: nil
-attribute :user, kind_of: [ String, Integer ], default: nil
-attribute :group, kind_of: [ String, Integer ], default: nil
-attribute :creates, kind_of: [ String ], default: nil
-attribute :flags, kind_of: [ String ], default: nil
+attribute :user, kind_of: [String, Integer], default: nil
+attribute :group, kind_of: [String, Integer], default: nil
+attribute :creates, kind_of: [String], default: nil
+attribute :flags, kind_of: [String], default: nil
 attribute :returns, kind_of: [Integer, Array], default: 0
 
-def initialize(name, run_context=nil)
+def initialize(name, run_context = nil)
   super
   @action = :run
   @command = name

@@ -76,10 +76,10 @@ class Chef
       end
     end
 
-    def adjust_privilege(token, priv, attr=0)
+    def adjust_privilege(token, priv, attr = 0)
       load_deps
 
-      luid = [0,0].pack('Ll')
+      luid = [0, 0].pack('Ll')
       if LookupPrivilegeValue(nil, priv, luid)
         new_state = [1, luid.unpack('Ll'), attr].flatten.pack('LLlL')
         AdjustTokenPrivileges(token, 0, new_state, new_state.size, 0, 0)

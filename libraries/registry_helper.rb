@@ -83,19 +83,19 @@ module Windows
       end
     end
 
-    def set_value(mode,path,values,type=nil)
+    def set_value(mode, path, values, type = nil)
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key_name = reg_path.join("\\")
 
       Chef::Log.debug("Creating #{path}")
 
-      if !key_exists?(path,true)
+      if !key_exists?(path, true)
         create_key(path)
       end
 
       hive.send(mode, key_name, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
         changed_something = false
-        values.each do |k,val|
+        values.each do |k, val|
           key = k.to_s #wtf. avoid "can't modify frozen string" in win32/registry.rb
           cur_val = nil
           begin
@@ -132,7 +132,7 @@ module Windows
       return false
     end
 
-    def get_value(path,value)
+    def get_value(path, value)
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key = reg_path.join("\\")
 
@@ -164,7 +164,7 @@ module Windows
       end
     end
 
-    def delete_value(path,values)
+    def delete_value(path, values)
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key = reg_path.join("\\")
       Chef::Log.debug("Deleting values in #{path}")
@@ -190,10 +190,10 @@ module Windows
       hive.create(key)
     end
 
-    def value_exists?(path,value)
-      if key_exists?(path,true)
+    def value_exists?(path, value)
+      if key_exists?(path, true)
 
-        hive, reg_path, hive_name, root_key , hive_loaded = get_reg_path_info(path)
+        hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
         key = reg_path.join("\\")
 
         Chef::Log.debug("Attempting to open #{key}");
@@ -218,7 +218,7 @@ module Windows
     # TODO: Does not load user registry...
     def key_exists?(path, load_hive = false)
       if load_hive
-        hive, reg_path, hive_name, root_key , hive_loaded = get_reg_path_info(path)
+        hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
         key = reg_path.join("\\")
       else
         hive = get_hive(path)
@@ -243,7 +243,7 @@ module Windows
       reg_key = "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList\\#{sid}"
       Chef::Log.debug("Looking for profile at #{reg_key}")
       if key_exists?(reg_key)
-        return get_value(reg_key,'ProfileImagePath')
+        return get_value(reg_key, 'ProfileImagePath')
       else
         return nil
       end
@@ -296,7 +296,7 @@ module Windows
       hive_loaded = false
 
       if is_user_hive?(hive) && !key_exists?("#{hive_name}\\#{root_key}")
-        reg_path, hive_loaded = load_user_hive(hive,reg_path,root_key)
+        reg_path, hive_loaded = load_user_hive(hive, reg_path, root_key)
         root_key = reg_path[0]
         Chef::Log.debug("Resolved user (#{path}) to (#{reg_path.join('/')})")
       end
@@ -304,7 +304,7 @@ module Windows
       return hive, reg_path, hive_name, root_key, hive_loaded
     end
 
-    def load_user_hive(hive,reg_path,user_hive)
+    def load_user_hive(hive, reg_path, user_hive)
       Chef::Log.debug("Reg Path #{reg_path}")
       # See if the hive is loaded. Logged in users will have a key that is named their SID
       # if the user has specified the a path by SID and the user is logged in, this function
@@ -333,7 +333,7 @@ module Windows
             ntuser_dat = "#{profile_path}\\NTUSER.DAT"
             if ::File.exists?(ntuser_dat)
               priv = Chef::WindowsPrivileged.new
-              if priv.reg_load_key(sid,ntuser_dat)
+              if priv.reg_load_key(sid, ntuser_dat)
                 Chef::Log.debug("RegLoadKey(#{sid}, #{user_hive}, #{ntuser_dat})")
                 reg_path[0] = sid
               else
@@ -349,7 +349,7 @@ module Windows
     end
 
     private
-    def ensure_hive_unloaded(hive_loaded=false)
+    def ensure_hive_unloaded(hive_loaded = false)
       if(hive_loaded)
         Chef::Log.debug("Hive was loaded, we really should unload it")
         unload_hive(path)

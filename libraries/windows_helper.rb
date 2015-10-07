@@ -75,7 +75,7 @@ module Windows
 
     # if a file is local it returns a windows friendly path version
     # if a file is remote it caches it locally
-    def cached_file(source, checksum=nil, windows_path=true)
+    def cached_file(source, checksum = nil, windows_path = true)
       @installer_file_path ||= begin
 
         if source =~ /^(file|ftp|http|https):\/\//
@@ -140,9 +140,9 @@ module Windows
               version = k["DisplayVersion"] rescue "NO VERSION"
               uninstall_string = k["UninstallString"] rescue nil
               if display_name
-                packages[display_name] = {name: display_name,
+                packages[display_name] = { name: display_name,
                                           version: version,
-                                          uninstall_string: uninstall_string}
+                                          uninstall_string: uninstall_string }
               end
             rescue ::Win32::Registry::Error
             end

@@ -79,14 +79,14 @@ end
 private
 def exists?(pagefile)
   @exists ||= begin
-    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", {returns: [0]})
+    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", { returns: [0] })
     cmd.stderr.empty? && (cmd.stdout =~ /SettingID=#{get_setting_id(pagefile)}/i)
   end
 end
 
 def max_and_min_set?(pagefile, min, max)
   @max_and_min_set ||= begin
-    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", {returns: [0]})
+    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", { returns: [0] })
     cmd.stderr.empty? && (cmd.stdout =~ /InitialSize=#{min}/i) && (cmd.stdout =~ /MaximumSize=#{max}/i)
   end
 end
@@ -124,13 +124,13 @@ end
 
 def set_custom_size(pagefile, min, max)
   Chef::Log.debug("Setting #{pagefile} to InitialSize=#{min} & MaximumSize=#{max}")
-  cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=#{min},MaximumSize=#{max}", {returns: [0]})
+  cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=#{min},MaximumSize=#{max}", { returns: [0] })
   check_for_errors(cmd.stderr)
 end
 
 def set_system_managed(pagefile)
   Chef::Log.debug("Setting #{pagefile} to System Managed")
-  cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0", {returns: [0]})
+  cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0", { returns: [0] })
   check_for_errors(cmd.stderr)
 end
 

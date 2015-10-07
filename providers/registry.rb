@@ -63,7 +63,7 @@ action :force_modify do
 end
 
 action :remove do
-  delete_value(@new_resource.key_name,@new_resource.values)
+  delete_value(@new_resource.key_name, @new_resource.values)
   new_resource.updated_by_last_action(true)
 end
 
@@ -71,5 +71,5 @@ private
 def registry_update(mode)
 
   Chef::Log.debug("Registry Mode (#{mode})")
-  updated = set_value(mode,@new_resource.key_name,@new_resource.values,@new_resource.type)
+  updated = set_value(mode, @new_resource.key_name, @new_resource.values, @new_resource.type)
 end
