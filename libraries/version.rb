@@ -148,7 +148,7 @@ module Windows
       'Windows Server 2008' => { major: 6, minor: 0, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
       'Windows Vista' => { major: 6, minor: 0, callable: lambda{ @product_type == VER_NT_WORKSTATION } },
       'Windows Server 2003 R2' => { major: 5, minor: 2, callable: lambda{ Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) != 0 } },
-      'Windows Home Server' => { major: 5, minor: 2, callable: lambda{  (@product_suite & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER } },
+      'Windows Home Server' => { major: 5, minor: 2, callable: lambda{ (@product_suite & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER } },
       'Windows Server 2003' => { major: 5, minor: 2, callable: lambda{ Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) == 0 } },
       'Windows XP' => { major: 5, minor: 1 },
       'Windows 2000' => { major: 5, minor: 0 }

@@ -30,7 +30,7 @@ end
 
 action :create do
   raise 'No user property set' if @new_resource.user.nil? || @new_resource.user.empty?
-  
+
   if @current_resource.exists
     needsChange = (@current_resource.user.casecmp(@new_resource.user) != 0)
 
@@ -50,7 +50,7 @@ action :create do
 end
 
 action :delete do
-  if @current_resource.exists 
+  if @current_resource.exists
     converge_by("Deleting #{@current_resource.url}") do
       deleteAcl
     end
@@ -79,7 +79,7 @@ def getCurrentAcl()
   else
     @current_resource.user(m[0][0])
     @current_resource.exists = true
-  end    
+  end
 end
 
 def setAcl()

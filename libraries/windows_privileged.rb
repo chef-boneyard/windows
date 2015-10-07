@@ -20,10 +20,10 @@
 # limitations under the License.
 #
 
-#helpers for Windows API calls that require privilege adjustments
+# helpers for Windows API calls that require privilege adjustments
 class Chef
   class WindowsPrivileged
-    #File -> Load Hive... in regedit.exe
+    # File -> Load Hive... in regedit.exe
     def reg_load_key(name, file)
       load_deps
 
@@ -39,7 +39,7 @@ class Chef
       end
     end
 
-    #File -> Unload Hive... in regedit.exe
+    # File -> Unload Hive... in regedit.exe
     def reg_unload_key(name)
       load_deps
 
@@ -69,7 +69,7 @@ class Chef
 
       begin
         yield
-      ensure #disable privs
+      ensure # disable privs
         privileges.each do |name|
           adjust_privilege(token, name, 0)
         end

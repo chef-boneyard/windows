@@ -31,7 +31,7 @@ action :create do
     validate_interactive_setting
     validate_create_day
 
-    schedule  = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
+    schedule = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
     frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
     options = Hash.new
     options['F'] = '' if @new_resource.force || task_need_update?

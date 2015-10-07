@@ -146,7 +146,7 @@ class Chef
         when :nsis
           '/S /NCRC'
         when :inno
-          #"/sp- /silent /norestart"
+          # "/sp- /silent /norestart"
           '/verysilent /norestart'
         when :wise
           '/s'

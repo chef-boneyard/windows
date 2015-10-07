@@ -29,7 +29,7 @@ action :add do
     notifies :run, "ruby_block[fix ruby ENV['PATH']]", :immediately
   end
 
-  # The windows Env provider does not correctly expand variables in 
+  # The windows Env provider does not correctly expand variables in
   # the PATH environment variable. Ruby expects these to be expanded.
   # This is a temporary fix for that.
   #

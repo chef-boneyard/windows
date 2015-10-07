@@ -94,12 +94,12 @@ module Windows
       hive.send(mode, key_name, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
         changed_something = false
         values.each do |k, val|
-          key = k.to_s #wtf. avoid "can't modify frozen string" in win32/registry.rb
+          key = k.to_s # wtf. avoid "can't modify frozen string" in win32/registry.rb
           cur_val = nil
           begin
             cur_val = reg[key]
           rescue
-            #subkey does not exist (ok)
+            # subkey does not exist (ok)
           end
           if cur_val != val
             Chef::Log.debug("setting #{key}=#{val}")
@@ -315,7 +315,7 @@ module Windows
         # does not exist as the key location.
         load_reg = false
         if key_exists?("HKU\\#{sid}")
-          reg_path[0] = sid #use the active profile (user is logged on)
+          reg_path[0] = sid # use the active profile (user is logged on)
           Chef::Log.debug("HKEY_USERS Mapped: #{user_hive} -> #{sid}")
         else
           Chef::Log.debug('User is not logged in')

@@ -35,7 +35,7 @@ end
 private
 
 def locate_default_provider
-  if  node['windows'].attribute?(:feature_provider)
+  if node['windows'].attribute?(:feature_provider)
     "windows_feature_#{node['windows']['feature_provider']}"
   elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
     :windows_feature_dism

@@ -21,7 +21,7 @@ include Windows::Helper
 
 def load_current_resource
   require 'win32ole'
-  fonts_dir  = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
+  fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
   @current_resource = Chef::Resource::WindowsFont.new(@new_resource.name)
   @current_resource.file(win_friendly_path(::File.join(fonts_dir, @new_resource.file)))
   @current_resource
@@ -50,12 +50,12 @@ end
 
 def install_font
   require 'win32ole'
-  fonts_dir  = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
+  fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
   folder = WIN32OLE.new('Shell.Application').Namespace(fonts_dir)
   folder.CopyHere(win_friendly_path(::File.join(ENV['TEMP'], @new_resource.file)))
   Chef::Log.debug("Installing font: #{@new_resource.file}")
 end
-    
+
 def action_install
   unless font_exists?
     get_cookbook_font
