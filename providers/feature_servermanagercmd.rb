@@ -26,11 +26,11 @@ include Windows::Helper
 
 def check_reboot(result, feature)
   if result.exitstatus == 3010 # successful, but needs reboot
-  	node.run_state[:reboot_requested] = true
-  	Chef::Log.warn("Require reboot to install #{feature}")
+    node.run_state[:reboot_requested] = true
+    Chef::Log.warn("Require reboot to install #{feature}")
   elsif result.exitstatus == 1001 # failure, but needs reboot before we can do anything else
-  	node.run_state[:reboot_requested] = true
-  	Chef::Log.warn("Failed installing #{feature} and need to reboot")
+    node.run_state[:reboot_requested] = true
+    Chef::Log.warn("Failed installing #{feature} and need to reboot")
   end
   result.error! # throw for any other bad results. The above results will also get raised, and should cause a reboot via the handler.
 end

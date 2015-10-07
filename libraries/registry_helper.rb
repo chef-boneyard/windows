@@ -151,12 +151,12 @@ module Windows
       hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
         values = []
         begin
-        reg.each_value do |name, type, data|
-          values << [name, type, data]
-        end
-        rescue
-        ensure
-          ensure_hive_unloaded(hive_loaded)
+          reg.each_value do |name, type, data|
+            values << [name, type, data]
+          end
+          rescue
+          ensure
+            ensure_hive_unloaded(hive_loaded)
         end
         values
       end

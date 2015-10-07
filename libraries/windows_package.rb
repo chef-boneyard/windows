@@ -105,7 +105,7 @@ class Chef
         Chef::Log.debug("Processing #{@new_resource} as a #{installer_type} installer.")
         install_args = [cached_file(@new_resource.source, @new_resource.checksum), expand_options(unattended_installation_flags), expand_options(@new_resource.options)]
         Chef::Log.info('Starting installation...this could take awhile.')
-        Chef::Log.debug "Install command: #{ sprintf(install_command_template, *install_args) }"
+        Chef::Log.debug "Install command: #{sprintf(install_command_template, *install_args)}"
         shell_out!(sprintf(install_command_template, *install_args), { timeout: @new_resource.timeout, returns: @new_resource.success_codes })
       end
 
@@ -232,5 +232,3 @@ else
     Chef.set_resource_priority_array(:windows_package, [Chef::Resource::WindowsCookbookPackage], platform: 'windows')
   end
 end
-
-

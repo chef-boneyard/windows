@@ -109,7 +109,7 @@ def checkHash(hash)
   p = powershell_out!("Test-Path \"cert:\\LocalMachine\\#{@current_resource.store_name}\\#{hash}\"")
 
   if !(p.stderr.empty? && p.stdout =~ /True/i)
-   raise "A Cert with hash of #{hash} doesn't exist in keystore LocalMachine\\#{@current_resource.store_name}"
+    raise "A Cert with hash of #{hash} doesn't exist in keystore LocalMachine\\#{@current_resource.store_name}"
   end
   return
 end

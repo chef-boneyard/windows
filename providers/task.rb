@@ -89,7 +89,7 @@ end
 
 action :delete do
   if @current_resource.exists
-	  # always need to force deletion
+    # always need to force deletion
     run_schtasks 'DELETE', { 'F' => '' }
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
