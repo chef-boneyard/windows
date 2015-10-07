@@ -49,7 +49,6 @@ module Windows
     end
 
     def get_hive(path)
-
       Chef::Log.debug("Getting hive for #{path}")
       reg_path = path.split("\\")
       hive_name = reg_path.shift
@@ -65,7 +64,6 @@ module Windows
       unless hive
         Chef::Application.fatal!("Unsupported registry hive '#{hive_name}'")
       end
-
 
       Chef::Log.debug("Registry hive resolved to #{hkey}")
       return hive
@@ -180,7 +178,6 @@ module Windows
           end
         }
       end
-
     end
 
     def create_key(path)
@@ -247,7 +244,6 @@ module Windows
       else
         return nil
       end
-
     end
 
     def resolve_user_to_sid(username)
@@ -345,7 +341,6 @@ module Windows
       end
 
       return reg_path, load_reg
-
     end
 
     private

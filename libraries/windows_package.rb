@@ -135,7 +135,6 @@ class Chef
         end
       end
 
-
       # http://unattended.sourceforge.net/installers.php
       def unattended_installation_flags
         case installer_type
@@ -188,7 +187,6 @@ class Chef
     end
   end
 end
-
 
 class Chef
   class Resource

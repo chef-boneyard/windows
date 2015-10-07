@@ -75,7 +75,6 @@ action :delete do
   new_resource.updated_by_last_action(updated)
 end
 
-
 private
 def exists?(pagefile)
   @exists ||= begin

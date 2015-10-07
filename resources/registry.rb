@@ -35,5 +35,4 @@ Please use the registry_key resource in Chef Client 11 and 12.
 windows_registry will be removed in the next major version release
 of the Windows cookbook.
 EOF
-
 end

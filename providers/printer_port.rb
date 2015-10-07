@@ -56,7 +56,6 @@ def load_current_resource
   end
 end
 
-
 private
 
 PORTS_REG_KEY = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\Standard TCP/IP Port\Ports\\'.freeze unless defined?(PORTS_REG_KEY)
@@ -68,9 +67,7 @@ def port_exists?(name)
   Registry.key_exists?(port_reg_key)
 end
 
-
 def create_printer_port
-
   port_name = new_resource.port_name || "IP_#{ new_resource.ipv4_address }"
 
   # create the printer port using PowerShell
@@ -91,7 +88,6 @@ def create_printer_port
 end
 
 def delete_printer_port
-
   port_name = new_resource.port_name || "IP_#{ new_resource.ipv4_address }"
 
   powershell_script "Deleting printer port: #{ new_resource.port_name }" do

@@ -54,7 +54,6 @@ def load_current_resource
   end
 end
 
-
 private
 
 PRINTERS_REG_KEY = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Print\Printers\\'.freeze unless defined?(PRINTERS_REG_KEY)
@@ -66,7 +65,6 @@ def printer_exists?(name)
 end
 
 def create_printer
-
   # Create the printer port first
   windows_printer_port new_resource.ipv4_address do
   end

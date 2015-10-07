@@ -75,8 +75,6 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_package, :remove, resource_name)
   end
 
-
-
   #
   # Assert that a +windows_feature+ resource exists in the Chef run with the
   # action +:install+. Given a Chef Recipe that installs "NetFX3" as a
@@ -154,8 +152,6 @@ if defined?(ChefSpec)
   def delete_windows_feature(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_feature, :delete, resource_name)
   end
-
-
 
   #
   # Assert that a +windows_task+ resource exists in the Chef run with the
@@ -258,8 +254,6 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_task, :change, resource_name)
   end
 
-
-
   #
   # Assert that a +windows_path+ resource exists in the Chef run with the
   # action +:add+. Given a Chef Recipe that adds "C:\7-Zip" to the Windows
@@ -310,8 +304,6 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_path, :remove, resource_name)
   end
 
-
-
   #
   # Assert that a +windows_batch+ resource exists in the Chef run with the
   # action +:run+. Given a Chef Recipe that runs a batch script
@@ -340,8 +332,6 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_batch, :run, resource_name)
   end
 
-
-
   #
   # Assert that a +windows_pagefile+ resource exists in the Chef run with the
   # action +:set+. Given a Chef Recipe that sets a pagefile
@@ -368,8 +358,6 @@ if defined?(ChefSpec)
   def set_windows_pagefile(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_pagefile, :set, resource_name)
   end
-
-
 
   #
   # Assert that a +windows_zipfile+ resource exists in the Chef run with the
@@ -423,7 +411,6 @@ if defined?(ChefSpec)
   def zip_windows_zipfile_to(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_zipfile, :zip, resource_name)
   end
-
 
   # All the other less commonly used LWRPs
   def create_windows_shortcut(resource_name)

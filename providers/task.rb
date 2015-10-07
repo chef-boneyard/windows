@@ -142,11 +142,9 @@ action :disable do
   end
 end
 
-
 def load_current_resource
   @current_resource = Chef::Resource::WindowsTask.new(@new_resource.name)
   @current_resource.task_name(@new_resource.task_name)
-
 
   pathed_task_name = @new_resource.task_name[0, 1] == '\\' ? @new_resource.task_name : @new_resource.task_name.prepend('\\')
   task_hash = load_task_hash(@current_resource.task_name)
@@ -213,7 +211,6 @@ def validate_user_and_password
       Chef::Log.fatal "#{@new_resource.task_name}: Can't specify a non-system user without a password!"
     end
   end
-
 end
 
 def validate_interactive_setting
