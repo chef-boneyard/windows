@@ -106,7 +106,7 @@ class Chef
         install_args = [cached_file(@new_resource.source, @new_resource.checksum), expand_options(unattended_installation_flags), expand_options(@new_resource.options)]
         Chef::Log.info("Starting installation...this could take awhile.")
         Chef::Log.debug "Install command: #{ sprintf(install_command_template, *install_args) }"
-        shell_out!(sprintf(install_command_template, *install_args), {:timeout => @new_resource.timeout, :returns => @new_resource.success_codes})
+        shell_out!(sprintf(install_command_template, *install_args), {timeout: @new_resource.timeout, returns: @new_resource.success_codes})
       end
 
       def remove_package(name, version)
@@ -121,7 +121,7 @@ class Chef
           end
         end
         Chef::Log.info("Removing #{@new_resource} with uninstall command '#{uninstall_command}'")
-        shell_out!(uninstall_command, {:returns => @new_resource.success_codes})
+        shell_out!(uninstall_command, {returns: @new_resource.success_codes})
       end
 
       private
@@ -202,14 +202,14 @@ class Chef
 
       default_action :install
 
-      attribute :package_name, :kind_of => String, :name_attribute => true
-      attribute :source, :kind_of => String, :required => true
-      attribute :version, :kind_of => String
-      attribute :options, :kind_of => String
-      attribute :installer_type, :kind_of => Symbol, :default => nil, :equal_to => [:msi, :inno, :nsis, :wise, :installshield, :custom]
-      attribute :checksum, :kind_of => String
-      attribute :timeout, :kind_of => Integer, :default => 600
-      attribute :success_codes, :kind_of => Array, :default => [0, 42, 127]
+      attribute :package_name, kind_of: String, name_attribute: true
+      attribute :source, kind_of: String, required: true
+      attribute :version, kind_of: String
+      attribute :options, kind_of: String
+      attribute :installer_type, kind_of: Symbol, default: nil, equal_to: [:msi, :inno, :nsis, :wise, :installshield, :custom]
+      attribute :checksum, kind_of: String
+      attribute :timeout, kind_of: Integer, default: 600
+      attribute :success_codes, kind_of: Array, default: [0, 42, 127]
 
       self.resource_name = 'windows_package'
       def initialize(*args)

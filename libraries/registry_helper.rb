@@ -111,13 +111,13 @@ module Windows
             end
 
             reg_type = {
-              :binary => ::Win32::Registry::REG_BINARY,
-              :string => ::Win32::Registry::REG_SZ,
-              :multi_string => ::Win32::Registry::REG_MULTI_SZ,
-              :expand_string => ::Win32::Registry::REG_EXPAND_SZ,
-              :dword => ::Win32::Registry::REG_DWORD,
-              :dword_big_endian => ::Win32::Registry::REG_DWORD_BIG_ENDIAN,
-              :qword => ::Win32::Registry::REG_QWORD
+              binary: ::Win32::Registry::REG_BINARY,
+              string: ::Win32::Registry::REG_SZ,
+              multi_string: ::Win32::Registry::REG_MULTI_SZ,
+              expand_string: ::Win32::Registry::REG_EXPAND_SZ,
+              dword: ::Win32::Registry::REG_DWORD,
+              dword_big_endian: ::Win32::Registry::REG_DWORD_BIG_ENDIAN,
+              qword: ::Win32::Registry::REG_QWORD
             }[type]
 
             reg.write(key, reg_type, val)

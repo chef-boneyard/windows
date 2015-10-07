@@ -140,9 +140,9 @@ module Windows
               version = k["DisplayVersion"] rescue "NO VERSION"
               uninstall_string = k["UninstallString"] rescue nil
               if display_name
-                packages[display_name] = {:name => display_name,
-                                          :version => version,
-                                          :uninstall_string => uninstall_string}
+                packages[display_name] = {name: display_name,
+                                          version: version,
+                                          uninstall_string: uninstall_string}
               end
             rescue ::Win32::Registry::Error
             end

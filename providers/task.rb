@@ -172,7 +172,7 @@ def run_schtasks(task_action, options={})
   end
   Chef::Log.debug("running: ")
   Chef::Log.debug("    #{cmd}")
-  shell_out!(cmd, {:returns => [0]})
+  shell_out!(cmd, {returns: [0]})
 end
 
 def task_need_update?
