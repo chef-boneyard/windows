@@ -55,6 +55,7 @@ def available?
 end
 
 private
+
 # account for File System Redirector
 # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
 def dism

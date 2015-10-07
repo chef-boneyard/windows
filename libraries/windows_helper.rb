@@ -128,6 +128,7 @@ module Windows
     end
 
     private
+
     def extract_installed_packages_from_key(hkey = ::Win32::Registry::HKEY_LOCAL_MACHINE, desired = ::Win32::Registry::Constants::KEY_READ)
       uninstall_subkey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall'
       packages = {}

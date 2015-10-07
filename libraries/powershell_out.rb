@@ -37,6 +37,7 @@ unless defined? Chef::Mixin::PowershellOut
         end
 
         private
+
         def run_command(script, options)
           if options && options[:architecture]
             architecture = options[:architecture]

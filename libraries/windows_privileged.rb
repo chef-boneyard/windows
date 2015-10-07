@@ -87,6 +87,7 @@ class Chef
     end
 
     private
+
     def load_deps
       if RUBY_PLATFORM =~ /mswin|mingw32|windows/
         require 'windows/error'

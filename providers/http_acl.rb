@@ -68,6 +68,7 @@ def load_current_resource
 end
 
 private
+
 def getCurrentAcl()
   cmd = shell_out!("#{@command} http show urlacl url=#{@current_resource.url}")
   Chef::Log.debug "netsh reports: #{cmd.stdout}"

@@ -45,6 +45,7 @@ class WindowsRebootHandler < Chef::Handler
   end
 
   private
+
   # reboot cause CHEF says so:
   # reboot explicitly requested in our cookbook code
   def reboot_requested?

@@ -163,6 +163,7 @@ def load_current_resource
 end
 
 private
+
 def run_schtasks(task_action, options = {})
   cmd = "schtasks /#{task_action} /TN \"#{@new_resource.task_name}\" "
   options.keys.each do |option|

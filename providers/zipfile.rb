@@ -79,6 +79,7 @@ action :zip do
 end
 
 private
+
 def ensure_rubyzip_gem_installed
   begin
     require 'zip'

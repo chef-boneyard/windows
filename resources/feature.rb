@@ -33,6 +33,7 @@ def initialize(name, run_context = nil)
 end
 
 private
+
 def locate_default_provider
   if  node['windows'].attribute?(:feature_provider)
     "windows_feature_#{node['windows']['feature_provider']}"

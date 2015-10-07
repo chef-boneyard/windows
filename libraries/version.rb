@@ -185,6 +185,7 @@ module Windows
     end
 
     private
+
     # Win32API call to GetSystemMetrics(SM_SERVERR2)
     # returns: The build number if the system is Windows Server 2003 R2; otherwise, 0.
     def sm_serverr2

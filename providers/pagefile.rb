@@ -76,6 +76,7 @@ action :delete do
 end
 
 private
+
 def exists?(pagefile)
   @exists ||= begin
     cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", { returns: [0] })

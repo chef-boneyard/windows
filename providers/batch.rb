@@ -47,6 +47,7 @@ action :run do
 end
 
 private
+
 def set_owner_and_group
   # FileUtils itself implements a no-op if +user+ or +group+ are nil
   # You can prove this by running FileUtils.chown(nil,nil,'/tmp/file')

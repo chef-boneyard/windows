@@ -344,6 +344,7 @@ module Windows
     end
 
     private
+
     def ensure_hive_unloaded(hive_loaded = false)
       if(hive_loaded)
         Chef::Log.debug("Hive was loaded, we really should unload it")
@@ -355,5 +356,6 @@ end
 
 module Registry
   module_function
+
   extend Windows::RegistryHelper
 end

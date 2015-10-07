@@ -72,6 +72,7 @@ def load_current_resource
 end
 
 private
+
 def getCurrentHash()
   cmd = shell_out("#{@command} http show sslcert ipport=#{@current_resource.address}:#{@current_resource.port}")
   Chef::Log.debug "netsh reports: #{cmd.stdout}"
