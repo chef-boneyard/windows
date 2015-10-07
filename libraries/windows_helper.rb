@@ -101,7 +101,7 @@ module Windows
       # http://msdn.microsoft.com/en-us/library/windows/desktop/ms724265%28v=vs.85%29.aspx
       buf = 0.chr * 32 * 1024 # 32k
       if ExpandEnvironmentStrings.call(path.dup, buf, buf.length) == 0
-        raise Chef::Exceptions::Win32APIError, "Failed calling ExpandEnvironmentStrings (received 0)"
+        raise Chef::Exceptions::Win32APIError, 'Failed calling ExpandEnvironmentStrings (received 0)'
       end
       buf.strip
     end
@@ -137,9 +137,9 @@ module Windows
           reg.each_key do |key, wtime|
             begin
               k = reg.open(key, desired)
-              display_name = k["DisplayName"] rescue nil
-              version = k["DisplayVersion"] rescue "NO VERSION"
-              uninstall_string = k["UninstallString"] rescue nil
+              display_name = k['DisplayName'] rescue nil
+              version = k['DisplayVersion'] rescue 'NO VERSION'
+              uninstall_string = k['UninstallString'] rescue nil
               if display_name
                 packages[display_name] = { name: display_name,
                                           version: version,

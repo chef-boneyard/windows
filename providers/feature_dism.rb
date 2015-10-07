@@ -23,8 +23,8 @@ include Chef::Mixin::ShellOut
 include Windows::Helper
 
 def install_feature(name)
-  addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ""
-  addall = @new_resource.all ? "/All" : ""
+  addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ''
+  addall = @new_resource.all ? '/All' : ''
   shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", { returns: [0, 42, 127, 3010] })
 end
 
@@ -60,6 +60,6 @@ private
 # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
 def dism
   @dism ||= begin
-    locate_sysnative_cmd("dism.exe")
+    locate_sysnative_cmd('dism.exe')
   end
 end

@@ -140,18 +140,18 @@ module Windows
     end
 
     WIN_VERSIONS = {
-      "Windows Server 2012 R2" => { major: 6, minor: 3, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
-      "Windows 8" => { major: 6, minor: 2, callable: lambda{ @product_type == VER_NT_WORKSTATION } },
-      "Windows Server 2012" => { major: 6, minor: 2, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
-      "Windows 7" => { major: 6, minor: 1, callable: lambda{ @product_type == VER_NT_WORKSTATION } },
-      "Windows Server 2008 R2" => { major: 6, minor: 1, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
-      "Windows Server 2008" => { major: 6, minor: 0, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
-      "Windows Vista" => { major: 6, minor: 0, callable: lambda{ @product_type == VER_NT_WORKSTATION } },
-      "Windows Server 2003 R2" => { major: 5, minor: 2, callable: lambda{ Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) != 0 } },
-      "Windows Home Server" => { major: 5, minor: 2, callable: lambda{  (@product_suite & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER } },
-      "Windows Server 2003" => { major: 5, minor: 2, callable: lambda{ Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) == 0 } },
-      "Windows XP" => { major: 5, minor: 1 },
-      "Windows 2000" => { major: 5, minor: 0 }
+      'Windows Server 2012 R2' => { major: 6, minor: 3, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
+      'Windows 8' => { major: 6, minor: 2, callable: lambda{ @product_type == VER_NT_WORKSTATION } },
+      'Windows Server 2012' => { major: 6, minor: 2, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
+      'Windows 7' => { major: 6, minor: 1, callable: lambda{ @product_type == VER_NT_WORKSTATION } },
+      'Windows Server 2008 R2' => { major: 6, minor: 1, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
+      'Windows Server 2008' => { major: 6, minor: 0, callable: lambda{ @product_type != VER_NT_WORKSTATION } },
+      'Windows Vista' => { major: 6, minor: 0, callable: lambda{ @product_type == VER_NT_WORKSTATION } },
+      'Windows Server 2003 R2' => { major: 5, minor: 2, callable: lambda{ Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) != 0 } },
+      'Windows Home Server' => { major: 5, minor: 2, callable: lambda{  (@product_suite & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER } },
+      'Windows Server 2003' => { major: 5, minor: 2, callable: lambda{ Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) == 0 } },
+      'Windows XP' => { major: 5, minor: 1 },
+      'Windows 2000' => { major: 5, minor: 0 }
     }.freeze unless defined?(WIN_VERSIONS)
 
     marketing_names = Array.new
@@ -195,7 +195,7 @@ module Windows
     # query WMI Win32_OperatingSystem for required OS info
     def get_os_info
       cols = %w{ Version ProductType OSProductSuite OperatingSystemSKU ServicePackMajorVersion ServicePackMinorVersion }
-      os_info = execute_wmi_query("select * from Win32_OperatingSystem").each.next
+      os_info = execute_wmi_query('select * from Win32_OperatingSystem').each.next
       cols.map do |c|
         begin
           wmi_object_property(os_info, c)

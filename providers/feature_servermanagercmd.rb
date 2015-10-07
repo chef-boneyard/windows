@@ -56,6 +56,6 @@ private
 # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
 def servermanagercmd
   @servermanagercmd ||= begin
-    locate_sysnative_cmd("servermanagercmd.exe")
+    locate_sysnative_cmd('servermanagercmd.exe')
   end
 end

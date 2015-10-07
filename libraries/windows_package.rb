@@ -37,7 +37,7 @@ class Chef
 
       action :upgrade do
         if @current_resource.version != candidate_version
-          orig_version = @current_resource.version || "uninstalled"
+          orig_version = @current_resource.version || 'uninstalled'
           Chef::Log.info("Upgrading #{@new_resource} version from #{orig_version} to #{candidate_version}")
           status = upgrade_package(@new_resource.package_name, candidate_version)
           if status
@@ -68,7 +68,7 @@ class Chef
       end
 
       def expand_options(options)
-        options ? " #{options}" : ""
+        options ? " #{options}" : ''
       end
 
       # these methods are the required overrides of
@@ -104,7 +104,7 @@ class Chef
       def install_package(name, version)
         Chef::Log.debug("Processing #{@new_resource} as a #{installer_type} installer.")
         install_args = [cached_file(@new_resource.source, @new_resource.checksum), expand_options(unattended_installation_flags), expand_options(@new_resource.options)]
-        Chef::Log.info("Starting installation...this could take awhile.")
+        Chef::Log.info('Starting installation...this could take awhile.')
         Chef::Log.debug "Install command: #{ sprintf(install_command_template, *install_args) }"
         shell_out!(sprintf(install_command_template, *install_args), { timeout: @new_resource.timeout, returns: @new_resource.success_codes })
       end
@@ -140,16 +140,16 @@ class Chef
         case installer_type
         when :msi
           # this is no-ui
-          "/qn /i"
+          '/qn /i'
         when :installshield
-          "/s /sms"
+          '/s /sms'
         when :nsis
-          "/S /NCRC"
+          '/S /NCRC'
         when :inno
           #"/sp- /silent /norestart"
-          "/verysilent /norestart"
+          '/verysilent /norestart'
         when :wise
-          "/s"
+          '/s'
         else
         end
       end
@@ -160,11 +160,11 @@ class Chef
             @new_resource.installer_type
           else
             basename = ::File.basename(cached_file(@new_resource.source, @new_resource.checksum))
-            if basename.split(".").last.downcase == "msi" # Microsoft MSI
+            if basename.split('.').last.downcase == 'msi' # Microsoft MSI
               :msi
             else
               # search the binary file for installer type
-              contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), "rb") {|io| io.read } # TODO limit data read in
+              contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), 'rb') {|io| io.read } # TODO limit data read in
               case contents
               when /inno/i # Inno Setup
                 :inno
@@ -174,10 +174,10 @@ class Chef
                 :nsis
               else
                 # if file is named 'setup.exe' assume installshield
-                if basename == "setup.exe"
+                if basename == 'setup.exe'
                   :installshield
                 else
-                  raise Chef::Exceptions::AttributeNotFound, "installer_type could not be determined, please set manually"
+                  raise Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
                 end
               end
             end
@@ -192,9 +192,9 @@ class Chef
   class Resource
     class WindowsCookbookPackage < Chef::Resource::LWRPBase
       if Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12.4.0')
-        provides :windows_package, os: "windows", override: true
+        provides :windows_package, os: 'windows', override: true
       elsif Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12')
-        provides :windows_package, os: "windows"
+        provides :windows_package, os: 'windows'
       end
       actions :install, :remove
 
@@ -222,14 +222,14 @@ if Gem::Version.new(Chef::VERSION) < Gem::Version.new('12')
   # this wires up the cookbook version of the windows_package resource as Chef::Resource::WindowsPackage,
   # which is kinda hella janky
   Chef::Resource.send(:remove_const, :WindowsPackage) if defined? Chef::Resource::WindowsPackage
-  Chef::Resource.const_set("WindowsPackage", Chef::Resource::WindowsCookbookPackage)
+  Chef::Resource.const_set('WindowsPackage', Chef::Resource::WindowsCookbookPackage)
 else
   if Chef.respond_to?(:set_resource_priority_array)
     # this wires up the dynamic resource resolver to favor the cookbook version of windows_package over
     # the internal version (but the internal Chef::Resource::WindowsPackage is still the internal version
     # and a wrapper cookbook can override this e.g. for users that want to use the windows cookbook but
     # want the internal windows_package resource)
-    Chef.set_resource_priority_array(:windows_package, [Chef::Resource::WindowsCookbookPackage], platform: "windows")
+    Chef.set_resource_priority_array(:windows_package, [Chef::Resource::WindowsCookbookPackage], platform: 'windows')
   end
 end
 

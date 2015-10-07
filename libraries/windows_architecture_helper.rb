@@ -3,7 +3,7 @@
 begin
   include Chef::Mixin::WindowsArchitectureHelper
 rescue
-  Chef::Log.debug("Chef::Mixin::WindowsArchitectureHelper not in core version, Monkey patching in.")
+  Chef::Log.debug('Chef::Mixin::WindowsArchitectureHelper not in core version, Monkey patching in.')
 
   require 'chef/exceptions'
   require 'win32/api' if Chef::Platform.windows?
@@ -35,7 +35,7 @@ rescue
         def assert_valid_windows_architecture!(architecture)
           if ! valid_windows_architecture?(architecture)
             raise Chef::Exceptions::Win32ArchitectureIncorrect,
-              "The specified architecture was not valid. It must be one of :i386 or :x86_64"
+              'The specified architecture was not valid. It must be one of :i386 or :x86_64'
           end
         end
 
@@ -53,7 +53,7 @@ rescue
             succeeded = win32_wow_64_disable_wow_64_fs_redirection.call(original_redirection_state)
 
             if succeeded == 0
-              raise Win32APIError "Failed to disable Wow64 file redirection"
+              raise Win32APIError 'Failed to disable Wow64 file redirection'
             end
 
           end
@@ -69,7 +69,7 @@ rescue
             succeeded = win32_wow_64_revert_wow_64_fs_redirection.call(original_redirection_state)
 
             if succeeded == 0
-              raise Win32APIError "Failed to revert Wow64 file redirection"
+              raise Win32APIError 'Failed to revert Wow64 file redirection'
             end
           end
         end

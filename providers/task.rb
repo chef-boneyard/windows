@@ -31,7 +31,7 @@ action :create do
     validate_interactive_setting
     validate_create_day
 
-    schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
+    schedule  = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
     frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
     options = Hash.new
     options['F'] = '' if @new_resource.force || task_need_update?
@@ -150,10 +150,10 @@ def load_current_resource
   task_hash = load_task_hash(@current_resource.task_name)
   if task_hash[:TaskName] == pathed_task_name
     @current_resource.exists = true
-    if task_hash[:Status] == "Running"
+    if task_hash[:Status] == 'Running'
       @current_resource.status = :running
     end
-    if task_hash[:ScheduledTaskState] == "Enabled"
+    if task_hash[:ScheduledTaskState] == 'Enabled'
       @current_resource.enabled = true
     end
     @current_resource.cwd(task_hash[:Folder])
@@ -169,7 +169,7 @@ def run_schtasks(task_action, options = {})
   options.keys.each do |option|
     cmd += "/#{option} #{options[option]} "
   end
-  Chef::Log.debug("running: ")
+  Chef::Log.debug('running: ')
   Chef::Log.debug("    #{cmd}")
   shell_out!(cmd, { returns: [0] })
 end
@@ -181,7 +181,7 @@ def task_need_update?
 end
 
 def load_task_hash(task_name)
-  Chef::Log.debug "looking for existing tasks"
+  Chef::Log.debug 'looking for existing tasks'
 
   # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
   output = shell_out("schtasks /Query /FO LIST /V /TN \"#{task_name}\"").stdout
@@ -191,12 +191,12 @@ def load_task_hash(task_name)
     task = Hash.new
 
     output.split("\n").map! do |line|
-      line.split(":", 2).map! do |field|
+      line.split(':', 2).map! do |field|
         field.strip
       end
     end.each do |field|
       if field.kind_of?(Array) && field[0].respond_to?(:to_sym)
-        task[field[0].gsub(/\s+/, "").to_sym] = field[1]
+        task[field[0].gsub(/\s+/, '').to_sym] = field[1]
       end
     end
   end
@@ -225,13 +225,13 @@ def validate_create_day
     return
   end
   if not [:weekly, :monthly].include?(@new_resource.frequency) then
-    raise "day attribute is only valid for tasks that run weekly or monthly"
+    raise 'day attribute is only valid for tasks that run weekly or monthly'
   end
   if @new_resource.day.is_a? String then
-    days = @new_resource.day.split(",")
+    days = @new_resource.day.split(',')
     days.each do |day|
-      if not ["mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"].include?(day.strip.downcase) then
-        raise "day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma."
+      if not ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', '*'].include?(day.strip.downcase) then
+        raise 'day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma.'
       end
     end
   end

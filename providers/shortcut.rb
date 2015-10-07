@@ -21,7 +21,7 @@
 def load_current_resource
   require 'win32ole'
 
-  @link = WIN32OLE.new("WScript.Shell").CreateShortcut(@new_resource.name)
+  @link = WIN32OLE.new('WScript.Shell').CreateShortcut(@new_resource.name)
 
   @current_resource = Chef::Resource::WindowsShortcut.new(@new_resource.name)
   @current_resource.name(@new_resource.name)

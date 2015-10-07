@@ -35,7 +35,7 @@ module Powershell
       elsif ::File.exist?("#{ENV['WINDIR']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe")
         "#{ENV['WINDIR']}\\system32\\WindowsPowershell\\v1.0\\powershell.exe"
       else
-        "powershell.exe"
+        'powershell.exe'
       end
     end
 

@@ -67,7 +67,7 @@ def load_current_resource
   @current_resource.address(@new_resource.address)
   @current_resource.port(@new_resource.port)
 
-  @command = locate_sysnative_cmd("netsh.exe")
+  @command = locate_sysnative_cmd('netsh.exe')
   getCurrentHash
 end
 

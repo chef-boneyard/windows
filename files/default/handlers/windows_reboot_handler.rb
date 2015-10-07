@@ -19,7 +19,7 @@
 class WindowsRebootHandler < Chef::Handler
   include Chef::Mixin::ShellOut
 
-  def initialize(allow_pending_reboots = true, timeout = 60, reason = "Chef client run")
+  def initialize(allow_pending_reboots = true, timeout = 60, reason = 'Chef client run')
     @allow_pending_reboots = allow_pending_reboots
     @timeout = timeout
     @reason = reason

@@ -85,7 +85,7 @@ def ensure_rubyzip_gem_installed
     require 'zip'
   rescue LoadError
     Chef::Log.info("Missing gem 'rubyzip'...installing now.")
-    chef_gem "rubyzip" do
+    chef_gem 'rubyzip' do
       version node['windows']['rubyzipversion']
       action :install
     end

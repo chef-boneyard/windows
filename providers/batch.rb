@@ -30,7 +30,7 @@ action :run do
 
     # cwd hax...shell_out on windows needs to support proper 'cwd'
     # follow CHEF-2357 for more
-    cwd = @new_resource.cwd ? "cd \"#{@new_resource.cwd}\" & " : ""
+    cwd = @new_resource.cwd ? "cd \"#{@new_resource.cwd}\" & " : ''
 
     r = Chef::Resource::Execute.new(@new_resource.name, run_context)
     r.user(@new_resource.user)

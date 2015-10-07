@@ -29,7 +29,7 @@ def whyrun_supported?
 end
 
 action :create do
-  raise "No user property set" if @new_resource.user.nil? || @new_resource.user.empty?
+  raise 'No user property set' if @new_resource.user.nil? || @new_resource.user.empty?
   
   if @current_resource.exists
     needsChange = (@current_resource.user.casecmp(@new_resource.user) != 0)
@@ -63,7 +63,7 @@ def load_current_resource
   @current_resource = Chef::Resource::WindowsHttpAcl.new(@new_resource.name)
   @current_resource.url(@new_resource.url)
 
-  @command = locate_sysnative_cmd("netsh.exe")
+  @command = locate_sysnative_cmd('netsh.exe')
   getCurrentAcl
 end
 

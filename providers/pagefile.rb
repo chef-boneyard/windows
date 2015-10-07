@@ -111,13 +111,13 @@ def automatic_managed?
 end
 
 def set_automatic_managed
-  Chef::Log.debug("Setting pagefile to Automatic Managed")
+  Chef::Log.debug('Setting pagefile to Automatic Managed')
   cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=True")
   check_for_errors(cmd.stderr)
 end
 
 def unset_automatic_managed
-  Chef::Log.debug("Setting pagefile to User Managed")
+  Chef::Log.debug('Setting pagefile to User Managed')
   cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=False")
   check_for_errors(cmd.stderr)
 end
@@ -136,7 +136,7 @@ end
 
 def get_setting_id(pagefile)
   pagefile = win_friendly_path(pagefile)
-  pagefile = pagefile.split("\\")
+  pagefile = pagefile.split('\\')
   "#{pagefile[1]} @ #{pagefile[0]}"
 end
 
@@ -148,6 +148,6 @@ end
 
 def wmic
   @wmic ||= begin
-    locate_sysnative_cmd("wmic.exe")
+    locate_sysnative_cmd('wmic.exe')
   end
 end
