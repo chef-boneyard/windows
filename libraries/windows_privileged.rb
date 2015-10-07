@@ -56,7 +56,7 @@ class Chef
 
       token = [0].pack('L')
 
-      unless OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY, token)
+      unless OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, token)
         raise get_last_error
       end
       token = token.unpack('L')[0]

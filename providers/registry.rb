@@ -44,7 +44,7 @@ action :force_modify do
         current_value_data = get_value(@new_resource.key_name.dup, value_name.dup)
         if current_value_data.to_s == desired_value_data.to_s
           Chef::Log.debug("#{@new_resource} value [#{value_name}] desired [#{desired_value_data}] data already set. Check #{i}/5.")
-          i+=1
+          i += 1
         else
           Chef::Log.debug("#{@new_resource} value [#{value_name}] current [#{current_value_data}] data not equal to desired [#{desired_value_data}] data. Setting value and restarting check loop.")
           begin
@@ -54,7 +54,7 @@ action :force_modify do
             updated = registry_update(:create)
             new_resource.updated_by_last_action(updated)
           end
-          i=0 # start count loop over
+          i = 0 # start count loop over
         end
       end
     end
