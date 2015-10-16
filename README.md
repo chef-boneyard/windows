@@ -16,7 +16,7 @@ Chef 11+ is required to run this cookbook
 * Windows 7
 * Windows Server 2008 (R1, R2)
 * Windows 8, 8.1
-* Windows Server 2012 (R2)
+* Windows Server 2012 (R1, R2)
 
 The `windows_task` LWRP requires Windows Server 2008 and above due to its API usage.
 
@@ -232,7 +232,7 @@ Disable Telnet client/server
 end
 ```
 
-Add SMTP Feature with powershell provider 
+Add SMTP Feature with powershell provider
 
 ```ruby
 windows_feature "smtp-server" do
@@ -847,8 +847,6 @@ depends 'windows'
 
 ### default
 Convenience recipe that installs supporting gems for many of the resources/providers that ship with this cookbook.
-
-*Change in v1.3.0: Uses chef_gem instead of gem_package to ensure gem installation in Chef 0.10.10.*
 
 ### reboot_handler
 Leverages the `chef_handler` LWRP to register the `WindowsRebootHandler` report handler that ships as part of this cookbook. By default this handler is set to automatically act on pending reboots.  If you would like to change this behavior override `node['windows']['allow_pending_reboots']` and set the value to false.  For example:
