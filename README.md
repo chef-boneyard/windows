@@ -7,23 +7,20 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 
 
 Requirements
--------------
-Chef 11+ is required to run this cookbook
-
-
-### Platforms
+------------
+#### Platforms
 * Windows Vista
 * Windows 7
 * Windows Server 2008 (R1, R2)
 * Windows 8, 8.1
 * Windows Server 2012 (R1, R2)
 
-The `windows_task` LWRP requires Windows Server 2008 and above due to its API usage.
+#### Chef
+- Chef 11+
 
-### Cookbooks
-The following cookbooks provided by Chef Software are required as noted:
-
+#### Cookbooks
 * chef_handler (`windows::reboot_handler` leverages the chef_handler LWRP)
+
 
 Attributes
 ----------
