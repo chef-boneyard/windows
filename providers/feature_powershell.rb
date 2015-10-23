@@ -26,7 +26,7 @@ end
 def installed?
   @installed ||= begin
     cmd = powershell_out("Get-WindowsFeature #{@new_resource.feature_name} | Select Installed | % { Write-Host $_.Installed }")
-    cmd.stderr.empty? &&  cmd.stdout =~ /True/i
+    cmd.stderr.empty? && cmd.stdout =~ /True/i
   end
 end
 

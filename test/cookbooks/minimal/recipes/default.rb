@@ -9,4 +9,4 @@ windows_package 'Mozilla Firefox 5.0 (x86 en-US)' do
   action :install
 end
 
-windows_font "CodeNewRoman.otf"
+windows_font 'CodeNewRoman.otf'

@@ -61,5 +61,3 @@ windows_task 'task_for_system' do
   user 'system'
   password 'ignored'
 end
-
-

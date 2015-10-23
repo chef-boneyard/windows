@@ -1,4 +1,3 @@
----
 driver:
   name: vagrant
   customize:
@@ -12,26 +11,22 @@ verifier:
   name: pester
 
 platforms:
-  - name: windows-8.1-chef11.10.4
+  - name: windows-2008r2-chef11.18.6
     driver_config:
-      box: windows-8.1
+      box: chef/windows-server-2008r2-standard
     provisioner:
-      require_chef_omnibus: 11.10.4
-  - name: windows-8.1-chef11.16.4
+      require_chef_omnibus: 11.18.6
+  - name: windows-2008r2-chef12
     driver_config:
-      box: windows-8.1
-    provisioner:
-      require_chef_omnibus: 11.16.4
-  - name: windows-8.1-chef12
+      box: chef/windows-server-2008r2-standard
+  - name: windows-2012r2-chef11.18.6
     driver_config:
-      box: windows-8.1
+      box: chef/windows-server-2012r2-standard
     provisioner:
-      require_chef_omnibus: 12
+      require_chef_omnibus: 11.18.6
   - name: windows-2012r2-chef12
     driver_config:
-      box: windows-2012r2
-    provisioner:
-      require_chef_omnibus: 12
+      box: chef/windows-server-2012r2-standard
 
 suites:
   - name: tasks
@@ -46,3 +41,7 @@ suites:
     run_list:
       - recipe[windows::default]
       - recipe[minimal::certificate]
+  - name: package
+    run_list:
+      - recipe[windows::default]
+      - recipe[minimal::package]

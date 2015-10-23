@@ -26,9 +26,9 @@ end
 
 action :create do
   if @current_resource.exists
-    Chef::Log.info "#{ @new_resource } already exists - nothing to do."
+    Chef::Log.info "#{@new_resource} already exists - nothing to do."
   else
-    converge_by("Create #{ @new_resource }") do
+    converge_by("Create #{@new_resource}") do
       create_printer
     end
   end
@@ -36,11 +36,11 @@ end
 
 action :delete do
   if @current_resource.exists
-    converge_by("Delete #{ @new_resource }") do
+    converge_by("Delete #{@new_resource}") do
       delete_printer
     end
   else
-    Chef::Log.info "#{ @current_resource } doesn't exist - can't delete."
+    Chef::Log.info "#{@current_resource} doesn't exist - can't delete."
   end
 end
 
@@ -54,47 +54,45 @@ def load_current_resource
   end
 end
 
-
 private
 
 PRINTERS_REG_KEY = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Print\Printers\\'.freeze unless defined?(PRINTERS_REG_KEY)
 
 def printer_exists?(name)
   printer_reg_key = PRINTERS_REG_KEY + name
-  Chef::Log.debug "Checking to see if this reg key exists: '#{ printer_reg_key }'"
+  Chef::Log.debug "Checking to see if this reg key exists: '#{printer_reg_key}'"
   Registry.key_exists?(printer_reg_key)
 end
 
 def create_printer
-
   # Create the printer port first
   windows_printer_port new_resource.ipv4_address do
   end
 
-  port_name = "IP_#{ new_resource.ipv4_address }"
+  port_name = "IP_#{new_resource.ipv4_address}"
 
-  powershell_script "Creating printer: #{ new_resource.name }" do
+  powershell_script "Creating printer: #{new_resource.name}" do
     code <<-EOH
 
       Set-WmiInstance -class Win32_Printer `
         -EnableAllPrivileges `
-        -Argument @{ DeviceID   = "#{ new_resource.device_id }";
-                     Comment    = "#{ new_resource.comment }";
-                     Default    = "$#{ new_resource.default }";
-                     DriverName = "#{ new_resource.driver_name }";
-                     Location   = "#{ new_resource.location }";
-                     PortName   = "#{ port_name }";
-                     Shared     = "$#{ new_resource.shared }";
-                     ShareName  = "#{ new_resource.share_name }";
+        -Argument @{ DeviceID   = "#{new_resource.device_id}";
+                     Comment    = "#{new_resource.comment}";
+                     Default    = "$#{new_resource.default}";
+                     DriverName = "#{new_resource.driver_name}";
+                     Location   = "#{new_resource.location}";
+                     PortName   = "#{port_name}";
+                     Shared     = "$#{new_resource.shared}";
+                     ShareName  = "#{new_resource.share_name}";
                   }
     EOH
   end
 end
 
 def delete_printer
-  powershell_script "Deleting printer: #{ new_resource.name }" do
+  powershell_script "Deleting printer: #{new_resource.name}" do
     code <<-EOH
-      $printer = Get-WMIObject -class Win32_Printer -EnableAllPrivileges -Filter "name = '#{ new_resource.name }'"
+      $printer = Get-WMIObject -class Win32_Printer -EnableAllPrivileges -Filter "name = '#{new_resource.name}'"
       $printer.Delete()
     EOH
   end

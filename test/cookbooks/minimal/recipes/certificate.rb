@@ -9,7 +9,7 @@ windows_certificate "#{Chef::Config[:file_cache_path]}/cookbooks/minimal/files/d
   action :create
 end
 
-windows_certificate "2796bae63f1801e277261ba0d77770028f20eee4" do
+windows_certificate '2796bae63f1801e277261ba0d77770028f20eee4' do
   action :delete
 end
 

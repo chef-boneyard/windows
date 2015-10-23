@@ -47,7 +47,7 @@ end
 
 # acl_add is a modify-if-exists operation : not idempotent
 action :acl_add do
-  if ::File.exists?(new_resource.source)
+  if ::File.exist?(new_resource.source)
     hash = '$cert.GetCertHashString()'
     code_script = guard_script = cert_script(false)
   else
@@ -74,7 +74,7 @@ action :delete do
     search = "Subject -like '*#{new_resource.source.sub(/\*/, '`*')}*'" # escape any * in the source
   end
   cert_command = "Get-ChildItem Cert:\\#{@location}\\#{new_resource.store_name} | where { $_.#{search} }"
-  
+
   code_script = within_store_script do |store| <<-EOH
 foreach ($c in #{cert_command})
 {
@@ -83,7 +83,7 @@ foreach ($c in #{cert_command})
 EOH
   end
   guard_script = "@(#{cert_command}).Count -gt 0\n"
-  
+
   powershell_script new_resource.name do
     code code_script
     only_if guard_script

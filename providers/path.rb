@@ -22,14 +22,14 @@ use_inline_resources if defined?(use_inline_resources)
 include Windows::Helper
 
 action :add do
-  env "path" do
+  env 'path' do
     action :modify
     delim ::File::PATH_SEPARATOR
     value new_resource.path
     notifies :run, "ruby_block[fix ruby ENV['PATH']]", :immediately
   end
 
-  # The windows Env provider does not correctly expand variables in 
+  # The windows Env provider does not correctly expand variables in
   # the PATH environment variable. Ruby expects these to be expanded.
   # This is a temporary fix for that.
   #
@@ -44,7 +44,7 @@ action :add do
 end
 
 action :remove do
-  env "path" do
+  env 'path' do
     action :delete
     delim ::File::PATH_SEPARATOR
     value new_resource.path

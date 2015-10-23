@@ -3,14 +3,14 @@
 # Cookbook Name:: windws
 # Provider:: batch
 #
-# Copyright:: 2011, Chef Software, Inc.
+# Copyright:: 2011-2015, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ action :run do
 
     # cwd hax...shell_out on windows needs to support proper 'cwd'
     # follow CHEF-2357 for more
-    cwd = @new_resource.cwd ? "cd \"#{@new_resource.cwd}\" & " : ""
+    cwd = @new_resource.cwd ? "cd \"#{@new_resource.cwd}\" & " : ''
 
     r = Chef::Resource::Execute.new(@new_resource.name, run_context)
     r.user(@new_resource.user)
@@ -47,6 +47,7 @@ action :run do
 end
 
 private
+
 def set_owner_and_group
   # FileUtils itself implements a no-op if +user+ or +group+ are nil
   # You can prove this by running FileUtils.chown(nil,nil,'/tmp/file')

@@ -4,7 +4,21 @@ This file is used to list changes made in each version of the windows cookbook.
 
 Unreleased
 --------------------
+- Make `windows_task` resource idempotent (double quotes need to be single when comparing)
+
+v1.38.2
+--------------------
+- Lazy-load windows-pr gem library files. Chef 12.5 no longer includes the windows-pr gem. Earlier versions of this cookbook will not compile on Chef 12.5.
+
+v1.38.1 (2015-07-28)
+--------------------
+- Publishing without extended metadata
+
+v1.38.0 (2015-07-27)
+--------------------
 - Do not set new_resource.password to nil, Fixes #219, Fixes #220
+- Add `windows_certificate` resource #212
+- Add `windows_http_acl` resource #214
 
 v1.37.0 (2015-05-14)
 --------------------
