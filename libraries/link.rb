@@ -25,7 +25,7 @@ require 'chef/scan_access_control'
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
   require 'chef/win32/error'
   require 'win32/dir'
-if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+end
 
 class Chef
   class Provider::WindowsLink < Provider::Link
