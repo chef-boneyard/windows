@@ -2,9 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
-Unreleased
+v1.38.3
 --------------------
 - Make `windows_task` resource idempotent (double quotes need to be single when comparing)
+- [Issue 245](https://github.com/chef-cookbooks/windows/issues/256) - Fix `No resource, method, or local variable named `password' for `Chef::Provider::WindowsTask'` when `interactive_enabled` is `true`
 
 v1.38.2
 --------------------
