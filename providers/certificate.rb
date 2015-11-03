@@ -49,11 +49,13 @@ end
 action :acl_add do
   if ::File.exist?(new_resource.source)
     hash = '$cert.GetCertHashString()'
-    code_script = guard_script = cert_script(false)
+    code_script = cert_script(false)
+    guard_script = cert_script(false)
   else
     # make sure we have no spaces in the hash string
     hash = "\"#{new_resource.source.gsub(/\s/, '')}\""
-    code_script = guard_script = ''
+    code_script = ''
+    guard_script = ''
   end
   code_script << acl_script(hash)
   guard_script << cert_exists_script(hash)
