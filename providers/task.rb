@@ -215,7 +215,7 @@ def validate_user_and_password
 end
 
 def validate_interactive_setting
-  if @new_resource.interactive_enabled && password.nil?
+  if @new_resource.interactive_enabled && @new_resource.password.nil?
     Chef::Log.fatal "#{new_resource} did not provide a password when attempting to set interactive/non-interactive."
   end
 end
