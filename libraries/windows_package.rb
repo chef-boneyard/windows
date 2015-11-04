@@ -156,7 +156,7 @@ class Chef
               :msi
             else
               # search the binary file for installer type
-              contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), 'rb', &:read) # TODO limit data read in
+              contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), 'rb', &:read) # TODO: limit data read in
               case contents
               when /inno/i # Inno Setup
                 :inno
