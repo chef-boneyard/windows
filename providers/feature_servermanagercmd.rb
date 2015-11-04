@@ -35,17 +35,17 @@ def check_reboot(result, feature)
   result.error! # throw for any other bad results. The above results will also get raised, and should cause a reboot via the handler.
 end
 
-def install_feature(name)
-  check_reboot(shell_out("#{servermanagercmd} -install #{@new_resource.feature_name}", { returns: [0, 42, 127, 1003, 3010] }), @new_resource.feature_name)
+def install_feature(_name)
+  check_reboot(shell_out("#{servermanagercmd} -install #{@new_resource.feature_name}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
 end
 
-def remove_feature(name)
-  check_reboot(shell_out("#{servermanagercmd} -remove #{@new_resource.feature_name}", { returns: [0, 42, 127, 1003, 3010] }), @new_resource.feature_name)
+def remove_feature(_name)
+  check_reboot(shell_out("#{servermanagercmd} -remove #{@new_resource.feature_name}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
 end
 
 def installed?
   @installed ||= begin
-    cmd = shell_out("#{servermanagercmd} -query", { returns: [0, 42, 127, 1003] })
+    cmd = shell_out("#{servermanagercmd} -query", returns: [0, 42, 127, 1003])
     cmd.stderr.empty? && (cmd.stdout =~ /^\s*?\[X\]\s.+?\s\[#{@new_resource.feature_name}\]\s*$/i)
   end
 end

@@ -30,7 +30,7 @@ def whyrun_supported?
 end
 
 action :create do
-  hash = @new_resource.name_kind == :subject ? getHashFromSubject() : @new_resource.cert_name
+  hash = @new_resource.name_kind == :subject ? getHashFromSubject : @new_resource.cert_name
 
   if @current_resource.exists
     needsChange = (hash.casecmp(@current_hash) != 0)
@@ -73,14 +73,14 @@ end
 
 private
 
-def getCurrentHash()
+def getCurrentHash
   cmd = shell_out("#{@command} http show sslcert ipport=#{@current_resource.address}:#{@current_resource.port}")
   Chef::Log.debug "netsh reports: #{cmd.stdout}"
 
   if cmd.exitstatus == 0
     m = cmd.stdout.scan(/Certificate Hash\s+:\s?([A-Fa-f0-9]{40})/)
     if m.length == 0
-      raise "Failed to extract hash from command output #{cmd.stdout}"
+      fail "Failed to extract hash from command output #{cmd.stdout}"
     else
       @current_hash = m[0][0]
       @current_resource.exists = true
@@ -101,20 +101,20 @@ def setBinding(hash)
   shell_out!(cmd)
 end
 
-def deleteBinding()
+def deleteBinding
   shell_out!("#{@command} http delete sslcert ipport=#{@current_resource.address}:#{@current_resource.port}")
 end
 
 def checkHash(hash)
   p = powershell_out!("Test-Path \"cert:\\LocalMachine\\#{@current_resource.store_name}\\#{hash}\"")
 
-  if !(p.stderr.empty? && p.stdout =~ /True/i)
-    raise "A Cert with hash of #{hash} doesn't exist in keystore LocalMachine\\#{@current_resource.store_name}"
+  unless p.stderr.empty? && p.stdout =~ /True/i
+    fail "A Cert with hash of #{hash} doesn't exist in keystore LocalMachine\\#{@current_resource.store_name}"
   end
-  return
+  nil
 end
 
-def getHashFromSubject()
+def getHashFromSubject
   # escape wildcard subject name (*.acme.com)
   subject = @current_resource.cert_name.sub(/\*/, '`*')
   ps_script = "& { gci cert:\\localmachine\\#{@current_resource.store_name} | where subject -like '*#{subject}*' | select -first 1 -expandproperty Thumbprint }"
@@ -122,10 +122,10 @@ def getHashFromSubject()
   Chef::Log.debug "Running PS script #{ps_script}"
   p = powershell_out!(ps_script)
 
-  if (!p.stderr.nil? && p.stderr.length > 0)
-    raise "#{ps_script} failed with #{p.stderr}"
-  elsif (p.stdout.nil? || p.stdout.length == 0)
-    raise "Couldn't find thumbprint for subject #{@current_resource.cert_name}"
+  if !p.stderr.nil? && p.stderr.length > 0
+    fail "#{ps_script} failed with #{p.stderr}"
+  elsif p.stdout.nil? || p.stdout.length == 0
+    fail "Couldn't find thumbprint for subject #{@current_resource.cert_name}"
   end
 
   p.stdout.strip

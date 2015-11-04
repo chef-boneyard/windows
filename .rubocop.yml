@@ -21,6 +21,8 @@ MethodLength:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
 PerceivedComplexity:
   Enabled: false
 SingleSpaceBeforeFirstArg:
@@ -28,4 +30,41 @@ SingleSpaceBeforeFirstArg:
 Style/ClassAndModuleChildren:
   Enabled: false
 Style/FileName:
+  Enabled: false
+
+# todo: resolve these issues:
+
+Style/RegexpLiteral:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Lint/UselessAssignment:
+  Enabled: false
+Lint/RescueException:
+  Enabled: false
+Style/MultilineBlockChain:
+  Enabled: false
+Style/AccessorMethodName:
+  Enabled: false
+Metrics/BlockNesting:
+  Enabled: false
+Style/MethodName:
+  Enabled: false
+Style/VariableName:
+  Enabled: false
+Style/UnlessElse:
+  Enabled: false
+Style/VariableName:
+  Enabled: false
+Lint/HandleExceptions:
+  Enabled: false
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
+Style/FormatString:
+  Enabled: false
+Style/BracesAroundHashParameters:
+  Enabled: false
+Style/ClassVars:
+  Enabled: false
+Style/MultilineTernaryOperator:
   Enabled: false

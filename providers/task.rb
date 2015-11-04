@@ -24,7 +24,7 @@ include Chef::Mixin::ShellOut
 use_inline_resources
 
 action :create do
-  if @current_resource.exists && (not (task_need_update? || @new_resource.force))
+  if @current_resource.exists && (!(task_need_update? || @new_resource.force))
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
     validate_user_and_password
@@ -33,7 +33,7 @@ action :create do
 
     schedule = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
     frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
-    options = Hash.new
+    options = {}
     options['F'] = '' if @new_resource.force || task_need_update?
     options['SC'] = schedule
     options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed.include?(@new_resource.frequency)
@@ -71,7 +71,7 @@ action :change do
     validate_user_and_password
     validate_interactive_setting
 
-    options = Hash.new
+    options = {}
     options['TR'] = "\"#{@new_resource.command}\" " if @new_resource.command
     options['RU'] = @new_resource.user if @new_resource.user
     options['RP'] = @new_resource.password if @new_resource.password
@@ -90,7 +90,7 @@ end
 action :delete do
   if @current_resource.exists
     # always need to force deletion
-    run_schtasks 'DELETE', { 'F' => '' }
+    run_schtasks 'DELETE', 'F' => ''
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
   else
@@ -109,7 +109,7 @@ action :end do
     end
   else
     Chef::Log.fatal "#{@new_resource} task doesn't exist - nothing to do"
-    raise Errno::ENOENT, "#{@new_resource}: task does not exist, cannot end"
+    fail Errno::ENOENT, "#{@new_resource}: task does not exist, cannot end"
   end
 end
 
@@ -118,20 +118,20 @@ action :enable do
     if @current_resource.enabled
       Chef::Log.debug "#{@new_resource} already enabled - nothing to do"
     else
-      run_schtasks 'CHANGE', { 'ENABLE' => '' }
+      run_schtasks 'CHANGE', 'ENABLE' => ''
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task enabled"
     end
   else
     Chef::Log.fatal "#{@new_resource} task doesn't exist - nothing to do"
-    raise Errno::ENOENT, "#{@new_resource}: task does not exist, cannot enable"
+    fail Errno::ENOENT, "#{@new_resource}: task does not exist, cannot enable"
   end
 end
 
 action :disable do
   if @current_resource.exists
     if @current_resource.enabled
-      run_schtasks 'CHANGE', { 'DISABLE' => '' }
+      run_schtasks 'CHANGE', 'DISABLE' => ''
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task disabled"
     else
@@ -150,9 +150,7 @@ def load_current_resource
   task_hash = load_task_hash(@current_resource.task_name)
   if task_hash[:TaskName] == pathed_task_name
     @current_resource.exists = true
-    if task_hash[:Status] == 'Running'
-      @current_resource.status = :running
-    end
+    @current_resource.status = :running if task_hash[:Status] == 'Running'
     if task_hash[:ScheduledTaskState] == 'Enabled'
       @current_resource.enabled = true
     end
@@ -171,12 +169,12 @@ def run_schtasks(task_action, options = {})
   end
   Chef::Log.debug('running: ')
   Chef::Log.debug("    #{cmd}")
-  shell_out!(cmd, { returns: [0] })
+  shell_out!(cmd, returns: [0])
 end
 
 def task_need_update?
   # gsub needed as schtasks converts single quotes to double quotes on creation
-  @current_resource.command != @new_resource.command.gsub(/'/, "\"") ||
+  @current_resource.command != @new_resource.command.tr("'", "\"") ||
     @current_resource.user != @new_resource.user
 end
 
@@ -188,14 +186,12 @@ def load_task_hash(task_name)
   if output.empty?
     task = false
   else
-    task = Hash.new
+    task = {}
 
     output.split("\n").map! do |line|
-      line.split(':', 2).map! do |field|
-        field.strip
-      end
+      line.split(':', 2).map!(&:strip)
     end.each do |field|
-      if field.kind_of?(Array) && field[0].respond_to?(:to_sym)
+      if field.is_a?(Array) && field[0].respond_to?(:to_sym)
         task[field[0].gsub(/\s+/, '').to_sym] = field[1]
       end
     end
@@ -221,17 +217,15 @@ def validate_interactive_setting
 end
 
 def validate_create_day
-  if not @new_resource.day then
-    return
+  return unless @new_resource.day
+  unless [:weekly, :monthly].include?(@new_resource.frequency)
+    fail 'day attribute is only valid for tasks that run weekly or monthly'
   end
-  if not [:weekly, :monthly].include?(@new_resource.frequency) then
-    raise 'day attribute is only valid for tasks that run weekly or monthly'
-  end
-  if @new_resource.day.is_a? String then
+  if @new_resource.day.is_a? String
     days = @new_resource.day.split(',')
     days.each do |day|
-      if not ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', '*'].include?(day.strip.downcase) then
-        raise 'day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma.'
+      unless ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', '*'].include?(day.strip.downcase)
+        fail 'day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma.'
       end
     end
   end
