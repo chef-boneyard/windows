@@ -33,11 +33,11 @@ use_inline_resources
 action :create do
   hash = '$cert.GetCertHashString()'
   code_script = cert_script(true) <<
-      within_store_script {|store| store + '.Add($cert)'} <<
-      acl_script(hash)
+                within_store_script { |store| store + '.Add($cert)' } <<
+                acl_script(hash)
 
   guard_script = cert_script(false) <<
-      cert_exists_script(hash)
+                 cert_exists_script(hash)
 
   powershell_script new_resource.name do
     code code_script
@@ -75,7 +75,8 @@ action :delete do
   end
   cert_command = "Get-ChildItem Cert:\\#{@location}\\#{new_resource.store_name} | where { $_.#{search} }"
 
-  code_script = within_store_script do |store| <<-EOH
+  code_script = within_store_script do |store|
+    <<-EOH
 foreach ($c in #{cert_command})
 {
   #{store}.Remove($c)
@@ -162,7 +163,7 @@ $userSID = $currentUser.Translate([System.Security.Principal.SecurityIdentifier]
 $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\$userSID\\$keyname"
 }
 EOH
-  new_resource.private_key_acl.each do | name |
+  new_resource.private_key_acl.each do |name|
     set_acl_script << "$uname='#{name}'; icacls $fullpath /grant $uname`:RX\n"
   end
   set_acl_script

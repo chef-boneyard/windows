@@ -39,7 +39,7 @@ action :force_modify do
   Timeout.timeout(120) do
     @new_resource.values.each do |value_name, value_data|
       i = 1
-      until i > 5 do
+      until i > 5
         desired_value_data = value_data
         current_value_data = get_value(@new_resource.key_name.dup, value_name.dup)
         if current_value_data.to_s == desired_value_data.to_s
