@@ -83,7 +83,7 @@ def getCurrentAcl
 end
 
 def setAcl
-  shell_out!("#{@command} http add urlacl url=#{@new_resource.url} user=#{@new_resource.user}")
+  shell_out!("#{@command} http add urlacl url=#{@new_resource.url} user=\"#{@new_resource.user}\"")
 end
 
 def deleteAcl
