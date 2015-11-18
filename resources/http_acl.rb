@@ -23,5 +23,6 @@ default_action :create
 
 attribute :url, kind_of: String, name_attribute: true, required: true
 attribute :user, kind_of: String
+attribute :sddl, kind_of: String
 
 attr_accessor :exists
