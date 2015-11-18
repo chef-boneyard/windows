@@ -2,6 +2,13 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.38.4
+--------------------
+- [PR 295](https://github.com/chef-cookbooks/windows/pull/295) - Escape `http_acl` username
+- [PR 293](https://github.com/chef-cookbooks/windows/pull/293) - Separating assignments to `code_script` and `guard_script` as they should be different scripts and not hold the same reference
+- [Issue 298](https://github.com/chef-cookbooks/windows/issues/298) - `windows_certificate_binding` is ignoring `store_name` attribute and always saving to `MY`
+- [Issue 296](https://github.com/chef-cookbooks/windows/pull/302) - Fixes `windows_certificate` idempotentcy on chef 11 clients
+
 v1.38.3
 --------------------
 - Make `windows_task` resource idempotent (double quotes need to be single when comparing)
