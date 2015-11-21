@@ -8,3 +8,9 @@ windows_package 'Mozilla Firefox 5.0 (x86 en-US)' do
   installer_type :custom
   action :install
 end
+
+windows_package 'Inno Quickstart Pack' do
+  source 'file:///C:/ispack-5.5.6.exe'
+  options '-ms'
+  action :install
+end
