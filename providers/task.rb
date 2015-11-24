@@ -242,7 +242,7 @@ def validate_create_months
   if @new_resource.months.is_a? String
     months = @new_resource.months.split(',')
     months.each do |month|
-      unless ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', '*'].include?(month.upcase)
+      unless ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', '*'].include?(month.strip.upcase)
         fail 'months attribute invalid. Only valid values are: JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC and *. Multiple values must be separated by a comma.'
       end
     end
