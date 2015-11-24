@@ -29,7 +29,9 @@ action :create do
   else
     validate_user_and_password
     validate_interactive_setting
+    validate_create_frequency_modifier
     validate_create_day
+    validate_create_months
 
     schedule = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
     frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
@@ -45,6 +47,7 @@ action :create do
     options['RL'] = 'HIGHEST' if @new_resource.run_level == :highest
     options['IT'] = '' if @new_resource.interactive_enabled
     options['D'] = @new_resource.day if @new_resource.day
+    options['M'] = @new_resource.months unless @new_resource.months.nil?
 
     run_schtasks 'CREATE', options
     new_resource.updated_by_last_action true
@@ -226,6 +229,50 @@ def validate_create_day
     days.each do |day|
       unless ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', '*'].include?(day.strip.downcase)
         fail 'day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma.'
+      end
+    end
+  end
+end
+
+def validate_create_months
+  return unless @new_resource.months
+  unless [:monthly].include?(@new_resource.frequency)
+    fail 'months attribute is only valid for tasks that run monthly'
+  end
+  if @new_resource.months.is_a? String
+    months = @new_resource.months.split(',')
+    months.each do |month|
+      unless ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', '*'].include?(month.strip.upcase)
+        fail 'months attribute invalid. Only valid values are: JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC and *. Multiple values must be separated by a comma.'
+      end
+    end
+  end
+end
+
+def validate_create_frequency_modifier
+  # Currently is handled in create action 'frequency_modifier_allowed' line. Does not allow for frequency_modifier for once,onstart,onlogon,onidle
+  # Note that 'OnEvent' is not a supported frequency.
+  unless @new_resource.frequency.nil? || @new_resource.frequency_modifier.nil?
+    case @new_resource.frequency
+    when :minute
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 1439
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :minute frequency are 1 - 1439."
+      end
+    when :hourly
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 23
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :hourly frequency are 1 - 23."
+      end
+    when :daily
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 365
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :daily frequency are 1 - 365."
+      end
+    when :weekly
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 52
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :weekly frequency are 1 - 52."
+      end
+    when :monthly
+      unless ('1'..'12').to_a.push('FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY').include?(@new_resource.frequency_modifier.to_s.upcase)
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :monthly frequency are 1 - 12, 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY'."
       end
     end
   end
