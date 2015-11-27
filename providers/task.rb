@@ -41,7 +41,7 @@ action :create do
     options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed.include?(@new_resource.frequency)
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
     options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
-    options['TR'] = "\"#{@new_resource.command}\" "
+    options['TR'] = @new_resource.command
     options['RU'] = @new_resource.user
     options['RP'] = @new_resource.password if use_password?
     options['RL'] = 'HIGHEST' if @new_resource.run_level == :highest
@@ -75,7 +75,7 @@ action :change do
     validate_interactive_setting
 
     options = {}
-    options['TR'] = "\"#{@new_resource.command}\" " if @new_resource.command
+    options['TR'] = @new_resource.command if @new_resource.command
     options['RU'] = @new_resource.user if @new_resource.user
     options['RP'] = @new_resource.password if @new_resource.password
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
@@ -168,7 +168,8 @@ private
 def run_schtasks(task_action, options = {})
   cmd = "schtasks /#{task_action} /TN \"#{@new_resource.task_name}\" "
   options.keys.each do |option|
-    cmd += "/#{option} #{options[option]} "
+    cmd += "/#{option} "
+    cmd += "\"#{options[option]}\" " unless options[option] == ''
   end
   Chef::Log.debug('running: ')
   Chef::Log.debug("    #{cmd}")
