@@ -47,6 +47,9 @@ end
 
 windows_task 'create task delete_me' do
   name 'delete_me'
+  user 'NT AUTHORITY\SYSTEM'
+  run_level :highest
+  password 'ignored'
   action :create
   command 'dir'
 end
@@ -58,7 +61,8 @@ end
 
 windows_task 'task_for_system' do
   command 'dir'
-  user 'NT AUTHORITY\SYSTEM'
   run_level :highest
-  password 'ignored'
+  user 'vagrant'
+  password 'vagrant'
+  cwd ENV['TEMP']
 end

@@ -19,6 +19,8 @@
 #
 
 require 'chef/mixin/shell_out'
+require 'rexml/document'
+
 include Chef::Mixin::ShellOut
 
 use_inline_resources
@@ -50,6 +52,7 @@ action :create do
     options['M'] = @new_resource.months unless @new_resource.months.nil?
 
     run_schtasks 'CREATE', options
+    set_cwd(@new_resource.cwd) if @new_resource.cwd
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
   end
@@ -83,6 +86,7 @@ action :change do
     options['IT'] = '' if @new_resource.interactive_enabled
 
     run_schtasks 'CHANGE', options
+    set_cwd(@new_resource.cwd) if @new_resource.cwd != @current_resource.cwd
     new_resource.updated_by_last_action true
     Chef::Log.info "Change #{@new_resource} task ran"
   else
@@ -157,7 +161,7 @@ def load_current_resource
     if task_hash[:ScheduledTaskState] == 'Enabled'
       @current_resource.enabled = true
     end
-    @current_resource.cwd(task_hash[:Folder])
+    @current_resource.cwd(task_hash[:StartIn]) unless task_hash[:StartIn] == 'N/A'
     @current_resource.command(task_hash[:TaskToRun])
     @current_resource.user(task_hash[:RunAsUser])
   end if task_hash.respond_to? :[]
@@ -180,6 +184,43 @@ def task_need_update?
   # gsub needed as schtasks converts single quotes to double quotes on creation
   @current_resource.command != @new_resource.command.tr("'", "\"") ||
     @current_resource.user != @new_resource.user
+end
+
+def set_cwd(folder)
+  Chef::Log.debug 'looking for existing tasks'
+
+  # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
+  task_xml = shell_out("schtasks /Query /TN \"#{@new_resource.task_name}\" /XML").stdout
+  doc = REXML::Document.new(task_xml)
+
+  Chef::Log.debug 'Removing former CWD if any'
+  doc.root.elements.delete("Actions/Exec/WorkingDirectory")
+
+  unless folder.nil?
+    Chef::Log.debug 'Setting CWD as #folder'
+    cwd_element = REXML::Element.new("WorkingDirectory")
+    cwd_element.add_text(folder)
+    exec_element = doc.root.elements["Actions/Exec"]
+    exec_element.add_element(cwd_element)
+  end
+
+  temp_task_file = ::File.join(ENV['TEMP'], "windows_task.xml")
+  begin
+    ::File.open(temp_task_file, 'w:UTF-16LE') do |f|
+      doc.write(f)
+    end
+
+    options = {}
+    options['RU'] = @new_resource.user if @new_resource.user
+    options['RP'] = @new_resource.password if @new_resource.password
+    options['IT'] = '' if @new_resource.interactive_enabled
+    options['XML'] = temp_task_file
+
+    run_schtasks('DELETE', 'F' => '')
+    run_schtasks('CREATE', options)
+  ensure
+    ::File.delete(temp_task_file)
+  end
 end
 
 def load_task_hash(task_name)

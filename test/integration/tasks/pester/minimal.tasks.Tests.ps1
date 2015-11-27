@@ -60,6 +60,10 @@ describe 'minimal::tasks' {
     it "task 'task_for_system' was created"  {
       $system_task | Should Not BeNullOrEmpty
     }
+
+    it "task 'task_for_system' runs in temp"  {
+      $system_task.Task.Actions.Exec.WorkingDirectory | Should Be $env:temp
+    }
   }
 }
 
