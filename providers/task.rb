@@ -194,17 +194,17 @@ def set_cwd(folder)
   doc = REXML::Document.new(task_xml)
 
   Chef::Log.debug 'Removing former CWD if any'
-  doc.root.elements.delete("Actions/Exec/WorkingDirectory")
+  doc.root.elements.delete('Actions/Exec/WorkingDirectory')
 
   unless folder.nil?
     Chef::Log.debug 'Setting CWD as #folder'
-    cwd_element = REXML::Element.new("WorkingDirectory")
+    cwd_element = REXML::Element.new('WorkingDirectory')
     cwd_element.add_text(folder)
-    exec_element = doc.root.elements["Actions/Exec"]
+    exec_element = doc.root.elements['Actions/Exec']
     exec_element.add_element(cwd_element)
   end
 
-  temp_task_file = ::File.join(ENV['TEMP'], "windows_task.xml")
+  temp_task_file = ::File.join(ENV['TEMP'], 'windows_task.xml')
   begin
     ::File.open(temp_task_file, 'w:UTF-16LE') do |f|
       doc.write(f)
