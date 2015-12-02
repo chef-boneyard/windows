@@ -12,14 +12,20 @@ describe 'minimal::certificate' {
     }
 
     it "installs test-cert" {
-      "Cert:\LocalMachine\My\5081f667f1ef005d0ec39fa3e30aa71b4fd84eb6" | Should Exist
+      "Cert:\LocalMachine\CA\5081f667f1ef005d0ec39fa3e30aa71b4fd84eb6" | Should Exist
     }
 
     it "puts persists the private key for test-cert" {
-      $cert = Get-ChildItem "Cert:\LocalMachine\My\5081f667f1ef005d0ec39fa3e30aa71b4fd84eb6"
+      $cert = Get-ChildItem "Cert:\LocalMachine\CA\5081f667f1ef005d0ec39fa3e30aa71b4fd84eb6"
       $cert.PrivateKey.CspKeyContainerInfo.MachineKeyStore | Should Be True
       $uniqueName = $cert.PrivateKey.CspKeyContainerInfo.UniqueKeyContainerName
       "$Env:ProgramData\Microsoft\Crypto\RSA\MachineKeys\$uniqueName" | Should Exist
+    }
+
+    it "binds test-cert to port 443" {
+      $binding = netsh http show sslcert
+      $binding[4] | Should Match ' : 0.0.0.0:443$'
+      $binding[5] | Should Match ' : 5081f667f1ef005d0ec39fa3e30aa71b4fd84eb6$'
     }
   }
 }

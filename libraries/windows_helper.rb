@@ -23,10 +23,9 @@ require 'chef/exceptions'
 
 module Windows
   module Helper
-
     AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'.freeze unless defined?(AUTO_RUN_KEY)
     ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'.freeze unless defined?(ENV_KEY)
-    ExpandEnvironmentStrings = Win32API.new('kernel32', 'ExpandEnvironmentStrings', ['P', 'P', 'L'], 'L') if Chef::Platform.windows? && !defined?(ExpandEnvironmentStrings)
+    ExpandEnvironmentStrings = Win32API.new('kernel32', 'ExpandEnvironmentStrings', %w(P P L), 'L') if Chef::Platform.windows? && !defined?(ExpandEnvironmentStrings)
 
     # returns windows friendly version of the provided path,
     # ensures backslashes are used everywhere
@@ -65,12 +64,10 @@ module Windows
 
     # Helper function to properly parse a URI
     def as_uri(source)
-      begin
-        URI.parse(source)
-      rescue URI::InvalidURIError
-        Chef::Log.warn("#{source} was an invalid URI. Trying to escape invalid characters")
-        URI.parse(URI.escape(source))
-      end
+      URI.parse(source)
+    rescue URI::InvalidURIError
+      Chef::Log.warn("#{source} was an invalid URI. Trying to escape invalid characters")
+      URI.parse(URI.escape(source))
     end
 
     # if a file is local it returns a windows friendly path version
@@ -101,12 +98,12 @@ module Windows
       # http://msdn.microsoft.com/en-us/library/windows/desktop/ms724265%28v=vs.85%29.aspx
       buf = 0.chr * 32 * 1024 # 32k
       if ExpandEnvironmentStrings.call(path.dup, buf, buf.length) == 0
-        raise Chef::Exceptions::Win32APIError, 'Failed calling ExpandEnvironmentStrings (received 0)'
+        fail Chef::Exceptions::Win32APIError, 'Failed calling ExpandEnvironmentStrings (received 0)'
       end
       buf.strip
     end
 
-    def is_package_installed?(package_name)
+    def is_package_installed?(package_name) # rubocop:disable Style/PredicateName
       installed_packages.include?(package_name)
     end
 
@@ -134,16 +131,28 @@ module Windows
       packages = {}
       begin
         ::Win32::Registry.open(hkey, uninstall_subkey, desired) do |reg|
-          reg.each_key do |key, wtime|
+          reg.each_key do |key, _wtime|
             begin
               k = reg.open(key, desired)
-              display_name = k['DisplayName'] rescue nil
-              version = k['DisplayVersion'] rescue 'NO VERSION'
-              uninstall_string = k['UninstallString'] rescue nil
+              display_name = begin
+                               k['DisplayName']
+                             rescue
+                               nil
+                             end
+              version = begin
+                          k['DisplayVersion']
+                        rescue
+                          'NO VERSION'
+                        end
+              uninstall_string = begin
+                                   k['UninstallString']
+                                 rescue
+                                   nil
+                                 end
               if display_name
                 packages[display_name] = { name: display_name,
-                                          version: version,
-                                          uninstall_string: uninstall_string }
+                                           version: version,
+                                           uninstall_string: uninstall_string }
               end
             rescue ::Win32::Registry::Error
             end

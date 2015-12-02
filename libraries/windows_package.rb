@@ -1,9 +1,7 @@
 require 'chef/resource/lwrp_base'
 require 'chef/provider/lwrp_base'
 
-if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-  require 'win32/registry'
-end
+require 'win32/registry' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
 require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
@@ -19,19 +17,17 @@ class Chef
 
       action :install do
         # If we specified a version, and it's not the current version, move to the specified version
-        if @new_resource.version != nil && @new_resource.version != @current_resource.version
+        if !@new_resource.version.nil? && @new_resource.version != @current_resource.version
           install_version = @new_resource.version
         # If it's not installed at all, install it
-        elsif @current_resource.version == nil
+        elsif @current_resource.version.nil?
           install_version = candidate_version
         end
 
         if install_version
           Chef::Log.info("Installing #{@new_resource} version #{install_version}")
           status = install_package(@new_resource.package_name, install_version)
-          if status
-            new_resource.updated_by_last_action(true)
-          end
+          new_resource.updated_by_last_action(true) if status
         end
       end
 
@@ -40,9 +36,7 @@ class Chef
           orig_version = @current_resource.version || 'uninstalled'
           Chef::Log.info("Upgrading #{@new_resource} version from #{orig_version} to #{candidate_version}")
           status = upgrade_package(@new_resource.package_name, candidate_version)
-          if status
-            new_resource.updated_by_last_action(true)
-          end
+          new_resource.updated_by_last_action(true) if status
         end
       end
 
@@ -51,7 +45,6 @@ class Chef
           Chef::Log.info("Removing #{@new_resource}")
           remove_package(@current_resource.package_name, @new_resource.version)
           new_resource.updated_by_last_action(true)
-        else
         end
       end
 
@@ -101,22 +94,22 @@ class Chef
         end
       end
 
-      def install_package(name, version)
+      def install_package(_name, _version)
         Chef::Log.debug("Processing #{@new_resource} as a #{installer_type} installer.")
         install_args = [cached_file(@new_resource.source, @new_resource.checksum), expand_options(unattended_installation_flags), expand_options(@new_resource.options)]
         Chef::Log.info('Starting installation...this could take awhile.')
         Chef::Log.debug "Install command: #{sprintf(install_command_template, *install_args)}"
-        shell_out!(sprintf(install_command_template, *install_args), { timeout: @new_resource.timeout, returns: @new_resource.success_codes })
+        shell_out!(sprintf(install_command_template, *install_args), timeout: @new_resource.timeout, returns: @new_resource.success_codes)
       end
 
-      def remove_package(name, version)
+      def remove_package(_name, _version)
         uninstall_string = installed_packages[@new_resource.package_name][:uninstall_string]
         Chef::Log.info("Registry provided uninstall string for #{@new_resource} is '#{uninstall_string}'")
         uninstall_command = begin
           if uninstall_string =~ /msiexec/i
             "#{uninstall_string} /qn"
           else
-            uninstall_string.gsub!('"', '')
+            uninstall_string.delete!('"')
             "start \"\" /wait /d\"#{::File.dirname(uninstall_string)}\" #{::File.basename(uninstall_string)}#{expand_options(@new_resource.options)} /S & exit %%%%ERRORLEVEL%%%%"
           end
         end
@@ -150,7 +143,6 @@ class Chef
           '/verysilent /norestart'
         when :wise
           '/s'
-        else
         end
       end
 
@@ -164,7 +156,7 @@ class Chef
               :msi
             else
               # search the binary file for installer type
-              contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), 'rb') {|io| io.read } # TODO limit data read in
+              contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), 'rb', &:read) # TODO: limit data read in
               case contents
               when /inno/i # Inno Setup
                 :inno
@@ -177,7 +169,7 @@ class Chef
                 if basename == 'setup.exe'
                   :installshield
                 else
-                  raise Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
+                  fail Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
                 end
               end
             end

@@ -29,7 +29,6 @@ end
 
 module Windows
   module RegistryHelper
-
     @@native_registry_constant = ENV['PROCESSOR_ARCHITEW6432'] == 'AMD64' ? 0x0100 : 0x0200
 
     def get_hive_name(path)
@@ -45,7 +44,7 @@ module Windows
       }[hive_name] || hive_name
 
       Chef::Log.debug("Hive resolved to #{hkey}")
-      return hkey
+      hkey
     end
 
     def get_hive(path)
@@ -59,14 +58,14 @@ module Windows
         'HKEY_LOCAL_MACHINE' => ::Win32::Registry::HKEY_LOCAL_MACHINE,
         'HKEY_USERS' => ::Win32::Registry::HKEY_USERS,
         'HKEY_CURRENT_USER' => ::Win32::Registry::HKEY_CURRENT_USER
-        }[hkey]
+      }[hkey]
 
       unless hive
         Chef::Application.fatal!("Unsupported registry hive '#{hive_name}'")
       end
 
       Chef::Log.debug("Registry hive resolved to #{hkey}")
-      return hive
+      hive
     end
 
     def unload_hive(path)
@@ -87,9 +86,7 @@ module Windows
 
       Chef::Log.debug("Creating #{path}")
 
-      if !key_exists?(path, true)
-        create_key(path)
-      end
+      create_key(path) unless key_exists?(path, true)
 
       hive.send(mode, key_name, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
         changed_something = false
@@ -101,40 +98,39 @@ module Windows
           rescue
             # subkey does not exist (ok)
           end
-          if cur_val != val
-            Chef::Log.debug("setting #{key}=#{val}")
 
-            if type.nil?
-              type = :string
-            end
+          next unless cur_val != val
 
-            reg_type = {
-              binary: ::Win32::Registry::REG_BINARY,
-              string: ::Win32::Registry::REG_SZ,
-              multi_string: ::Win32::Registry::REG_MULTI_SZ,
-              expand_string: ::Win32::Registry::REG_EXPAND_SZ,
-              dword: ::Win32::Registry::REG_DWORD,
-              dword_big_endian: ::Win32::Registry::REG_DWORD_BIG_ENDIAN,
-              qword: ::Win32::Registry::REG_QWORD
-            }[type]
+          Chef::Log.debug("setting #{key}=#{val}")
 
-            reg.write(key, reg_type, val)
+          type = :string if type.nil?
 
-            ensure_hive_unloaded(hive_loaded)
+          reg_type = {
+            binary: ::Win32::Registry::REG_BINARY,
+            string: ::Win32::Registry::REG_SZ,
+            multi_string: ::Win32::Registry::REG_MULTI_SZ,
+            expand_string: ::Win32::Registry::REG_EXPAND_SZ,
+            dword: ::Win32::Registry::REG_DWORD,
+            dword_big_endian: ::Win32::Registry::REG_DWORD_BIG_ENDIAN,
+            qword: ::Win32::Registry::REG_QWORD
+          }[type]
 
-            changed_something = true
-          end
+          reg.write(key, reg_type, val)
+
+          ensure_hive_unloaded(hive_loaded)
+
+          changed_something = true
         end
         return changed_something
       end
-      return false
+      false
     end
 
     def get_value(path, value)
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key = reg_path.join('\\')
 
-      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
+      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
         begin
           return reg[value]
         rescue
@@ -148,15 +144,15 @@ module Windows
     def get_values(path)
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key = reg_path.join('\\')
-      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
+      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
         values = []
         begin
           reg.each_value do |name, type, data|
             values << [name, type, data]
           end
-          rescue
-          ensure
-            ensure_hive_unloaded(hive_loaded)
+        rescue
+        ensure
+          ensure_hive_unloaded(hive_loaded)
         end
         values
       end
@@ -166,8 +162,8 @@ module Windows
       hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
       key = reg_path.join('\\')
       Chef::Log.debug("Deleting values in #{path}")
-      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do | reg |
-        values.each_key { |key|
+      hive.open(key, ::Win32::Registry::KEY_ALL_ACCESS | @@native_registry_constant) do |reg|
+        values.each_key do |key|
           name = key.to_s
           # Ensure delete operation is idempotent.
           if value_exists?(path, key)
@@ -176,7 +172,7 @@ module Windows
           else
             Chef::Log.debug("Value #{name} in #{path} does not exist, skipping.")
           end
-        }
+        end
       end
     end
 
@@ -193,11 +189,11 @@ module Windows
         hive, reg_path, hive_name, root_key, hive_loaded = get_reg_path_info(path)
         key = reg_path.join('\\')
 
-        Chef::Log.debug("Attempting to open #{key}");
+        Chef::Log.debug("Attempting to open #{key}")
         Chef::Log.debug("Native Constant #{@@native_registry_constant}")
         Chef::Log.debug("Hive #{hive}")
 
-        hive.open(key, ::Win32::Registry::KEY_READ | @@native_registry_constant) do | reg |
+        hive.open(key, ::Win32::Registry::KEY_READ | @@native_registry_constant) do |reg|
           begin
             rtn_value = reg[value]
             return true
@@ -209,7 +205,7 @@ module Windows
         end
 
       end
-      return false
+      false
     end
 
     # TODO: Does not load user registry...
@@ -227,7 +223,7 @@ module Windows
       end
 
       begin
-        hive.open(key, ::Win32::Registry::Constants::KEY_READ | @@native_registry_constant )
+        hive.open(key, ::Win32::Registry::Constants::KEY_READ | @@native_registry_constant)
         return true
       rescue
         return false
@@ -247,20 +243,18 @@ module Windows
     end
 
     def resolve_user_to_sid(username)
-      begin
-        user_query = execute_wmi_query("select * from Win32_UserAccount where Name='#{username}'")
-        sid = nil
+      user_query = execute_wmi_query("select * from Win32_UserAccount where Name='#{username}'")
+      sid = nil
 
-        user_query.each do |user|
-          sid = wmi_object_property(user, 'sid')
-          break
-        end
-
-        Chef::Log.debug("Resolved user SID to #{sid}")
-        return sid
-      rescue
-        return nil
+      user_query.each do |user|
+        sid = wmi_object_property(user, 'sid')
+        break
       end
+
+      Chef::Log.debug("Resolved user SID to #{sid}")
+      return sid
+    rescue
+      return nil
     end
 
     def hive_loaded?(path)
@@ -269,14 +263,14 @@ module Windows
       hive_name = reg_path.shift
       user_hive = path[0]
 
-      if is_user_hive?(hive)
+      if user_hive?(hive)
         return key_exists?("#{hive_name}\\#{user_hive}")
       else
         return true
       end
     end
 
-    def is_user_hive?(hive)
+    def user_hive?(hive)
       if hive == ::Win32::Registry::HKEY_USERS
         return true
       else
@@ -291,13 +285,13 @@ module Windows
       root_key = reg_path[0]
       hive_loaded = false
 
-      if is_user_hive?(hive) && !key_exists?("#{hive_name}\\#{root_key}")
+      if user_hive?(hive) && !key_exists?("#{hive_name}\\#{root_key}")
         reg_path, hive_loaded = load_user_hive(hive, reg_path, root_key)
         root_key = reg_path[0]
         Chef::Log.debug("Resolved user (#{path}) to (#{reg_path.join('/')})")
       end
 
-      return hive, reg_path, hive_name, root_key, hive_loaded
+      [hive, reg_path, hive_name, root_key, hive_loaded]
     end
 
     def load_user_hive(hive, reg_path, user_hive)
@@ -305,7 +299,7 @@ module Windows
       # See if the hive is loaded. Logged in users will have a key that is named their SID
       # if the user has specified the a path by SID and the user is logged in, this function
       # should not be executed.
-      if is_user_hive?(hive) && !key_exists?("HKU\\#{user_hive}")
+      if user_hive?(hive) && !key_exists?("HKU\\#{user_hive}")
         Chef::Log.debug('The user is not logged in and has not been specified by SID')
         sid = resolve_user_to_sid(user_hive)
         Chef::Log.debug("User SID resolved to (#{sid})")
@@ -325,7 +319,7 @@ module Windows
         # The user is not logged in, so we should load the registry from disk
         if load_reg
           profile_path = get_user_hive_location(sid)
-          if profile_path != nil
+          unless profile_path.nil?
             ntuser_dat = "#{profile_path}\\NTUSER.DAT"
             if ::File.exist?(ntuser_dat)
               priv = Chef::WindowsPrivileged.new
@@ -340,13 +334,13 @@ module Windows
         end
       end
 
-      return reg_path, load_reg
+      [reg_path, load_reg]
     end
 
     private
 
     def ensure_hive_unloaded(hive_loaded = false)
-      if(hive_loaded)
+      if hive_loaded
         Chef::Log.debug('Hive was loaded, we really should unload it')
         unload_hive(path)
       end

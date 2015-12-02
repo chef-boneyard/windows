@@ -27,7 +27,7 @@ actions :create, :delete
 default_action :create
 
 attribute :device_id, kind_of: String, name_attribute: true,
-            required: true
+                      required: true
 attribute :comment, kind_of: String
 
 attribute :default, kind_of: [TrueClass, FalseClass], default: false

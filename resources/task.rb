@@ -30,19 +30,20 @@ attribute :password, kind_of: String, default: nil
 attribute :run_level, equal_to: [:highest, :limited], default: :limited
 attribute :force, kind_of: [TrueClass, FalseClass], default: false
 attribute :interactive_enabled, kind_of: [TrueClass, FalseClass], default: false
-attribute :frequency_modifier, kind_of: Integer, default: 1
+attribute :frequency_modifier, kind_of: [Integer, String], default: 1
 attribute :frequency, equal_to: [:minute,
-                                    :hourly,
-                                    :daily,
-                                    :weekly,
-                                    :monthly,
-                                    :once,
-                                    :on_logon,
-                                    :onstart,
-                                    :on_idle], default: :hourly
+                                 :hourly,
+                                 :daily,
+                                 :weekly,
+                                 :monthly,
+                                 :once,
+                                 :on_logon,
+                                 :onstart,
+                                 :on_idle], default: :hourly
 attribute :start_day, kind_of: String, default: nil
 attribute :start_time, kind_of: String, default: nil
 attribute :day, kind_of: [String, Integer], default: nil
+attribute :months, kind_of: String, default: nil
 
 attr_accessor :exists, :status, :enabled
 

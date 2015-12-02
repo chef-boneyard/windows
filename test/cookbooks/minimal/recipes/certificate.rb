@@ -19,4 +19,10 @@ end
 windows_certificate "#{Chef::Config[:file_cache_path]}/cookbooks/minimal/files/default/test-cert.pfx" do
   action :create
   pfx_password 'chef123'
+  store_name 'CA'
+end
+
+windows_certificate_binding 'ChefDummyCertForTest' do
+  store_name 'CA'
+  port 443
 end

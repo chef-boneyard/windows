@@ -52,9 +52,7 @@ action :zip do
     Chef::Log.info("file #{@new_resource.path} already exists and overwrite is set to false, exiting")
   else
     # delete the archive if it already exists, because we are recreating it.
-    if ::File.exist?(@new_resource.path)
-      ::File.unlink(@new_resource.path)
-    end
+    ::File.unlink(@new_resource.path) if ::File.exist?(@new_resource.path)
     # only supporting compression of a single directory (recursively).
     if ::File.directory?(@new_resource.source)
       z = Zip::File.new(@new_resource.path, true)
@@ -81,14 +79,12 @@ end
 private
 
 def ensure_rubyzip_gem_installed
-  begin
-    require 'zip'
-  rescue LoadError
-    Chef::Log.info("Missing gem 'rubyzip'...installing now.")
-    chef_gem 'rubyzip' do
-      version node['windows']['rubyzipversion']
-      action :install
-    end
-    require 'zip'
+  require 'zip'
+rescue LoadError
+  Chef::Log.info("Missing gem 'rubyzip'...installing now.")
+  chef_gem 'rubyzip' do
+    version node['windows']['rubyzipversion']
+    action :install
   end
+  require 'zip'
 end

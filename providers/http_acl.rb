@@ -29,7 +29,7 @@ def whyrun_supported?
 end
 
 action :create do
-  raise 'No user property set' if @new_resource.user.nil? || @new_resource.user.empty?
+  fail 'No user property set' if @new_resource.user.nil? || @new_resource.user.empty?
 
   if @current_resource.exists
     needsChange = (@current_resource.user.casecmp(@new_resource.user) != 0)
@@ -69,7 +69,7 @@ end
 
 private
 
-def getCurrentAcl()
+def getCurrentAcl
   cmd = shell_out!("#{@command} http show urlacl url=#{@current_resource.url}")
   Chef::Log.debug "netsh reports: #{cmd.stdout}"
 
@@ -82,10 +82,10 @@ def getCurrentAcl()
   end
 end
 
-def setAcl()
-  shell_out!("#{@command} http add urlacl url=#{@new_resource.url} user=#{@new_resource.user}")
+def setAcl
+  shell_out!("#{@command} http add urlacl url=#{@new_resource.url} user=\"#{@new_resource.user}\"")
 end
 
-def deleteAcl()
+def deleteAcl
   shell_out!("#{@command} http delete urlacl url=#{@new_resource.url}")
 end
