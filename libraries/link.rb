@@ -17,7 +17,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 require 'chef/provider/link'
 require 'chef/resource/link'
@@ -29,31 +28,29 @@ end
 
 class Chef
   class Provider::WindowsLink < Provider::Link
-
     def load_current_resource
-      #assert that if link_type is :junction that current link type is junction too
+      # assert that if link_type is :junction that current link type is junction too
+
       @current_resource = Chef::Resource::WindowsLink.new(@new_resource.name)
       @current_resource.target_file(@new_resource.target_file)
       if file_class.symlink?(@current_resource.target_file)
-      @current_resource.link_type(:symbolic)
-      @current_resource.to(
+        @current_resource.link_type(:symbolic)
+        @current_resource.to(
           canonicalize(file_class.readlink(@current_resource.target_file))
-      )
+        )
       elsif ::Dir.junction?(@current_resource.target_file)
         Chef::Log.debug("link #{@current_resource.target_file} is junction")
         @current_resource.link_type(:junction)
         @current_resource.to(
-            canonicalize(::Dir.read_junction(@current_resource.target_file))
+          canonicalize(::Dir.read_junction(@current_resource.target_file))
         )
       else
         @current_resource.link_type(:hard)
-        if ::File.exists?(@current_resource.target_file)
-          if ::File.exists?(@new_resource.to) &&
-              file_class.stat(@current_resource.target_file).ino ==
-                  file_class.stat(@new_resource.to).ino
+        if ::File.exist?(@current_resource.target_file)
+          if ::File.exist?(@new_resource.to) && file_class.stat(@current_resource.target_file).ino == file_class.stat(@new_resource.to).ino
             @current_resource.to(canonicalize(@new_resource.to))
           else
-            @current_resource.to("")
+            @current_resource.to('')
           end
         end
       end
@@ -99,17 +96,17 @@ class Chef
   end
 
   class Resource::WindowsLink < Resource::Link
-    def initialize(name, run_context=nil)
+    def initialize(name, run_context = nil)
       super
       @resource_name = :windows_link
     end
 
-    def link_type(arg=nil)
-      real_arg = arg.kind_of?(String) ? arg.to_sym : arg
+    def link_type(arg = nil)
+      real_arg = arg.ia_a?(String) ? arg.to_sym : arg
       set_or_return(
-          :link_type,
-          real_arg,
-          :equal_to => [ :symbolic, :hard, :junction ]
+        :link_type,
+        real_arg,
+        equal_to: [:symbolic, :hard, :junction]
       )
     end
   end
