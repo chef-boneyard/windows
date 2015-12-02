@@ -134,12 +134,12 @@ if RUBY_PLATFORM =~ /mswin|mingw32|windows/
         error_control:    Win32::Service::ERROR_NORMAL
       }
 
-      config[:service_start_name]   = @new_resource.run_as_user unless @new_resource.run_as_user.empty?
-      config[:password]             = @new_resource.run_as_password unless @new_resource.run_as_user.empty?
+      config[:service_start_name] = @new_resource.run_as_user unless @new_resource.run_as_user.empty?
+      config[:password] = @new_resource.run_as_password unless @new_resource.run_as_user.empty?
       config[:failure_reset_period] = @new_resource.reset_fail_counter_days * 60 * 60 * 24 if @new_resource.reset_fail_counter_days
-      config[:failure_delay]        = @new_resource.restart_after_min * 60 * 1000 if @new_resource.restart_after_min
+      config[:failure_delay] = @new_resource.restart_after_min * 60 * 1000 if @new_resource.restart_after_min
       actions = get_failure_actions
-      config[:failure_actions]      = actions if actions
+      config[:failure_actions] = actions if actions
       config
     end
 
