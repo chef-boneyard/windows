@@ -52,7 +52,7 @@ class WindowsRebootHandler < Chef::Handler
     node.run_state[:reboot_requested] == true
   end
 
-  if Chef::VERSION > '11.12'
+  if Gem::Version.new(Chef::VERSION) > Gem::Version.new('11.12')
     include Chef::DSL::RebootPending
   else
     # reboot cause WIN says so:
