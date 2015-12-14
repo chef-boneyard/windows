@@ -657,6 +657,8 @@ Server 2008 due to API usage.
 - `start_time` - Specifies the start time to run the task. Optional string (HH:mm)
 - `interactive_enabled` - (Allow task to run interactively or non-interactively.  Requires user and password.)
 - `day` - For monthly or weekly tasks, the day(s) on which the task runs.  (MON - SUN, *, 1 - 31)
+- `unescape_command` - Allow chef to unescape the command, ie. replace *\"* by *"*. (defaults to true - this is a temporary migration attribute)
+- `schtasks_compatibility` - Allow chef to replace command's single quotes by double quotes - like schtasks does. (defaults to true - this is a temporary migration attribute)
 
 #### Examples
 

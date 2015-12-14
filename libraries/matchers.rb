@@ -425,6 +425,34 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_auto_run, :remove, resource_name)
   end
 
+  def create_windows_advanced_task(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_advanced_task, :create, resource_name)
+  end
+
+  def delete_windows_advanced_task(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_advanced_task, :delete, resource_name)
+  end
+
+  def disable_windows_advanced_task(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_advanced_task, :disable, resource_name)
+  end
+
+  def enable_windows_advanced_task(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_advanced_task, :enable, resource_name)
+  end
+
+  def start_windows_advanced_task(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_advanced_task, :start, resource_name)
+  end
+
+  def stop_windows_advanced_task(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_advanced_task, :stop, resource_name)
+  end
+
+  def update_windows_advanced_task(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_advanced_task, :update, resource_name)
+  end
+
   def create_windows_printer(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_printer, :create, resource_name)
   end
