@@ -58,6 +58,7 @@ end
 
 windows_task 'task_for_system' do
   command 'dir'
-  user 'system'
+  user 'NT AUTHORITY\SYSTEM'
+  run_level :highest
   password 'ignored'
 end
