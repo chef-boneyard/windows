@@ -191,7 +191,7 @@ if defined?(ChefSpec)
   # The Examples section demonstrates the different ways to test a
   # +windows_task+ resource with ChefSpec.
   #
-  # @example Assert that a +windows_task+ was created
+  # @example Assert that a +windows_task+ was disabled
   #   expect(chef_run).to disable_windows_task('mytask')
   #
   #
