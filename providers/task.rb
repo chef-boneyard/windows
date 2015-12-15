@@ -52,7 +52,7 @@ action :create do
     options['M'] = @new_resource.months unless @new_resource.months.nil?
 
     run_schtasks 'CREATE', options
-    set_cwd(@new_resource.cwd) if @new_resource.cwd
+    set_cwd(new_resource.cwd) if new_resource.cwd
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
   end
@@ -86,7 +86,7 @@ action :change do
     options['IT'] = '' if @new_resource.interactive_enabled
 
     run_schtasks 'CHANGE', options
-    set_cwd(@new_resource.cwd) if @new_resource.cwd != @current_resource.cwd
+    set_cwd(new_resource.cwd) if new_resource.cwd != @current_resource.cwd
     new_resource.updated_by_last_action true
     Chef::Log.info "Change #{@new_resource} task ran"
   else
@@ -227,7 +227,7 @@ def set_cwd(folder)
 end
 
 def load_task_hash(task_name)
-  Chef::Log.debug 'looking for existing tasks'
+  Chef::Log.debug 'Looking for existing tasks'
 
   # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
   output = shell_out("schtasks /Query /FO LIST /V /TN \"#{task_name}\"").stdout
