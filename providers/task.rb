@@ -190,8 +190,11 @@ def set_cwd(folder)
   Chef::Log.debug 'looking for existing tasks'
 
   # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
-  task_xml = shell_out("schtasks /Query /TN \"#{@new_resource.task_name}\" /XML").stdout
-  doc = REXML::Document.new(task_xml)
+  xml_cmd = shell_out("schtasks /Query /TN \"#{@new_resource.task_name}\" /XML")
+
+  return if xml_cmd.exitstatus != 0
+
+  doc = REXML::Document.new(xml_cmd.stdout)
 
   Chef::Log.debug 'Removing former CWD if any'
   doc.root.elements.delete('Actions/Exec/WorkingDirectory')
