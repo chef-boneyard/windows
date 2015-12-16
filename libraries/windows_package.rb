@@ -156,21 +156,34 @@ class Chef
               :msi
             else
               # search the binary file for installer type
-              contents = ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), 'rb', &:read) # TODO: limit data read in
-              case contents
-              when /inno/i # Inno Setup
-                :inno
-              when /wise/i # Wise InstallMaster
-                :wise
-              when /nsis/i # Nullsoft Scriptable Install System
-                :nsis
-              else
-                # if file is named 'setup.exe' assume installshield
-                if basename == 'setup.exe'
-                  :installshield
-                else
-                  fail Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
+              ::Kernel.open(::File.expand_path(cached_file(@new_resource.source)), "rb") { |io|
+                filesize = io.size
+                bufsize = 4096 # read 4K buffers
+                overlap = 16 # bytes to overlap between buffer reads
+
+                until io.eof
+                  contents = io.read(bufsize)
+
+                  case contents
+                  when /inno/i # Inno Setup
+                    return :inno
+                  when /wise/i # Wise InstallMaster
+                    return :wise
+                  when /nsis/i # Nullsoft Scriptable Install System
+                    return :nsis
+                  end
+
+                  if (io.tell() < filesize)
+                    io.seek(io.tell() - overlap)
+                  end
                 end
+               }
+
+              # if file is named 'setup.exe' assume installshield
+              if basename == 'setup.exe'
+                :installshield
+              else
+                fail Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
               end
             end
           end
