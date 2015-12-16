@@ -812,6 +812,7 @@ expect(chef_run).to install_windows_package('Node.js').with(
 * remove_windows_feature
 * delete_windows_feature
 * create_windows_task
+* disable_windows_task
 * delete_windows_task
 * run_windows_task
 * change_windows_task
