@@ -42,8 +42,13 @@ end
 
 def installed?
   @installed ||= begin
-    cmd = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127])
-    cmd.stderr.empty? && (cmd.stdout =~ /^Feature Name : #{@new_resource.feature_name}.?$\n^State : Enabled.?$/i)
+    # Win32_OptionalFeature wmi class is only available in Win7+ (NT >= 6.1), but is way faster than dism.exe
+    if win_version.major_version > 6 || (win_version.major_version == 6 && win_version.minor_version >= 1)
+      !execute_wmi_query("SELECT * FROM Win32_OptionalFeature WHERE Name='#{@new_resource.feature_name}' AND InstallState=1").nil?
+    else
+      cmd = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127])
+      cmd.stderr.empty? && (cmd.stdout =~ /^Feature Name : #{@new_resource.feature_name}.?$\n^State : Enabled.?$/i)
+    end
   end
 end
 
