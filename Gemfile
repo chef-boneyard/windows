@@ -30,6 +30,7 @@ end
 group :kitchen_cloud do
   gem 'kitchen-digitalocean'
   gem 'kitchen-ec2'
+  gem 'kitchen-azurerm'
 end
 
 group :development do
