@@ -201,10 +201,27 @@ class Chef
       attribute :timeout, kind_of: Integer, default: 600
       attribute :success_codes, kind_of: Array, default: [0, 42, 127]
 
+      if Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12.6.0')
+        attribute :remote_file_attributes, kind_of: Hash
+        attribute :response_file, kind_of: String
+        attribute :response_file_variables, kind_of: Hash
+        alias_method :returns, :success_codes
+      end
+
       self.resource_name = 'windows_package'
       def initialize(*args)
         super
-        @provider = Chef::Provider::WindowsCookbookPackage
+        if Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12.6.0')
+          @provider = Chef::Provider::Package::Windows
+        else
+          @provider = Chef::Provider::WindowsCookbookPackage
+        end
+
+        Chef::Log.warn <<-EOF
+Please use the package resource available in Chef Client 12.6.
+windows_package will be removed in the next major version release
+of the Windows cookbook.
+EOF
       end
     end
   end
