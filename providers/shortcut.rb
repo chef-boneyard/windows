@@ -21,7 +21,7 @@
 def load_current_resource
   require 'win32ole'
 
-  @link = WIN32OLE.new("WScript.Shell").CreateShortcut(@new_resource.name)
+  @link = WIN32OLE.new('WScript.Shell').CreateShortcut(@new_resource.name)
 
   @current_resource = Chef::Resource::WindowsShortcut.new(@new_resource.name)
   @current_resource.name(@new_resource.name)
@@ -45,12 +45,12 @@ end
 
 def action_create
   if compare_shortcut
-    @link.TargetPath = @new_resource.target if @new_resource.target != nil
-    @link.Arguments = @new_resource.arguments if @new_resource.arguments != nil
-    @link.Description = @new_resource.description if @new_resource.description != nil
-    @link.WorkingDirectory = @new_resource.cwd if @new_resource.cwd != nil
-    @link.IconLocation = @new_resource.iconlocation if @new_resource.iconlocation != nil
-    #ignoring: WindowStyle, Hotkey
+    @link.TargetPath = @new_resource.target unless @new_resource.target.nil?
+    @link.Arguments = @new_resource.arguments unless @new_resource.arguments.nil?
+    @link.Description = @new_resource.description unless @new_resource.description.nil?
+    @link.WorkingDirectory = @new_resource.cwd unless @new_resource.cwd.nil?
+    @link.IconLocation = @new_resource.iconlocation unless @new_resource.iconlocation.nil?
+    # ignoring: WindowStyle, Hotkey
     @link.Save
     Chef::Log.info("Added #{@new_resource} shortcut")
     new_resource.updated_by_last_action(true)

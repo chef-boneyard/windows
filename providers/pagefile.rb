@@ -42,9 +42,7 @@ action :set do
 
     # Check that the resource is not just trying to unset automatic managed, if it is do nothing more
     if (initial_size && maximum_size) || system_managed
-      unless exists?(pagefile)
-        create(pagefile)
-      end
+      create(pagefile) unless exists?(pagefile)
 
       if system_managed
         unless max_and_min_set?(pagefile, 0, 0)
@@ -75,18 +73,18 @@ action :delete do
   new_resource.updated_by_last_action(updated)
 end
 
-
 private
+
 def exists?(pagefile)
   @exists ||= begin
-    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", {:returns => [0]})
+    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", returns: [0])
     cmd.stderr.empty? && (cmd.stdout =~ /SettingID=#{get_setting_id(pagefile)}/i)
   end
 end
 
 def max_and_min_set?(pagefile, min, max)
   @max_and_min_set ||= begin
-    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", {:returns => [0]})
+    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", returns: [0])
     cmd.stderr.empty? && (cmd.stdout =~ /InitialSize=#{min}/i) && (cmd.stdout =~ /MaximumSize=#{max}/i)
   end
 end
@@ -111,43 +109,41 @@ def automatic_managed?
 end
 
 def set_automatic_managed
-  Chef::Log.debug("Setting pagefile to Automatic Managed")
+  Chef::Log.debug('Setting pagefile to Automatic Managed')
   cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=True")
   check_for_errors(cmd.stderr)
 end
 
 def unset_automatic_managed
-  Chef::Log.debug("Setting pagefile to User Managed")
+  Chef::Log.debug('Setting pagefile to User Managed')
   cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=False")
   check_for_errors(cmd.stderr)
 end
 
 def set_custom_size(pagefile, min, max)
   Chef::Log.debug("Setting #{pagefile} to InitialSize=#{min} & MaximumSize=#{max}")
-  cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=#{min},MaximumSize=#{max}", {:returns => [0]})
+  cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=#{min},MaximumSize=#{max}", returns: [0])
   check_for_errors(cmd.stderr)
 end
 
 def set_system_managed(pagefile)
   Chef::Log.debug("Setting #{pagefile} to System Managed")
-  cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0", {:returns => [0]})
+  cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0", returns: [0])
   check_for_errors(cmd.stderr)
 end
 
 def get_setting_id(pagefile)
   pagefile = win_friendly_path(pagefile)
-  pagefile = pagefile.split("\\")
+  pagefile = pagefile.split('\\')
   "#{pagefile[1]} @ #{pagefile[0]}"
 end
 
 def check_for_errors(stderr)
-  unless stderr.empty?
-    Chef::Log.fatal(stderr)
-  end
+  Chef::Log.fatal(stderr) unless stderr.empty?
 end
 
 def wmic
   @wmic ||= begin
-    locate_sysnative_cmd("wmic.exe")
+    locate_sysnative_cmd('wmic.exe')
   end
 end

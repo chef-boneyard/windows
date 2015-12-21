@@ -22,4 +22,4 @@ actions :install
 
 default_action :install
 
-attribute :file, :kind_of => String, :name_attribute => true
+attribute :file, kind_of: String, name_attribute: true

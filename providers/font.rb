@@ -21,7 +21,7 @@ include Windows::Helper
 
 def load_current_resource
   require 'win32ole'
-  fonts_dir  = WIN32OLE.new("WScript.Shell").SpecialFolders("Fonts")
+  fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
   @current_resource = Chef::Resource::WindowsFont.new(@new_resource.name)
   @current_resource.file(win_friendly_path(::File.join(fonts_dir, @new_resource.file)))
   @current_resource
@@ -33,29 +33,31 @@ end
 # <true>:: If the font is installed
 # <false>:: If the font is not instaled
 def font_exists?
-  ::File.exists?(@current_resource.file)
+  ::File.exist?(@current_resource.file)
 end
 
 def get_cookbook_font
-  r = Chef::Resource::CookbookFile.new(@new_resource.file, run_context)
-  r.path(win_friendly_path(::File.join(ENV['TEMP'], @new_resource.file)))
-  r.cookbook(cookbook_name.to_s)
-  r.run_action(:create)
+  cookbook_file @new_resource.file do
+    action    :create
+    cookbook  cookbook_name.to_s unless cookbook_name.nil?
+    path      win_friendly_path(::File.join(ENV['TEMP'], @new_resource.file))
+  end
 end
 
 def del_cookbook_font
-  r = Chef::Resource::File.new(::File.join(ENV['TEMP'], @new_resource.file), run_context)
-  r.run_action(:delete)
+  file ::File.join(ENV['TEMP'], @new_resource.file) do
+    action :delete
+  end
 end
 
 def install_font
   require 'win32ole'
-  fonts_dir  = WIN32OLE.new("WScript.Shell").SpecialFolders("Fonts")
-  folder = WIN32OLE.new("Shell.Application").Namespace(fonts_dir)
+  fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
+  folder = WIN32OLE.new('Shell.Application').Namespace(fonts_dir)
   folder.CopyHere(win_friendly_path(::File.join(ENV['TEMP'], @new_resource.file)))
   Chef::Log.debug("Installing font: #{@new_resource.file}")
 end
-    
+
 def action_install
   unless font_exists?
     get_cookbook_font

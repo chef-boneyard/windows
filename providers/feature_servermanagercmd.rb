@@ -3,7 +3,7 @@
 # Cookbook Name:: windows
 # Provider:: feature_servermanagercmd
 #
-# Copyright:: 2011, Chef Software, Inc.
+# Copyright:: 2011-2015, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,26 +26,26 @@ include Windows::Helper
 
 def check_reboot(result, feature)
   if result.exitstatus == 3010 # successful, but needs reboot
-  	node.run_state[:reboot_requested] = true
-  	Chef::Log.warn("Require reboot to install #{feature}")
+    node.run_state[:reboot_requested] = true
+    Chef::Log.warn("Require reboot to install #{feature}")
   elsif result.exitstatus == 1001 # failure, but needs reboot before we can do anything else
-  	node.run_state[:reboot_requested] = true
-  	Chef::Log.warn("Failed installing #{feature} and need to reboot")
+    node.run_state[:reboot_requested] = true
+    Chef::Log.warn("Failed installing #{feature} and need to reboot")
   end
   result.error! # throw for any other bad results. The above results will also get raised, and should cause a reboot via the handler.
 end
 
-def install_feature(name)
-  check_reboot(shell_out("#{servermanagercmd} -install #{@new_resource.feature_name}", {:returns => [0,42,127,1003,3010]}), @new_resource.feature_name)
+def install_feature(_name)
+  check_reboot(shell_out("#{servermanagercmd} -install #{@new_resource.feature_name}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
 end
 
-def remove_feature(name)
-  check_reboot(shell_out("#{servermanagercmd} -remove #{@new_resource.feature_name}", {:returns => [0,42,127,1003,3010]}), @new_resource.feature_name)
+def remove_feature(_name)
+  check_reboot(shell_out("#{servermanagercmd} -remove #{@new_resource.feature_name}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
 end
 
 def installed?
   @installed ||= begin
-    cmd = shell_out("#{servermanagercmd} -query", {:returns => [0,42,127,1003]})
+    cmd = shell_out("#{servermanagercmd} -query", returns: [0, 42, 127, 1003])
     cmd.stderr.empty? && (cmd.stdout =~ /^\s*?\[X\]\s.+?\s\[#{@new_resource.feature_name}\]\s*$/i)
   end
 end
@@ -56,6 +56,6 @@ private
 # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
 def servermanagercmd
   @servermanagercmd ||= begin
-    locate_sysnative_cmd("servermanagercmd.exe")
+    locate_sysnative_cmd('servermanagercmd.exe')
   end
 end

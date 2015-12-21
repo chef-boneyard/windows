@@ -3,7 +3,7 @@
 # Cookbook Name:: windows
 # Provider:: task
 #
-# Copyright:: 2012, Chef Software, Inc.
+# Copyright:: 2012-2015, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,34 +19,40 @@
 #
 
 require 'chef/mixin/shell_out'
+require 'rexml/document'
+
 include Chef::Mixin::ShellOut
 
 use_inline_resources
 
 action :create do
-  if @current_resource.exists && (not (task_need_update? || @new_resource.force))
+  if @current_resource.exists && (!(task_need_update? || @new_resource.force))
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
     validate_user_and_password
     validate_interactive_setting
+    validate_create_frequency_modifier
     validate_create_day
+    validate_create_months
 
-    schedule  = @new_resource.frequency == :on_logon ? "ONLOGON" : @new_resource.frequency
+    schedule = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
     frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
-    options = Hash.new
+    options = {}
     options['F'] = '' if @new_resource.force || task_need_update?
     options['SC'] = schedule
     options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed.include?(@new_resource.frequency)
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
     options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
-    options['TR'] = "\"#{@new_resource.command}\" "
+    options['TR'] = @new_resource.command
     options['RU'] = @new_resource.user
     options['RP'] = @new_resource.password if use_password?
     options['RL'] = 'HIGHEST' if @new_resource.run_level == :highest
     options['IT'] = '' if @new_resource.interactive_enabled
     options['D'] = @new_resource.day if @new_resource.day
+    options['M'] = @new_resource.months unless @new_resource.months.nil?
 
     run_schtasks 'CREATE', options
+    set_cwd(new_resource.cwd) if new_resource.cwd
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task created"
   end
@@ -71,8 +77,8 @@ action :change do
     validate_user_and_password
     validate_interactive_setting
 
-    options = Hash.new
-    options['TR'] = "\"#{@new_resource.command}\" " if @new_resource.command
+    options = {}
+    options['TR'] = @new_resource.command if @new_resource.command
     options['RU'] = @new_resource.user if @new_resource.user
     options['RP'] = @new_resource.password if @new_resource.password
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
@@ -80,6 +86,7 @@ action :change do
     options['IT'] = '' if @new_resource.interactive_enabled
 
     run_schtasks 'CHANGE', options
+    set_cwd(new_resource.cwd) if new_resource.cwd != @current_resource.cwd
     new_resource.updated_by_last_action true
     Chef::Log.info "Change #{@new_resource} task ran"
   else
@@ -89,8 +96,8 @@ end
 
 action :delete do
   if @current_resource.exists
-	  # always need to force deletion
-    run_schtasks 'DELETE', {'F' => ''}
+    # always need to force deletion
+    run_schtasks 'DELETE', 'F' => ''
     new_resource.updated_by_last_action true
     Chef::Log.info "#{@new_resource} task deleted"
   else
@@ -109,7 +116,7 @@ action :end do
     end
   else
     Chef::Log.fatal "#{@new_resource} task doesn't exist - nothing to do"
-    raise Errno::ENOENT, "#{@new_resource}: task does not exist, cannot end"
+    fail Errno::ENOENT, "#{@new_resource}: task does not exist, cannot end"
   end
 end
 
@@ -118,20 +125,20 @@ action :enable do
     if @current_resource.enabled
       Chef::Log.debug "#{@new_resource} already enabled - nothing to do"
     else
-      run_schtasks 'CHANGE', {'ENABLE' => ''}
+      run_schtasks 'CHANGE', 'ENABLE' => ''
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task enabled"
     end
   else
     Chef::Log.fatal "#{@new_resource} task doesn't exist - nothing to do"
-    raise Errno::ENOENT, "#{@new_resource}: task does not exist, cannot enable"
+    fail Errno::ENOENT, "#{@new_resource}: task does not exist, cannot enable"
   end
 end
 
 action :disable do
   if @current_resource.exists
     if @current_resource.enabled
-      run_schtasks 'CHANGE', {'DISABLE' => ''}
+      run_schtasks 'CHANGE', 'DISABLE' => ''
       @new_resource.updated_by_last_action true
       Chef::Log.info "#{@new_resource} task disabled"
     else
@@ -142,62 +149,98 @@ action :disable do
   end
 end
 
-
 def load_current_resource
   @current_resource = Chef::Resource::WindowsTask.new(@new_resource.name)
   @current_resource.task_name(@new_resource.task_name)
 
-
-  pathed_task_name = @new_resource.task_name[0,1] == '\\' ? @new_resource.task_name : @new_resource.task_name.prepend('\\')
+  pathed_task_name = @new_resource.task_name[0, 1] == '\\' ? @new_resource.task_name : @new_resource.task_name.prepend('\\')
   task_hash = load_task_hash(@current_resource.task_name)
   if task_hash[:TaskName] == pathed_task_name
     @current_resource.exists = true
-    if task_hash[:Status] == "Running"
-      @current_resource.status = :running
-    end
-    if task_hash[:ScheduledTaskState] == "Enabled"
+    @current_resource.status = :running if task_hash[:Status] == 'Running'
+    if task_hash[:ScheduledTaskState] == 'Enabled'
       @current_resource.enabled = true
     end
-    @current_resource.cwd(task_hash[:Folder])
+    @current_resource.cwd(task_hash[:StartIn]) unless task_hash[:StartIn] == 'N/A'
     @current_resource.command(task_hash[:TaskToRun])
     @current_resource.user(task_hash[:RunAsUser])
   end if task_hash.respond_to? :[]
 end
 
 private
-def run_schtasks(task_action, options={})
+
+def run_schtasks(task_action, options = {})
   cmd = "schtasks /#{task_action} /TN \"#{@new_resource.task_name}\" "
   options.keys.each do |option|
-    cmd += "/#{option} #{options[option]} "
+    cmd += "/#{option} "
+    cmd += "\"#{options[option]}\" " unless options[option] == ''
   end
-  Chef::Log.debug("running: ")
+  Chef::Log.debug('running: ')
   Chef::Log.debug("    #{cmd}")
-  shell_out!(cmd, {:returns => [0]})
+  shell_out!(cmd, returns: [0])
 end
 
 def task_need_update?
   # gsub needed as schtasks converts single quotes to double quotes on creation
-  @current_resource.command != @new_resource.command.gsub(/'/,"\"") ||
+  @current_resource.command != @new_resource.command.tr("'", "\"") ||
     @current_resource.user != @new_resource.user
 end
 
+def set_cwd(folder)
+  Chef::Log.debug 'looking for existing tasks'
+
+  # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
+  xml_cmd = shell_out("schtasks /Query /TN \"#{@new_resource.task_name}\" /XML")
+
+  return if xml_cmd.exitstatus != 0
+
+  doc = REXML::Document.new(xml_cmd.stdout)
+
+  Chef::Log.debug 'Removing former CWD if any'
+  doc.root.elements.delete('Actions/Exec/WorkingDirectory')
+
+  unless folder.nil?
+    Chef::Log.debug 'Setting CWD as #folder'
+    cwd_element = REXML::Element.new('WorkingDirectory')
+    cwd_element.add_text(folder)
+    exec_element = doc.root.elements['Actions/Exec']
+    exec_element.add_element(cwd_element)
+  end
+
+  temp_task_file = ::File.join(ENV['TEMP'], 'windows_task.xml')
+  begin
+    ::File.open(temp_task_file, 'w:UTF-16LE') do |f|
+      doc.write(f)
+    end
+
+    options = {}
+    options['RU'] = @new_resource.user if @new_resource.user
+    options['RP'] = @new_resource.password if @new_resource.password
+    options['IT'] = '' if @new_resource.interactive_enabled
+    options['XML'] = temp_task_file
+
+    run_schtasks('DELETE', 'F' => '')
+    run_schtasks('CREATE', options)
+  ensure
+    ::File.delete(temp_task_file)
+  end
+end
+
 def load_task_hash(task_name)
-  Chef::Log.debug "looking for existing tasks"
+  Chef::Log.debug 'Looking for existing tasks'
 
   # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
   output = shell_out("schtasks /Query /FO LIST /V /TN \"#{task_name}\"").stdout
   if output.empty?
     task = false
   else
-    task = Hash.new
+    task = {}
 
     output.split("\n").map! do |line|
-      line.split(":", 2).map! do |field|
-        field.strip
-      end
+      line.split(':', 2).map!(&:strip)
     end.each do |field|
-      if field.kind_of? Array and field[0].respond_to? :to_sym
-        task[field[0].gsub(/\s+/,"").to_sym] = field[1]
+      if field.is_a?(Array) && field[0].respond_to?(:to_sym)
+        task[field[0].gsub(/\s+/, '').to_sym] = field[1]
       end
     end
   end
@@ -213,27 +256,68 @@ def validate_user_and_password
       Chef::Log.fatal "#{@new_resource.task_name}: Can't specify a non-system user without a password!"
     end
   end
-
 end
 
 def validate_interactive_setting
-  if @new_resource.interactive_enabled && password.nil?
+  if @new_resource.interactive_enabled && @new_resource.password.nil?
     Chef::Log.fatal "#{new_resource} did not provide a password when attempting to set interactive/non-interactive."
   end
 end
 
 def validate_create_day
-  if not @new_resource.day then
-    return
+  return unless @new_resource.day
+  unless [:weekly, :monthly].include?(@new_resource.frequency)
+    fail 'day attribute is only valid for tasks that run weekly or monthly'
   end
-  if not [:weekly, :monthly].include?(@new_resource.frequency) then
-    raise "day attribute is only valid for tasks that run weekly or monthly"
-  end
-  if @new_resource.day.is_a? String then
-    days = @new_resource.day.split(",")
+  if @new_resource.day.is_a? String
+    days = @new_resource.day.split(',')
     days.each do |day|
-      if not ["mon", "tue", "wed", "thu", "fri", "sat", "sun", "*"].include?(day.strip.downcase) then
-        raise "day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma."
+      unless ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', '*'].include?(day.strip.downcase)
+        fail 'day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma.'
+      end
+    end
+  end
+end
+
+def validate_create_months
+  return unless @new_resource.months
+  unless [:monthly].include?(@new_resource.frequency)
+    fail 'months attribute is only valid for tasks that run monthly'
+  end
+  if @new_resource.months.is_a? String
+    months = @new_resource.months.split(',')
+    months.each do |month|
+      unless ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', '*'].include?(month.strip.upcase)
+        fail 'months attribute invalid. Only valid values are: JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC and *. Multiple values must be separated by a comma.'
+      end
+    end
+  end
+end
+
+def validate_create_frequency_modifier
+  # Currently is handled in create action 'frequency_modifier_allowed' line. Does not allow for frequency_modifier for once,onstart,onlogon,onidle
+  # Note that 'OnEvent' is not a supported frequency.
+  unless @new_resource.frequency.nil? || @new_resource.frequency_modifier.nil?
+    case @new_resource.frequency
+    when :minute
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 1439
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :minute frequency are 1 - 1439."
+      end
+    when :hourly
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 23
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :hourly frequency are 1 - 23."
+      end
+    when :daily
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 365
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :daily frequency are 1 - 365."
+      end
+    when :weekly
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 52
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :weekly frequency are 1 - 52."
+      end
+    when :monthly
+      unless ('1'..'12').to_a.push('FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY').include?(@new_resource.frequency_modifier.to_s.upcase)
+        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :monthly frequency are 1 - 12, 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY'."
       end
     end
   end

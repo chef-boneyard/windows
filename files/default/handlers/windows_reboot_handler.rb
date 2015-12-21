@@ -19,7 +19,7 @@
 class WindowsRebootHandler < Chef::Handler
   include Chef::Mixin::ShellOut
 
-  def initialize(allow_pending_reboots = true, timeout = 60, reason = "Chef client run")
+  def initialize(allow_pending_reboots = true, timeout = 60, reason = 'Chef client run')
     @allow_pending_reboots = allow_pending_reboots
     @timeout = timeout
     @reason = reason
@@ -45,13 +45,14 @@ class WindowsRebootHandler < Chef::Handler
   end
 
   private
+
   # reboot cause CHEF says so:
   # reboot explicitly requested in our cookbook code
   def reboot_requested?
     node.run_state[:reboot_requested] == true
   end
 
-  if Chef::VERSION > '11.12'
+  if Gem::Version.new(Chef::VERSION) > Gem::Version.new('11.12')
     include Chef::DSL::RebootPending
   else
     # reboot cause WIN says so:
@@ -60,15 +61,15 @@ class WindowsRebootHandler < Chef::Handler
       # this key will only exit if the system need a reboot to update some file currently in use
       # see http://technet.microsoft.com/en-us/library/cc960241.aspx
       Registry.value_exists?('HKLM\SYSTEM\CurrentControlSet\Control\Session Manager', 'PendingFileRenameOperations') ||
-      # 1 for any value means reboot pending
-      # "9306cdfc-c4a1-4a22-9996-848cb67eddc3"=1
-      (Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired') &&
-        Registry.get_values('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired').select{|v| v[2] == 1 }.any?) ||
-      # this key will only exit if the system is pending a reboot
-      ::Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending') ||
-      # 1, 2 or 3 for 'Flags' value means reboot pending
-      (Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile') &&
-        [1, 2, 3].include?(Registry.get_value('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile', 'Flags')))
+        # 1 for any value means reboot pending
+        # "9306cdfc-c4a1-4a22-9996-848cb67eddc3"=1
+        (Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired') &&
+          Registry.get_values('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired').select { |v| v[2] == 1 }.any?) ||
+        # this key will only exit if the system is pending a reboot
+        ::Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending') ||
+        # 1, 2 or 3 for 'Flags' value means reboot pending
+        (Registry.key_exists?('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile') &&
+          [1, 2, 3].include?(Registry.get_value('HKLM\SOFTWARE\Microsoft\Updates\UpdateExeVolatile', 'Flags')))
     end
   end
 
