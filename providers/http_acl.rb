@@ -77,7 +77,7 @@ def getCurrentAcl
   if m.length == 0
     @current_resource.exists = false
   else
-    @current_resource.user(m[0][0])
+    @current_resource.user(m[0][0].chomp)
     @current_resource.exists = true
   end
 end
