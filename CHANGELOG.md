@@ -2,6 +2,19 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.39.0
+--------------------
+- [PR 305](https://github.com/chef-cookbooks/windows/pull/305) - Added `months` attribute to `windows_task` and allow `frequency_modifier` to accept values 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', and 'LASTDAY' for monthly frequency
+- [PR 310](https://github.com/chef-cookbooks/windows/pull/310) - Fix `windows_task` breaks when there is a space in the user name
+- [PR 314](https://github.com/chef-cookbooks/windows/pull/314) - fixes reboot handling on some chef versions below 11.12
+- [PR 317](https://github.com/chef-cookbooks/windows/pull/317) - Adds a `disable_windows_task` matcher
+- [PR 311](https://github.com/chef-cookbooks/windows/pull/311) - Implements the `cwd` attribute of `windows_task`
+- [PR 318](https://github.com/chef-cookbooks/windows/pull/318) - Use dsl instead of manual resource instanciation
+- [PR 303](https://github.com/chef-cookbooks/windows/pull/303) - Fix `http_acl` idempotency when user name contains a space
+- [PR 257](https://github.com/chef-cookbooks/windows/pull/257) - Speed up windows_feature dism provider
+- [PR 319](https://github.com/chef-cookbooks/windows/pull/319) - Add a `.kitchen.cloud.yml` for kitchen testing on Azure
+- [PR 315](https://github.com/chef-cookbooks/windows/pull/315) - Deprecate `windows_package` and forward to `Chef::Provider::Package::Windows` when running 12.6 or higher
+
 v1.38.4
 --------------------
 - [PR 295](https://github.com/chef-cookbooks/windows/pull/295) - Escape `http_acl` username
