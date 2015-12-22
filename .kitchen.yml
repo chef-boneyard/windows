@@ -45,3 +45,11 @@ suites:
     run_list:
       - recipe[windows::default]
       - recipe[minimal::package]
+  - name: feature
+    run_list:
+      - recipe[windows::default]
+      - recipe[minimal::feature]
+  - name: http_acl
+    run_list:
+      - recipe[windows::default]
+      - recipe[minimal::http_acl]
