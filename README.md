@@ -282,6 +282,8 @@ end
 ```
 
 ### windows_package
+This resource is now deprecated and will be removed in a future version of this cookbook.  Chef >= 12.6.0 includes a built-in [package](https://docs.chef.io/resource_windows_package.html) resource.
+
 Manage Windows application packages in an unattended, idempotent way.
 
 The following application installers are currently supported:
@@ -652,11 +654,12 @@ Server 2008 due to API usage.
 - `password` - The user's password. (requires user)
 - `run_level` - Run with `:limited` or `:highest` privileges.
 - `frequency` - Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle) \*:once requires start_time
-- `frequency_modifier` - Multiple for frequency. (15 minutes, 2 days)
+- `frequency_modifier` - Multiple for frequency. (15 minutes, 2 days). Monthly tasks may also use these values": ('FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY')
 - `start_day` - Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
 - `start_time` - Specifies the start time to run the task. Optional string (HH:mm)
 - `interactive_enabled` - (Allow task to run interactively or non-interactively.  Requires user and password.)
 - `day` - For monthly or weekly tasks, the day(s) on which the task runs.  (MON - SUN, *, 1 - 31)
+- `months` - The Months of the year on which the task runs. (JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC, *). Multiple months should be comma delimited.
 
 #### Examples
 
