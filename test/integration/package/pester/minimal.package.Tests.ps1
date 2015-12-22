@@ -4,7 +4,7 @@ describe 'minimal::package' {
   context 'minimal_package' {
 
     it "task 'task_for_system' was created"  {
-      Test-Path "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" | Should Be True
+      Test-Path "C:\Program Files\Mercurial\hg.exe" | Should Be True
     }
   }
 }
