@@ -3,5 +3,5 @@ user 'space user' do
 end
 
 windows_http_acl 'http://google.com:80/' do
-    user "#{ENV['COMPUTERNAME']}\\space user"
+  user "#{ENV['COMPUTERNAME']}\\space user"
 end
