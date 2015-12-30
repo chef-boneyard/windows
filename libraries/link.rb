@@ -102,7 +102,7 @@ class Chef
     end
 
     def link_type(arg = nil)
-      real_arg = arg.ia_a?(String) ? arg.to_sym : arg
+      real_arg = arg.is_a?(String) ? arg.to_sym : arg
       set_or_return(
         :link_type,
         real_arg,
