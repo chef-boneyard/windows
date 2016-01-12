@@ -53,3 +53,8 @@ suites:
     run_list:
       - recipe[windows::default]
       - recipe[minimal::http_acl]
+
+  - name: font
+    run_list:
+      - recipe[windows::default]
+      - recipe[minimal::font]

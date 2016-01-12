@@ -37,11 +37,12 @@ def font_exists?
 end
 
 def get_cookbook_font
-  cookbook_file @new_resource.file do
-    action    :create
+  font_file = @new_resource.file
+  cookbook_file font_file do
+    action    :nothing
     cookbook  cookbook_name.to_s unless cookbook_name.nil?
-    path      win_friendly_path(::File.join(ENV['TEMP'], @new_resource.file))
-  end
+    path      win_friendly_path(::File.join(ENV['TEMP'], font_file))
+  end.run_action(:create)
 end
 
 def del_cookbook_font
