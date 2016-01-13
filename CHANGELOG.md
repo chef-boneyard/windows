@@ -2,6 +2,11 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.39.1
+--------------------
+- [PR 325](https://github.com/chef-cookbooks/windows/pull/325) - Raise an error if a bogus feature is given to the powershell `windows_feature` provider
+- [PR 326](https://github.com/chef-cookbooks/windows/pull/326) - Fix `windows_font` and copy the font file before installation
+
 v1.39.0
 --------------------
 - [PR 305](https://github.com/chef-cookbooks/windows/pull/305) - Added `months` attribute to `windows_task` and allow `frequency_modifier` to accept values 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', and 'LASTDAY' for monthly frequency
