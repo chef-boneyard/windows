@@ -1,0 +1,40 @@
+branches:
+  only:
+    - master
+
+# Do not build on tags (GitHub only)
+skip_tags: true
+
+#faster cloning
+clone_depth: 1
+
+cache:
+  - c:\opscode\chefdk
+
+build: off
+
+install:
+  - ps: >-
+      Write-Host "Validating ChefDK install.";
+      iex (irm https://omnitruck.chef.io/install.ps1);
+      if (-not (test-path c:\opscode\chefdk)){ Install-Project -Project chefdk }
+      else {
+        $CurrentInstalledChefDKVersion = [version]::Parse((c:\opscode\chefdk\bin\chef.bat --version)[0] -replace 'Chef Development Kit Version:');
+        $CurrentReleasedChefDKVersion = [version]::parse((get-projectmetadata -project chefdk).version );
+        Write-Host "Currently installed version = $CurrentInstalledChefDKVersion.";
+        Write-Host "Latest stable released version = $CurrentReleasedChefDKVersion.";
+        if ($CurrentInstalledChefDKVersion -lt $CurrentReleasedChefDKVersion) { Install-Project -Project chefdk -verbose};
+      }
+  - ps: 'Get-CimInstance win32_operatingsystem -Property Caption, OSArchitecture, Version | fl Caption, OSArchitecture, Version'
+  - ps: $PSVersionTable
+  - ps: c:\opscode\chefdk\bin\chef.bat shell-init powershell | iex; cmd /c c:\opscode\chefdk\bin\chef.bat --version
+  - c:\opscode\chefdk\bin\chef.bat exec ruby --version
+  - c:\opscode\chefdk\bin\chef.bat gem install chef-sugar
+
+test_script:
+  - c:\opscode\chefdk\bin\chef.bat exec rubocop --version
+  - c:\opscode\chefdk\bin\chef.bat exec foodcritic --version
+  - c:\opscode\chefdk\bin\chef.bat exec rake style
+  - c:\opscode\chefdk\bin\chef.bat exec rake spec
+
+deploy: off

@@ -19,10 +19,10 @@ before_script:
   - eval "$(/opt/chefdk/bin/chef shell-init bash)"
   # We have to install chef-sugar for ChefSpec
   - /opt/chefdk/embedded/bin/chef gem install chef-sugar
+
 script:
   - /opt/chefdk/embedded/bin/chef --version
-  - /opt/chefdk/embedded/bin/rubocop --version
-  - /opt/chefdk/embedded/bin/rubocop
+  - /opt/chefdk/embedded/bin/chef exec rubocop --version
   - /opt/chefdk/embedded/bin/foodcritic --version
-  - /opt/chefdk/embedded/bin/foodcritic . --exclude spec
-  - /opt/chefdk/embedded/bin/rspec spec
+  - /opt/chefdk/bin/chef exec rake style
+  - /opt/chefdk/bin/chef exec rake spec
