@@ -74,7 +74,7 @@ action :delete do
   # do we have a hash or a subject?
   # TODO: It's a bit annoying to know the thumbprint of a cert you want to remove when you already
   # have the file.  Support reading the hash directly from the file if provided.
-  if @new_resource.source.match(/^[a-fA-F0-9]{40}$/)
+  if @new_resource.source =~ /^[a-fA-F0-9]{40}$/
     search = "Thumbprint -eq '#{@new_resource.source}'"
   else
     search = "Subject -like '*#{@new_resource.source.sub(/\*/, '`*')}*'" # escape any * in the source

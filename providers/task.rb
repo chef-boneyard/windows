@@ -26,7 +26,7 @@ include Chef::Mixin::ShellOut
 use_inline_resources
 
 action :create do
-  if @current_resource.exists && (!(task_need_update? || @new_resource.force))
+  if @current_resource.exists && !(task_need_update? || @new_resource.force)
     Chef::Log.info "#{@new_resource} task already exists - nothing to do"
   else
     validate_user_and_password
@@ -248,7 +248,7 @@ def load_task_hash(task_name)
   task
 end
 
-SYSTEM_USERS = ['NT AUTHORITY\SYSTEM', 'SYSTEM', 'NT AUTHORITY\LOCALSERVICE', 'NT AUTHORITY\NETWORKSERVICE']
+SYSTEM_USERS = ['NT AUTHORITY\SYSTEM', 'SYSTEM', 'NT AUTHORITY\LOCALSERVICE', 'NT AUTHORITY\NETWORKSERVICE'].freeze
 
 def validate_user_and_password
   if @new_resource.user && use_password?

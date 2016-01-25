@@ -31,6 +31,8 @@ Style/ClassAndModuleChildren:
   Enabled: false
 Style/FileName:
   Enabled: false
+Style/StringLiterals:
+  Enabled: false
 
 # todo: resolve these issues:
 
@@ -67,4 +69,12 @@ Style/BracesAroundHashParameters:
 Style/ClassVars:
   Enabled: false
 Style/MultilineTernaryOperator:
+  Enabled: false
+Style/ConditionalAssignment:
+  Enabled: false
+Performance/Casecmp:
+  Enabled: false
+Style/Alias:
+  Enabled: false
+Style/IfInsideElse:
   Enabled: false
