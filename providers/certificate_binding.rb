@@ -118,7 +118,7 @@ end
 def getHashFromSubject
   # escape wildcard subject name (*.acme.com)
   subject = @current_resource.cert_name.sub(/\*/, '`*')
-  ps_script = "& { gci cert:\\localmachine\\#{@current_resource.store_name} | where subject -like '*#{subject}*' | select -first 1 -expandproperty Thumbprint }"
+  ps_script = "& { gci cert:\\localmachine\\#{@current_resource.store_name} | where { $_.subject -like '*#{subject}*' } | select -first 1 -expandproperty Thumbprint }"
 
   Chef::Log.debug "Running PS script #{ps_script}"
   p = powershell_out!(ps_script)
