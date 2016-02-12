@@ -169,7 +169,7 @@ class Chef
                 if basename == 'setup.exe'
                   :installshield
                 else
-                  fail Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
+                  raise Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
                 end
               end
             end

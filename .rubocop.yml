@@ -25,7 +25,7 @@ Metrics/ModuleLength:
   Enabled: false
 PerceivedComplexity:
   Enabled: false
-SingleSpaceBeforeFirstArg:
+SpaceBeforeFirstArg:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false

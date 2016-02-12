@@ -151,7 +151,7 @@ EOH
 end
 
 def acl_script(hash)
-  return '' if @new_resource.private_key_acl.nil? || @new_resource.private_key_acl.length == 0
+  return '' if @new_resource.private_key_acl.nil? || @new_resource.private_key_acl.empty?
   # this PS came from http://blogs.technet.com/b/operationsguy/archive/2010/11/29/provide-access-to-private-keys-commandline-vs-powershell.aspx
   # and from https://msdn.microsoft.com/en-us/library/windows/desktop/bb204778(v=vs.85).aspx
   set_acl_script = <<-EOH

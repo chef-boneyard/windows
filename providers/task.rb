@@ -116,7 +116,7 @@ action :end do
     end
   else
     Chef::Log.fatal "#{@new_resource} task doesn't exist - nothing to do"
-    fail Errno::ENOENT, "#{@new_resource}: task does not exist, cannot end"
+    raise Errno::ENOENT, "#{@new_resource}: task does not exist, cannot end"
   end
 end
 
@@ -131,7 +131,7 @@ action :enable do
     end
   else
     Chef::Log.fatal "#{@new_resource} task doesn't exist - nothing to do"
-    fail Errno::ENOENT, "#{@new_resource}: task does not exist, cannot enable"
+    raise Errno::ENOENT, "#{@new_resource}: task does not exist, cannot enable"
   end
 end
 
@@ -267,13 +267,13 @@ end
 def validate_create_day
   return unless @new_resource.day
   unless [:weekly, :monthly].include?(@new_resource.frequency)
-    fail 'day attribute is only valid for tasks that run weekly or monthly'
+    raise 'day attribute is only valid for tasks that run weekly or monthly'
   end
   if @new_resource.day.is_a? String
     days = @new_resource.day.split(',')
     days.each do |day|
       unless ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', '*'].include?(day.strip.downcase)
-        fail 'day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma.'
+        raise 'day attribute invalid.  Only valid values are: MON, TUE, WED, THU, FRI, SAT, SUN and *.  Multiple values must be separated by a comma.'
       end
     end
   end
@@ -282,13 +282,13 @@ end
 def validate_create_months
   return unless @new_resource.months
   unless [:monthly].include?(@new_resource.frequency)
-    fail 'months attribute is only valid for tasks that run monthly'
+    raise 'months attribute is only valid for tasks that run monthly'
   end
   if @new_resource.months.is_a? String
     months = @new_resource.months.split(',')
     months.each do |month|
       unless ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', '*'].include?(month.strip.upcase)
-        fail 'months attribute invalid. Only valid values are: JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC and *. Multiple values must be separated by a comma.'
+        raise 'months attribute invalid. Only valid values are: JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC and *. Multiple values must be separated by a comma.'
       end
     end
   end
@@ -301,23 +301,23 @@ def validate_create_frequency_modifier
     case @new_resource.frequency
     when :minute
       unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 1439
-        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :minute frequency are 1 - 1439."
+        raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :minute frequency are 1 - 1439."
       end
     when :hourly
       unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 23
-        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :hourly frequency are 1 - 23."
+        raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :hourly frequency are 1 - 23."
       end
     when :daily
       unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 365
-        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :daily frequency are 1 - 365."
+        raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :daily frequency are 1 - 365."
       end
     when :weekly
       unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 52
-        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :weekly frequency are 1 - 52."
+        raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :weekly frequency are 1 - 52."
       end
     when :monthly
       unless ('1'..'12').to_a.push('FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY').include?(@new_resource.frequency_modifier.to_s.upcase)
-        fail "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :monthly frequency are 1 - 12, 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY'."
+        raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :monthly frequency are 1 - 12, 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY'."
       end
     end
   end
