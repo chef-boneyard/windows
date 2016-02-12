@@ -11,6 +11,8 @@ class Chef
       include Chef::Mixin::ShellOut
       include Windows::Helper
 
+      use_inline_resources if defined?(use_inline_resources)
+
       # the logic in all action methods mirror that of
       # the Chef::Provider::Package which will make
       # refactoring into core chef easy
@@ -169,7 +171,7 @@ class Chef
                 if basename == 'setup.exe'
                   :installshield
                 else
-                  fail Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
+                  raise Chef::Exceptions::AttributeNotFound, 'installer_type could not be determined, please set manually'
                 end
               end
             end
