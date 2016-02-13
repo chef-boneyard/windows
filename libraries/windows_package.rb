@@ -7,7 +7,7 @@ require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
 class Chef
   class Provider
-    class WindowsCookbookPackage < Chef::Provider::LWRPBase
+    class WindowsCookbookPackage < Chef::Provider::LWRPBase # ~FC058
       include Chef::Mixin::ShellOut
       include Windows::Helper
 
