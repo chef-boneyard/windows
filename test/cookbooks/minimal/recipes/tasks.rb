@@ -52,6 +52,7 @@ windows_task 'create task delete_me' do
   password 'ignored'
   action :create
   command 'dir'
+  notifies :create, 'file[c:/notifytest.txt]', :immediately
 end
 
 windows_task 'delete task delete_me' do
@@ -65,4 +66,9 @@ windows_task 'task_for_system' do
   user 'vagrant'
   password 'vagrant'
   cwd ENV['TEMP']
+end
+
+file 'c:/notifytest.txt' do
+  content 'blah'
+  action :nothing
 end
