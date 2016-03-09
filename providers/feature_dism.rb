@@ -22,6 +22,9 @@ use_inline_resources if defined?(use_inline_resources)
 include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::ShellOut
 include Windows::Helper
+include Chef::Provider::WindowsFeature::Base
+include Chef::Mixin::ShellOut
+include Windows::Helper
 
 def install_feature(_name)
   addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ''
@@ -46,15 +49,13 @@ end
 
 def installed?
   @installed ||= begin
-    feature_list = get_feature_list
-    feature_list.stderr.empty? && (feature_list.stdout =~ /^Feature Name : #{@new_resource.feature_name}.?$\n^State : Enabled.?$/i)
+    get_feature_list[@new_resource.feature_name] == :Enabled
   end
 end
 
 def available?
   @available ||= begin
-    feature_list = get_feature_list
-    feature_list.stderr.empty? && (feature_list.stdout !~ /^Feature Name : #{@new_resource.feature_name}.?$\n^State : .* with payload removed.?$/i)
+    get_feature_list[@new_resource.feature_name] != :Removed
   end
 end
 
@@ -67,12 +68,20 @@ def dism
     locate_sysnative_cmd('dism.exe')
   end
 end
-
 @@feature_list = nil
 def get_feature_list
   if @@feature_list.nil?
-    @@feature_list = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127])
+    list = {}
+    out = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127]).stdout
+    feature_matches.each do |match|
+      name = match[0]
+      state = match[1]
+      state = 'Removed' if state.include? 'Payload Removed'
+      list[name] = state.to_sym
+    end
+    @@feature_list = list
   end
+  @@feature_list
 end
 
 def clear_cache
