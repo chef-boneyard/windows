@@ -64,6 +64,10 @@ describe 'minimal::tasks' {
     it "task 'task_for_system' runs in temp"  {
       $system_task.Task.Actions.Exec.WorkingDirectory | Should Be $env:temp
     }
+
+    it 'notifies other resources' {
+      test-path 'c:/notifytest.txt' | should be $true
+    }
   }
 }
 
