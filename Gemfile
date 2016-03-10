@@ -16,7 +16,7 @@ group :unit do
 end
 
 group :kitchen_common do
-  gem 'test-kitchen', '~> 1.4'
+  gem 'test-kitchen', '~> 1.6'
 end
 
 group :kitchen_vagrant do
@@ -34,6 +34,6 @@ group :kitchen_cloud do
 end
 
 group :development do
-  gem 'winrm-transport'
+  gem 'winrm-fs', '~> 0.3'
   gem 'stove'
 end
