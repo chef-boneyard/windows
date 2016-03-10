@@ -73,13 +73,12 @@ def get_feature_list
   if @@feature_list.nil?
     out = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127]).stdout
     feature_matches = out.scan(/^Feature Name : (.*).?$\n^State : (.*)?$/)
-    list = feature_matches.each_with_object({}) do |match, list|
+    @@feature_list = feature_matches.each_with_object({}) do |match, list|
       name = match[0]
       state = match[1]
       state = 'Removed' if state.include? 'Payload Removed'
       list[name] = state.to_sym
     end
-    @@feature_list = list
   end
   @@feature_list
 end
