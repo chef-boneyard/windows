@@ -60,6 +60,10 @@ windows_task 'delete task delete_me' do
   action :delete
 end
 
+user 'vagrant' do
+  password 'vagrant'
+end
+
 windows_task 'task_for_system' do
   command 'dir'
   run_level :highest
