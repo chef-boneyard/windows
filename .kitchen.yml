@@ -50,3 +50,7 @@ suites:
     run_list:
       - recipe[windows::default]
       - recipe[minimal::package]
+  - name: share
+    run_list:
+      - recipe[windows::default]
+      - recipe[minimal::share]
