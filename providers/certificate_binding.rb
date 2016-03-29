@@ -133,6 +133,6 @@ def getHashFromSubject
   end
 
   # seem to get a UTF-8 string with BOM returned sometimes! Strip any such BOM
-  hash = p.stdout.strip  
-  hash[0].ord == 239 ? hash.force_encoding("UTF-8").delete!("\xEF\xBB\xBF".force_encoding("UTF-8")) : hash    
+  hash = p.stdout.strip
+  hash[0].ord == 239 ? hash.force_encoding("UTF-8").delete!("\xEF\xBB\xBF".force_encoding("UTF-8")) : hash
 end
