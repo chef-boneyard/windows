@@ -37,11 +37,15 @@ action :create do
     validate_create_months
 
     schedule = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
+    schedule = @new_resource.frequency == :on_idle ? 'ONIDLE' : @new_resource.frequency
     frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
     options = {}
     options['F'] = '' if @new_resource.force || task_need_update?
     options['SC'] = schedule
-    options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed.include?(@new_resource.frequency)
+    unless @new_resource.frequency == :monthly && !%w(FIRST SECOND THIRD FOURTH LAST LASTDAY).include?(@new_resource.frequency_modifier)
+      options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed.include?(@new_resource.frequency)
+    end
+    options['I']  = @new_resource.frequency_modifier if @new_resource.frequency == :on_idle
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
     options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
     options['TR'] = @new_resource.command
@@ -271,7 +275,7 @@ def validate_create_day
   unless [:weekly, :monthly].include?(@new_resource.frequency)
     raise 'day attribute is only valid for tasks that run weekly or monthly'
   end
-  if @new_resource.day.is_a? String
+  if @new_resource.day.is_a?(String) && @new_resource.day.to_i.to_s != @new_resource.day
     days = @new_resource.day.split(',')
     days.each do |day|
       unless ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', '*'].include?(day.strip.downcase)
@@ -301,6 +305,10 @@ def validate_create_frequency_modifier
   # Note that 'OnEvent' is not a supported frequency.
   unless @new_resource.frequency.nil? || @new_resource.frequency_modifier.nil?
     case @new_resource.frequency
+    when :on_idle
+      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 999
+        raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :on_idle frequency are 1 - 999."
+      end
     when :minute
       unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 1439
         raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :minute frequency are 1 - 1439."
