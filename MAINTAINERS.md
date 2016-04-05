@@ -20,6 +20,5 @@ for details on the process and how to become a maintainer or the project lead.
 * [Jay Mundrawala](https://github.com/jaym)
 * [Claire McQuin](https://github.com/mcquin)
 * [Salim Alam](https://github.com/chefsalim)
-* [Sean OMeara](https://github.com/someara)
 * [Tim Smith](https://github.com/tas50)
 * [Jennifer Davis](https://github.com/sigje)
