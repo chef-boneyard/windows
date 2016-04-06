@@ -36,8 +36,14 @@ action :create do
     validate_create_day
     validate_create_months
 
-    schedule = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
-    schedule = @new_resource.frequency == :on_idle ? 'ONIDLE' : @new_resource.frequency
+    schedule = case @new_resource.frequency
+               when :on_logon
+                 'ONLOGON'
+               when :on_idle
+                 'ONIDLE'
+               else
+                 @new_resource.frequency
+               end
     frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
     options = {}
     options['F'] = '' if @new_resource.force || task_need_update?
