@@ -29,7 +29,6 @@ for details on the process and how to become a maintainer or the project lead.
 	      'jaym',
       	'claire',
       	'chefsalim',
-      	'someara',
       	'tas50',
       	'sigje'
       ]
@@ -66,10 +65,6 @@ for details on the process and how to become a maintainer or the project lead.
   [people.sigje]
     name = "Jennifer Davis"
     github = "sigje"
-
-  [people.someara]
-    name = "Sean OMeara"
-    github = "someara"
 
   [people.tas50]
     name = "Tim Smith"

@@ -73,11 +73,11 @@ action :delete do
   # do we have a hash or a subject?
   # TODO: It's a bit annoying to know the thumbprint of a cert you want to remove when you already
   # have the file.  Support reading the hash directly from the file if provided.
-  if @new_resource.source =~ /^[a-fA-F0-9]{40}$/
-    search = "Thumbprint -eq '#{@new_resource.source}'"
-  else
-    search = "Subject -like '*#{@new_resource.source.sub(/\*/, '`*')}*'" # escape any * in the source
-  end
+  search = if @new_resource.source =~ /^[a-fA-F0-9]{40}$/
+             "Thumbprint -eq '#{@new_resource.source}'"
+           else
+             "Subject -like '*#{@new_resource.source.sub(/\*/, '`*')}*'" # escape any * in the source
+           end
   cert_command = "Get-ChildItem Cert:\\#{@location}\\#{@new_resource.store_name} | where { $_.#{search} }"
 
   code_script = within_store_script do |store|

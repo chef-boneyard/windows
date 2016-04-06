@@ -161,7 +161,7 @@ def load_current_resource
   @current_resource.task_name(pathed_task_name)
   task_hash = load_task_hash(pathed_task_name)
 
-  if task_hash[:TaskName] == pathed_task_name
+  if task_hash.respond_to?(:[]) && task_hash[:TaskName] == pathed_task_name
     @current_resource.exists = true
     @current_resource.status = :running if task_hash[:Status] == 'Running'
     if task_hash[:ScheduledTaskState] == 'Enabled'
@@ -170,7 +170,7 @@ def load_current_resource
     @current_resource.cwd(task_hash[:StartIn]) unless task_hash[:StartIn] == 'N/A'
     @current_resource.command(task_hash[:TaskToRun])
     @current_resource.user(task_hash[:RunAsUser])
-  end if task_hash.respond_to? :[]
+  end
 end
 
 private
@@ -188,7 +188,7 @@ end
 
 def task_need_update?
   # gsub needed as schtasks converts single quotes to double quotes on creation
-  @current_resource.command != @new_resource.command.tr("'", "\"") ||
+  @current_resource.command != @new_resource.command.tr("'", '"') ||
     @current_resource.user != @new_resource.user
 end
 
