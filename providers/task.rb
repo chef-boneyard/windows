@@ -36,22 +36,11 @@ action :create do
     validate_create_day
     validate_create_months
 
-    schedule = case @new_resource.frequency
-               when :on_logon
-                 'ONLOGON'
-               when :on_idle
-                 'ONIDLE'
-               else
-                 @new_resource.frequency
-               end
-    frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
     options = {}
     options['F'] = '' if @new_resource.force || task_need_update?
     options['SC'] = schedule
-    unless @new_resource.frequency == :monthly && !%w(FIRST SECOND THIRD FOURTH LAST LASTDAY).include?(@new_resource.frequency_modifier)
-      options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed.include?(@new_resource.frequency)
-    end
-    options['I']  = @new_resource.frequency_modifier if @new_resource.frequency == :on_idle
+    options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed
+    options['I']  = @new_resource.idle_time unless @new_resource.idle_time.nil?
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
     options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
     options['TR'] = @new_resource.command
@@ -341,4 +330,26 @@ end
 
 def use_password?
   @use_password ||= !SYSTEM_USERS.include?(@new_resource.user.upcase)
+end
+
+def schedule
+  case @new_resource.frequency
+  when :on_logon
+    'ONLOGON'
+  when :on_idle
+    'ONIDLE'
+  else
+    @new_resource.frequency
+  end
+end
+
+def frequency_modifier_allowed
+  case @new_resource.frequency
+  when :minute, :hourly, :daily, :weekly
+    true
+  when :monthly
+    @new_resource.months.nil? || %w(FIRST SECOND THIRD FOURTH LAST LASTDAY).include?(@new_resource.frequency_modifier)
+  else
+    false
+  end
 end
