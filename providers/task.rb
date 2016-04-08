@@ -35,6 +35,7 @@ action :create do
     validate_create_frequency_modifier
     validate_create_day
     validate_create_months
+    validate_idle_time
 
     options = {}
     options['F'] = '' if @new_resource.force || task_need_update?
@@ -295,15 +296,18 @@ def validate_create_months
   end
 end
 
+def validate_idle_time
+  return unless @new_resource.frequency == :on_idle
+  unless @new_resource.idle_time.to_i > 0 && @new_resource.idle_time.to_i <= 999
+    raise "idle_time value #{@new_resource.idle_time} is invalid.  Valid values for :on_idle frequency are 1 - 999."
+  end
+end
+
 def validate_create_frequency_modifier
   # Currently is handled in create action 'frequency_modifier_allowed' line. Does not allow for frequency_modifier for once,onstart,onlogon,onidle
   # Note that 'OnEvent' is not a supported frequency.
   unless @new_resource.frequency.nil? || @new_resource.frequency_modifier.nil?
     case @new_resource.frequency
-    when :on_idle
-      unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 999
-        raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :on_idle frequency are 1 - 999."
-      end
     when :minute
       unless @new_resource.frequency_modifier.to_i > 0 && @new_resource.frequency_modifier.to_i <= 1439
         raise "frequency_modifier value #{@new_resource.frequency_modifier} is invalid.  Valid values for :minute frequency are 1 - 1439."
