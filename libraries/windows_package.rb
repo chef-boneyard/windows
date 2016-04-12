@@ -111,8 +111,7 @@ class Chef
           if uninstall_string =~ /msiexec/i
             "#{uninstall_string} /qn"
           else
-            uninstall_string.delete!('"')
-            "start \"\" /wait /d\"#{::File.dirname(uninstall_string)}\" #{::File.basename(uninstall_string)}#{expand_options(@new_resource.options)} /S & exit %%%%ERRORLEVEL%%%%"
+            "start \"\" /wait #{uninstall_string} #{expand_options(@new_resource.options)} /S & exit %%%%ERRORLEVEL%%%%"
           end
         end
         Chef::Log.info("Removing #{@new_resource} with uninstall command '#{uninstall_command}'")
