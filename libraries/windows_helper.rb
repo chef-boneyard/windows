@@ -79,11 +79,11 @@ module Windows
           uri = as_uri(source)
           cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(::URI.unescape(uri.path))}"
           Chef::Log.debug("Caching a copy of file #{source} at #{cache_file_path}")
-          r = Chef::Resource::RemoteFile.new(cache_file_path, run_context)
-          r.source(source)
-          r.backup(false)
-          r.checksum(checksum) if checksum
-          r.run_action(:create)
+          remote_file cache_file_path do
+            source source
+            backup false
+            checksum checksum unless checksum.nil?
+          end.run_action(:create)
         else
           cache_file_path = source
         end
@@ -98,7 +98,7 @@ module Windows
       # http://msdn.microsoft.com/en-us/library/windows/desktop/ms724265%28v=vs.85%29.aspx
       buf = 0.chr * 32 * 1024 # 32k
       if ExpandEnvironmentStrings.call(path.dup, buf, buf.length) == 0
-        fail Chef::Exceptions::Win32APIError, 'Failed calling ExpandEnvironmentStrings (received 0)'
+        raise Chef::Exceptions::Win32APIError, 'Failed calling ExpandEnvironmentStrings (received 0)'
       end
       buf.strip
     end

@@ -54,11 +54,11 @@ unless defined? Chef::Mixin::PowershellOut
 
           command = build_command(script)
 
-          if options
-            cmd = shell_out(command, options)
-          else
-            cmd = shell_out(command)
-          end
+          cmd = if options
+                  shell_out(command, options)
+                else
+                  shell_out(command)
+                end
 
           if disable_redirection
             restore_wow64_file_redirection(node, original_redirection_state)

@@ -2,6 +2,31 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.39.2
+--------------------
+- [PR 329](https://github.com/chef-cookbooks/windows/pull/329) - Silence `compile_time` warning for `chef_gem`
+- [PR 338](https://github.com/chef-cookbooks/windows/pull/338) - ChefSpec matchers for `windows_certificate`
+- [PR 341](https://github.com/chef-cookbooks/windows/pull/341) - Updated rubocop and FoodCritic compliance
+- [PR 336](https://github.com/chef-cookbooks/windows/pull/336) - Fixed where clause compliance with PS v1/v2
+
+v1.39.1
+--------------------
+- [PR 325](https://github.com/chef-cookbooks/windows/pull/325) - Raise an error if a bogus feature is given to the powershell `windows_feature` provider
+- [PR 326](https://github.com/chef-cookbooks/windows/pull/326) - Fix `windows_font` and copy the font file before installation
+
+v1.39.0
+--------------------
+- [PR 305](https://github.com/chef-cookbooks/windows/pull/305) - Added `months` attribute to `windows_task` and allow `frequency_modifier` to accept values 'FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', and 'LASTDAY' for monthly frequency
+- [PR 310](https://github.com/chef-cookbooks/windows/pull/310) - Fix `windows_task` breaks when there is a space in the user name
+- [PR 314](https://github.com/chef-cookbooks/windows/pull/314) - fixes reboot handling on some chef versions below 11.12
+- [PR 317](https://github.com/chef-cookbooks/windows/pull/317) - Adds a `disable_windows_task` matcher
+- [PR 311](https://github.com/chef-cookbooks/windows/pull/311) - Implements the `cwd` attribute of `windows_task`
+- [PR 318](https://github.com/chef-cookbooks/windows/pull/318) - Use dsl instead of manual resource instanciation
+- [PR 303](https://github.com/chef-cookbooks/windows/pull/303) - Fix `http_acl` idempotency when user name contains a space
+- [PR 257](https://github.com/chef-cookbooks/windows/pull/257) - Speed up windows_feature dism provider
+- [PR 319](https://github.com/chef-cookbooks/windows/pull/319) - Add a `.kitchen.cloud.yml` for kitchen testing on Azure
+- [PR 315](https://github.com/chef-cookbooks/windows/pull/315) - Deprecate `windows_package` and forward to `Chef::Provider::Package::Windows` when running 12.6 or higher
+
 v1.38.4
 --------------------
 - [PR 295](https://github.com/chef-cookbooks/windows/pull/295) - Escape `http_acl` username

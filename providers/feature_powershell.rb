@@ -3,23 +3,24 @@
 # Cookbook Name:: windows
 # Provider:: feature_powershell
 #
+use_inline_resources if defined?(use_inline_resources)
 
 include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::PowershellOut
 include Windows::Helper
 
 def install_feature(_name)
-  cmd = powershell_out("Install-WindowsFeature #{@new_resource.feature_name}")
+  cmd = powershell_out!("Install-WindowsFeature #{@new_resource.feature_name}")
   Chef::Log.info(cmd.stdout)
 end
 
 def remove_feature(_name)
-  cmd = powershell_out("Uninstall-WindowsFeature #{@new_resource.feature_name}")
+  cmd = powershell_out!("Uninstall-WindowsFeature #{@new_resource.feature_name}")
   Chef::Log.info(cmd.stdout)
 end
 
 def delete_feature(_name)
-  cmd = powershell_out("Uninstall-WindowsFeature #{@new_resource.feature_name} -Remove")
+  cmd = powershell_out!("Uninstall-WindowsFeature #{@new_resource.feature_name} -Remove")
   Chef::Log.info(cmd.stdout)
 end
 
