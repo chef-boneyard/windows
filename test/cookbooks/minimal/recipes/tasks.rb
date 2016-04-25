@@ -68,6 +68,12 @@ windows_task 'task_for_system' do
   cwd ENV['TEMP']
 end
 
+windows_task 'task_on_idle' do
+  frequency :on_idle
+  command 'dir'
+  idle_time 30
+end
+
 file 'c:/notifytest.txt' do
   content 'blah'
   action :nothing

@@ -35,13 +35,13 @@ action :create do
     validate_create_frequency_modifier
     validate_create_day
     validate_create_months
+    validate_idle_time
 
-    schedule = @new_resource.frequency == :on_logon ? 'ONLOGON' : @new_resource.frequency
-    frequency_modifier_allowed = [:minute, :hourly, :daily, :weekly, :monthly]
     options = {}
     options['F'] = '' if @new_resource.force || task_need_update?
     options['SC'] = schedule
-    options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed.include?(@new_resource.frequency)
+    options['MO'] = @new_resource.frequency_modifier if frequency_modifier_allowed
+    options['I']  = @new_resource.idle_time unless @new_resource.idle_time.nil?
     options['SD'] = @new_resource.start_day unless @new_resource.start_day.nil?
     options['ST'] = @new_resource.start_time unless @new_resource.start_time.nil?
     options['TR'] = @new_resource.command
@@ -271,7 +271,7 @@ def validate_create_day
   unless [:weekly, :monthly].include?(@new_resource.frequency)
     raise 'day attribute is only valid for tasks that run weekly or monthly'
   end
-  if @new_resource.day.is_a? String
+  if @new_resource.day.is_a?(String) && @new_resource.day.to_i.to_s != @new_resource.day
     days = @new_resource.day.split(',')
     days.each do |day|
       unless ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', '*'].include?(day.strip.downcase)
@@ -293,6 +293,13 @@ def validate_create_months
         raise 'months attribute invalid. Only valid values are: JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC and *. Multiple values must be separated by a comma.'
       end
     end
+  end
+end
+
+def validate_idle_time
+  return unless @new_resource.frequency == :on_idle
+  unless @new_resource.idle_time.to_i > 0 && @new_resource.idle_time.to_i <= 999
+    raise "idle_time value #{@new_resource.idle_time} is invalid.  Valid values for :on_idle frequency are 1 - 999."
   end
 end
 
@@ -327,4 +334,26 @@ end
 
 def use_password?
   @use_password ||= !SYSTEM_USERS.include?(@new_resource.user.upcase)
+end
+
+def schedule
+  case @new_resource.frequency
+  when :on_logon
+    'ONLOGON'
+  when :on_idle
+    'ONIDLE'
+  else
+    @new_resource.frequency
+  end
+end
+
+def frequency_modifier_allowed
+  case @new_resource.frequency
+  when :minute, :hourly, :daily, :weekly
+    true
+  when :monthly
+    @new_resource.months.nil? || %w(FIRST SECOND THIRD FOURTH LAST LASTDAY).include?(@new_resource.frequency_modifier)
+  else
+    false
+  end
 end

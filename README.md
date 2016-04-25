@@ -660,6 +660,7 @@ Server 2008 due to API usage.
 - `interactive_enabled` - (Allow task to run interactively or non-interactively.  Requires user and password.)
 - `day` - For monthly or weekly tasks, the day(s) on which the task runs.  (MON - SUN, *, 1 - 31)
 - `months` - The Months of the year on which the task runs. (JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC, *). Multiple months should be comma delimited.
+- `idle_time` - For :on_idle frequency, the time (in minutes) without user activity that must pass to trigger the task. (1 - 999)
 
 #### Examples
 

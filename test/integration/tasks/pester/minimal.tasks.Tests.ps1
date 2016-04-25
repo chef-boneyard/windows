@@ -9,6 +9,7 @@ describe 'minimal::tasks' {
     [xml]$missing_task = schtasks /query /tn 'delete_me' /XML 2> $null
     [xml]$task_changed_by_create = schtasks /query /tn '\chef\change_me' /XML 2> $null
     [xml]$system_task = schtasks /query /tn 'task_for_system' /XML 2> $null
+    [xml]$task_on_idle = schtasks /query /tn 'task_on_idle' /XML 2> $null
 
     it "task 'task_from_name' was created"  {
       $top_level_task | Should Not BeNullOrEmpty
@@ -63,6 +64,18 @@ describe 'minimal::tasks' {
 
     it "task 'task_for_system' runs in temp"  {
       $system_task.Task.Actions.Exec.WorkingDirectory | Should Be $env:temp
+    }
+
+    it "task 'task_on_idle' was created"  {
+      $task_on_idle | Should Not BeNullOrEmpty
+    }
+
+    it "task 'task_on_idle' has IdleTrigger"  {
+      $task_on_idle.Task.Triggers.IdleTrigger | Should Not BeNullOrEmpty
+    }
+
+    it "task 'task_on_idle' has IdleSetting duration 30 minutes"  {
+      $task_on_idle.Task.Settings.IdleSettings.Duration | Should be 'PT30M'
     }
 
     it 'notifies other resources' {
