@@ -2,6 +2,14 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.40.0
+--------------------
+- [PR 357](https://github.com/chef-cookbooks/windows/pull/357) - Fixes for schtasks
+- [PR 359](https://github.com/chef-cookbooks/windows/pull/359) - take bundler out of the appveyor build
+- [PR 356](https://github.com/chef-cookbooks/windows/pull/356) - Misc fixes and updates
+- [PR 355](https://github.com/chef-cookbooks/windows/pull/355) - bump and pin rubocop, fix broken cop
+- [PR 348](https://github.com/chef-cookbooks/windows/pull/348) - Make notify work for `windows_task`
+
 v1.39.2
 --------------------
 - [PR 329](https://github.com/chef-cookbooks/windows/pull/329) - Silence `compile_time` warning for `chef_gem`
