@@ -248,7 +248,8 @@ Font files should be included in the cookbooks
 - `:install` - install a font to the system fonts directory.
 
 #### Attribute Parameters
-- `file` - The name of the font file name to install. It should exist in the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
+- `file` - The name of the font file name to install. The path defaults to the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
+- `source` - Set an alternate path to the font file.
 
 #### Examples
 
