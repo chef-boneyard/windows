@@ -40,11 +40,19 @@ end
 
 def get_cookbook_font
   font_file = @new_resource.file
-  cookbook_file font_file do
-    action    :nothing
-    cookbook  cookbook_name.to_s unless cookbook_name.nil?
-    path      win_friendly_path(::File.join(ENV['TEMP'], font_file))
-  end.run_action(:create)
+  if @new_resource.source
+    remote_file font_file do
+      action  :nothing
+      source  "file://#{new_resource.source}"
+      path    win_friendly_path(::File.join(ENV['TEMP'], font_file))
+    end.run_action(:create)
+  else
+    cookbook_file font_file do
+      action    :nothing
+      cookbook  cookbook_name.to_s unless cookbook_name.nil?
+      path      win_friendly_path(::File.join(ENV['TEMP'], font_file))
+    end.run_action(:create)
+  end
 end
 
 def del_cookbook_font
