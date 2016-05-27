@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.42.0
+--------------------
+- [PR 365](https://github.com/chef-cookbooks/windows/pull/365) - Escape command quotes when passing to schtasks
+
 v1.41.0
 --------------------
 - [PR 364](https://github.com/chef-cookbooks/windows/pull/364) - Configurable font source
