@@ -171,16 +171,18 @@ end
 
 private
 
+# rubocop:disable Style/StringLiteralsInInterpolation
 def run_schtasks(task_action, options = {})
   cmd = "schtasks /#{task_action} /TN \"#{@new_resource.task_name}\" "
   options.keys.each do |option|
     cmd += "/#{option} "
-    cmd += "\"#{options[option]}\" " unless options[option] == ''
+    cmd += "\"#{options[option].to_s.gsub('"', "\\\"")}\" " unless options[option] == ''
   end
   Chef::Log.debug('running: ')
   Chef::Log.debug("    #{cmd}")
   shell_out!(cmd, returns: [0])
 end
+# rubocop:enable Style/StringLiteralsInInterpolation
 
 def task_need_update?
   # gsub needed as schtasks converts single quotes to double quotes on creation

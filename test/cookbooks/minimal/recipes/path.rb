@@ -20,3 +20,9 @@ windows_task 'testpath' do
   action [:create, :run]
   command 'powershell.exe -command $env:path > c:\\external_paths.txt'
 end
+
+ruby_block 'wait for task' do
+  block do
+    sleep 2
+  end
+end
