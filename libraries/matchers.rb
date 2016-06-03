@@ -284,6 +284,31 @@ if defined?(ChefSpec)
 
   #
   # Assert that a +windows_task+ resource exists in the Chef run with the
+  # action +:enable+. Given a Chef Recipe that creates "mytask" as a
+  # +windows_task+:
+  #
+  #     windows_task 'mytask' do
+  #       action :enable
+  #     end
+  #
+  # The Examples section demonstrates the different ways to test a
+  # +windows_task+ resource with ChefSpec.
+  #
+  # @example Assert that a +windows_task+ was enabled
+  #   expect(chef_run).to enable_windows_task('mytask')
+  #
+  #
+  # @param [String, Regex] resource_name
+  #   the name of the resource to match
+  #
+  # @return [ChefSpec::Matchers::ResourceMatcher]
+  #
+  def enable_windows_task(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_task, :enable, resource_name)
+  end
+
+  #
+  # Assert that a +windows_task+ resource exists in the Chef run with the
   # action +:delete+. Given a Chef Recipe that deletes "mytask" as a
   # +windows_task+:
   #
