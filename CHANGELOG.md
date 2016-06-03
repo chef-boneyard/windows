@@ -2,6 +2,10 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.43.0
+--------------------
+- [PR 369](https://github.com/chef-cookbooks/windows/pull/369) - Add a enable_windows_task matcher
+
 v1.42.0
 --------------------
 - [PR 365](https://github.com/chef-cookbooks/windows/pull/365) - Escape command quotes when passing to schtasks
