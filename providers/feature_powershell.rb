@@ -9,13 +9,21 @@ include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::PowershellOut
 include Windows::Helper
 
+def install_feature_cmdlet
+  node['os_version'] < 6.2 ? 'Add-WindowsFeature' : 'Install-WindowsFeature'
+end
+
+def remove_feature_cmdlet
+  node['os_version'] < 6.2 ? 'Remove-WindowsFeature' : 'Uninstall-WindowsFeature'
+end
+
 def install_feature(_name)
-  cmd = powershell_out!("Install-WindowsFeature #{@new_resource.feature_name}")
+  cmd = powershell_out!("#{install_feature_cmdlet} #{@new_resource.feature_name}")
   Chef::Log.info(cmd.stdout)
 end
 
 def remove_feature(_name)
-  cmd = powershell_out!("Uninstall-WindowsFeature #{@new_resource.feature_name}")
+  cmd = powershell_out!("#{remove_feature_cmdlet} #{@new_resource.feature_name}")
   Chef::Log.info(cmd.stdout)
 end
 
