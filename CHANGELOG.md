@@ -4,6 +4,10 @@ This file is used to list changes made in each version of the windows cookbook.
 
 v1.43.0
 --------------------
+- [PR 372](https://github.com/chef-cookbooks/windows/pull/372) - Support Server 2008 for feature installs via PowerShell
+
+v1.43.0
+--------------------
 - [PR 369](https://github.com/chef-cookbooks/windows/pull/369) - Add a enable_windows_task matcher
 
 v1.42.0
