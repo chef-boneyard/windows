@@ -3,12 +3,12 @@ class Chef
     class WindowsFeature
       module Base
         def action_install
-          unless installed?
+          if installed?
+            Chef::Log.debug("#{@new_resource} is already installed - nothing to do")
+          else
             install_feature(@new_resource.feature_name)
             @new_resource.updated_by_last_action(true)
             Chef::Log.info("#{@new_resource} installed feature")
-          else
-            Chef::Log.debug("#{@new_resource} is already installed - nothing to do")
           end
         end
 
