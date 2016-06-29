@@ -70,13 +70,13 @@ def install_font
 end
 
 action :install do
-  unless font_exists?
+  if font_exists?
+    Chef::Log.debug("Not installing font: #{@new_resource.file}, font already installed.")
+    new_resource.updated_by_last_action(false)
+  else
     get_cookbook_font
     install_font
     del_cookbook_font
     new_resource.updated_by_last_action(true)
-  else
-    Chef::Log.debug("Not installing font: #{@new_resource.file}, font already installed.")
-    new_resource.updated_by_last_action(false)
   end
 end

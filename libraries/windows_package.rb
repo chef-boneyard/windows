@@ -116,7 +116,7 @@ class Chef
           end
         end
         Chef::Log.info("Removing #{@new_resource} with uninstall command '#{uninstall_command}'")
-        shell_out!(uninstall_command, { returns: @new_resource.success_codes })
+        shell_out!(uninstall_command, returns: @new_resource.success_codes)
       end
 
       private
