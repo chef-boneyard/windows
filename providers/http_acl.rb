@@ -23,6 +23,7 @@ use_inline_resources if defined?(use_inline_resources)
 
 include Chef::Mixin::ShellOut
 include Windows::Helper
+include Windows::UrlAcl
 
 # Support whyrun
 def whyrun_supported?
@@ -71,14 +72,14 @@ end
 private
 
 def getCurrentAcl
-  cmd = shell_out!("#{@command} http show urlacl url=#{@current_resource.url}")
-  Chef::Log.debug "netsh reports: #{cmd.stdout}"
+  users = get_urlacl(@current_resource.url)
 
-  m = cmd.stdout.scan(/User:\s*(.+)/)
-  if m.empty?
+  if users.empty?
     @current_resource.exists = false
   else
-    @current_resource.user(m[0][0].chomp)
+    # TODO: URL might be registered for more than one user. 
+    # For now .first will do for most cases (I've never seen more than one user registered)
+    @current_resource.user(users.first[:user])
     @current_resource.exists = true
   end
 end
