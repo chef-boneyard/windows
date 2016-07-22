@@ -81,8 +81,8 @@ def to_domain_notation(user, domain = nil)
   else
     part_array.unshift(domain) unless domain.nil?
   end
-  
-  return part_array.join('\\')
+
+  part_array.join('\\')
 end
 
 def getCurrentAcl
@@ -91,7 +91,7 @@ def getCurrentAcl
   if users.empty?
     @current_resource.exists = false
   else
-    # TODO: URL might be registered for more than one user. 
+    # TODO: URL might be registered for more than one user.
     # For now .first will do for most cases (I've never seen more than one user registered)
     user = users.first
     username = to_domain_notation(user[:user], user[:domain])

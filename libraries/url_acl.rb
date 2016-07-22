@@ -25,7 +25,7 @@ module Windows
       extend FFI::Library
       ffi_lib 'httpapi'
 
-      HTTP_INITIALIZE_CONFIG = 2
+      HTTP_INITIALIZE_CONFIG = 2 unless defined? HTTP_INITIALIZE_CONFIG
 
       enum :http_service_config_query_type, [:http_service_config_query_exact, 0,
                                              :http_service_config_next,
@@ -115,25 +115,25 @@ module Windows
     end
 
     module ErrorCodes
-      ERROR_SUCCESS = 0,
-      ERROR_INVALID_FUNCTION = 1,
-      ERROR_FILE_NOT_FOUND = 2,
-      ERROR_INVALID_HANDLE = 6,
-      ERROR_INSUFFICIENT_BUFFER = 122
+      ERROR_SUCCESS = 0 unless defined? ERROR_SUCCESS
+      ERROR_INVALID_FUNCTION = 1 unless defined? ERROR_INVALID_FUNCTION
+      ERROR_FILE_NOT_FOUND = 2 unless defined? ERROR_FILE_NOT_FOUND
+      ERROR_INVALID_HANDLE = 6 unless defined? ERROR_INVALID_HANDLE
+      ERROR_INSUFFICIENT_BUFFER = 122 unless defined? ERROR_INSUFFICIENT_BUFFER
     end
 
     def get_urlacl(url)
-      hresult = initialize_http
+      initialize_http
       begin
-          security_descriptor = get_security_descriptor(url)
-          sids = get_sids(security_descriptor)
-          sids.map { |sid| get_user(sid) }
+        security_descriptor = get_security_descriptor(url)
+        sids = get_sids(security_descriptor)
+        sids.map { |sid| get_user(sid) }
       ensure
-          terminate_http
+        terminate_http
       end
     end
 
-  private
+    private
 
     def initialize_http
       api_version = HttpApi::HTTPApiVersion.new
@@ -152,8 +152,7 @@ module Windows
 
     def get_security_descriptor(url)
       url_utf16 = url.encode(Encoding::UTF_16LE)
-      ptr_url_utf16 = FFI::MemoryPointer.new(:ushort, url_utf16.length + 1, true).
-          put_bytes(0, url_utf16)
+      ptr_url_utf16 = FFI::MemoryPointer.new(:ushort, url_utf16.length + 1, true).put_bytes(0, url_utf16)
 
       input_config_info = HttpApi::HTTPServiceConfigURLACLQuery.new
       input_config_info[:query_desc] = :http_service_config_query_exact
@@ -164,16 +163,16 @@ module Windows
       # First request to get needed buffer_size. Expecting ERROR_INSUFFICIENT_BUFFER
       # or URL not found
       hresult = HttpApi.http_query_service_configuration(
-          nil,
-          :http_service_config_urlacl_info,
-          input_config_info.to_ptr,
-          input_config_info.size,
-          nil,
-          0,
-          ptr_return_length,
-          nil)
+        nil,
+        :http_service_config_urlacl_info,
+        input_config_info.to_ptr,
+        input_config_info.size,
+        nil,
+        0,
+        ptr_return_length,
+        nil)
 
-      return "" if 2 == hresult
+      return '' if 2 == hresult
 
       raise "Unexcpected HRESULT #{hresult} [HttpApi.http_query_service_configuration]" \
           unless ErrorCodes::ERROR_INSUFFICIENT_BUFFER == hresult
@@ -183,14 +182,14 @@ module Windows
 
       # Second request is expected to succeed
       hresult = HttpApi.http_query_service_configuration(
-          nil,
-          :http_service_config_urlacl_info,
-          input_config_info.to_ptr,
-          input_config_info.size,
-          ptr_output_config_info,
-          buffer_size,
-          ptr_return_length,
-          nil)
+        nil,
+        :http_service_config_urlacl_info,
+        input_config_info.to_ptr,
+        input_config_info.size,
+        ptr_output_config_info,
+        buffer_size,
+        ptr_return_length,
+        nil)
 
       raise "Unexcpected HRESULT #{hresult} [HttpApi.http_query_service_configuration]" \
           unless 0 == hresult
@@ -203,34 +202,32 @@ module Windows
       index = 0
       wchar = 0
       result = []
-      begin
-          wchar = mem_pointer.get_uint16(index*2)
-          result.push(wchar) unless (0 == wchar)
-          index += 1
-      end until 0 == wchar
+      loop do
+        wchar = mem_pointer.get_uint16(2 * index)
+        break if 0 == wchar
+        result.push(wchar)
+        index += 1
+      end
 
-      result.pack("s*").
-          force_encoding(Encoding::UTF_16LE).
-          encode(Encoding::UTF_8)
+      result.pack('s*').force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8)
     end
 
     def get_sids(security_descriptor)
-      match_data =  security_descriptor.scan(/\([^\)]+\)/)
+      match_data = security_descriptor.scan(/\([^\)]+\)/)
       sids = []
       match_data.each do |sd|
-          sid_string = sd.match(/\(A;;G\w{1};;;([^\)]+)/)[1].encode(Encoding::UTF_16LE)
-          sids.push(sid_string)
+        sid_string = sd.match(/\(A;;G\w{1};;;([^\)]+)/)[1].encode(Encoding::UTF_16LE)
+        sids.push(sid_string)
       end
-      return sids
+      sids
     end
 
     def get_user(sid_string)
-      ptr_string_sid = FFI::MemoryPointer.new(:ushort, sid_string.length + 1).
-          put_bytes(0, sid_string)
+      ptr_string_sid = FFI::MemoryPointer.new(:ushort, sid_string.length + 1).put_bytes(0, sid_string)
       ptr_ptr_sid = FFI::MemoryPointer.new(:pointer, 1)
       success = Advapi32.convert_string_sid_to_sid(ptr_string_sid, ptr_ptr_sid)
 
-      raise "Advapi32.convert_string_sid_to_sid failed" unless 0 != success
+      raise 'Advapi32.convert_string_sid_to_sid failed' unless 0 != success
 
       ptr_cch_name = FFI::MemoryPointer.new(:uint, 1)
       ptr_cch_domain = FFI::MemoryPointer.new(:uint, 1)
@@ -238,32 +235,32 @@ module Windows
 
       # First call to get needed buffer sizes
       Advapi32.lookup_account_sid(
-          nil,
-          ptr_ptr_sid.read_pointer,
-          nil,
-          ptr_cch_name,
-          nil,
-          ptr_cch_domain,
-          ptr_sid_name_use)
+        nil,
+        ptr_ptr_sid.read_pointer,
+        nil,
+        ptr_cch_name,
+        nil,
+        ptr_cch_domain,
+        ptr_sid_name_use)
 
       ptr_name = FFI::MemoryPointer.new(:ushort, ptr_cch_name.read_uint)
       ptr_domain = FFI::MemoryPointer.new(:ushort, ptr_cch_domain.read_uint)
       success = Advapi32.lookup_account_sid(
-          nil,
-          ptr_ptr_sid.read_pointer,
-          ptr_name,
-          ptr_cch_name,
-          ptr_domain,
-          ptr_cch_domain,
-          ptr_sid_name_use)
+        nil,
+        ptr_ptr_sid.read_pointer,
+        ptr_name,
+        ptr_cch_name,
+        ptr_domain,
+        ptr_cch_domain,
+        ptr_sid_name_use)
 
-      raise "Advapi32.lookup_account_sid failed" unless 0 != success
+      raise 'Advapi32.lookup_account_sid failed' unless 0 != success
 
       name = read_utf16(ptr_name)
       domain = read_utf16(ptr_domain)
       domain = nil if domain.empty?
 
-      return :domain => domain, :user => name
+      return { domain: domain, user: name }
     ensure
       ptr_sid = ptr_ptr_sid.read_pointer
       Kernel32.local_free(ptr_sid) unless ptr_sid.null?
