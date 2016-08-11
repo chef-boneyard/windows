@@ -24,5 +24,5 @@ default_action :create
 attribute :source, kind_of: String, name_attribute: true, required: true
 attribute :pfx_password, kind_of: String
 attribute :private_key_acl, kind_of: Array
-attribute :store_name, kind_of: String, default: 'MY', regex: /^(?:MY|CA|ROOT)$/
+attribute :store_name, kind_of: String, default: 'MY', regex: /^(?:MY|CA|ROOT|TrustedPublisher)$/
 attribute :user_store, kind_of: [TrueClass, FalseClass], default: false
