@@ -599,15 +599,15 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_registry, :force_modify, resource_name)
   end
 
-  def remove_modify_windows_registry(resource_name)
+  def remove_windows_registry(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_registry, :remove, resource_name)
   end
 
-  def create_modify_windows_http_acl(resource_name)
+  def create_windows_http_acl(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_http_acl, :create, resource_name)
   end
 
-  def delete_modify_windows_http_acl(resource_name)
+  def delete_windows_http_acl(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_http_acl, :delete, resource_name)
   end
 end
