@@ -1,25 +1,22 @@
 if defined?(ChefSpec)
-  chefspec_version = Gem.loaded_specs['chefspec'].version
-  define_method = if chefspec_version < Gem::Version.new('4.1.0')
-                    ChefSpec::Runner.method(:define_runner_method)
-                  else
-                    ChefSpec.method(:define_matcher)
-                  end
 
-  define_method.call :windows_certificate
-  define_method.call :windows_package
-  define_method.call :windows_feature
-  define_method.call :windows_task
-  define_method.call :windows_path
-  define_method.call :windows_batch
-  define_method.call :windows_pagefile
-  define_method.call :windows_zipfile
-  define_method.call :windows_shortcut
-  define_method.call :windows_auto_run
-  define_method.call :windows_printer
-  define_method.call :windows_printer_port
-  define_method.call :windows_reboot
-  define_method.call :windows_font
+  ChefSpec.define_matcher :windows_auto_run
+  ChefSpec.define_matcher :windows_batch
+  ChefSpec.define_matcher :windows_certificate
+  ChefSpec.define_matcher :windows_certificate_binding
+  ChefSpec.define_matcher :windows_feature
+  ChefSpec.define_matcher :windows_font
+  ChefSpec.define_matcher :windows_http_acl
+  ChefSpec.define_matcher :windows_package
+  ChefSpec.define_matcher :windows_pagefile
+  ChefSpec.define_matcher :windows_path
+  ChefSpec.define_matcher :windows_printer
+  ChefSpec.define_matcher :windows_printer_port
+  ChefSpec.define_matcher :windows_reboot
+  ChefSpec.define_matcher :windows_registry
+  ChefSpec.define_matcher :windows_shortcut
+  ChefSpec.define_matcher :windows_task
+  ChefSpec.define_matcher :windows_zipfile
 
   #
   # Assert that a +windows_certificate+ resource exists in the Chef run with the
@@ -580,5 +577,37 @@ if defined?(ChefSpec)
 
   def install_windows_font(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_font, :install, resource_name)
+  end
+
+  def create_windows_certificate_binding(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_certificate_binding, :create, resource_name)
+  end
+
+  def delete_windows_certificate_binding(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_certificate_binding, :delete, resource_name)
+  end
+
+  def create_windows_registry(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_registry, :create, resource_name)
+  end
+
+  def modify_windows_registry(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_registry, :modify, resource_name)
+  end
+
+  def force_modify_windows_registry(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_registry, :force_modify, resource_name)
+  end
+
+  def remove_windows_registry(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_registry, :remove, resource_name)
+  end
+
+  def create_windows_http_acl(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_http_acl, :create, resource_name)
+  end
+
+  def delete_windows_http_acl(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_http_acl, :delete, resource_name)
   end
 end
