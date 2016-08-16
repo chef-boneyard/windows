@@ -19,6 +19,7 @@ if defined?(ChefSpec)
   define_method.call :windows_printer
   define_method.call :windows_printer_port
   define_method.call :windows_reboot
+  define_method.call :windows_font
 
   #
   # Assert that a +windows_certificate+ resource exists in the Chef run with the
@@ -577,4 +578,7 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_reboot, :cancel, resource_name)
   end
 
+  def install_windows_font(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_font, :install, resource_name)
+  end
 end
