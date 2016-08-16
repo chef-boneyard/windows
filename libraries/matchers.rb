@@ -1,25 +1,19 @@
 if defined?(ChefSpec)
-  chefspec_version = Gem.loaded_specs['chefspec'].version
-  define_method = if chefspec_version < Gem::Version.new('4.1.0')
-                    ChefSpec::Runner.method(:define_runner_method)
-                  else
-                    ChefSpec.method(:define_matcher)
-                  end
 
-  define_method.call :windows_certificate
-  define_method.call :windows_package
-  define_method.call :windows_feature
-  define_method.call :windows_task
-  define_method.call :windows_path
-  define_method.call :windows_batch
-  define_method.call :windows_pagefile
-  define_method.call :windows_zipfile
-  define_method.call :windows_shortcut
-  define_method.call :windows_auto_run
-  define_method.call :windows_printer
-  define_method.call :windows_printer_port
-  define_method.call :windows_reboot
-  define_method.call :windows_font
+  ChefSpec.define_matcher :windows_certificate
+  ChefSpec.define_matcher :windows_package
+  ChefSpec.define_matcher :windows_feature
+  ChefSpec.define_matcher :windows_task
+  ChefSpec.define_matcher :windows_path
+  ChefSpec.define_matcher :windows_batch
+  ChefSpec.define_matcher :windows_pagefile
+  ChefSpec.define_matcher :windows_zipfile
+  ChefSpec.define_matcher :windows_shortcut
+  ChefSpec.define_matcher :windows_auto_run
+  ChefSpec.define_matcher :windows_printer
+  ChefSpec.define_matcher :windows_printer_port
+  ChefSpec.define_matcher :windows_reboot
+  ChefSpec.define_matcher :windows_font
 
   #
   # Assert that a +windows_certificate+ resource exists in the Chef run with the
