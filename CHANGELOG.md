@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 1.44.2 (2016-08-15)
+
+- Add missing windows_font matcher
+- Add chef_version to the metadata
+- Switch from Rubocop to Cookstyle and use our improved Rakefile
+- Remove test deps from the Gemfile that are in ChefDK
+
 ## v1.44.1
 
 - [PR 375](https://github.com/chef-cookbooks/windows/pull/375) - Fix comparison of string to number in platform_version
