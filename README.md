@@ -838,6 +838,7 @@ expect(chef_run).to install_windows_package('Node.js').with(
 * request_windows_reboot
 * cancel_windows_reboot
 * create_windows_shortcut
+* install_windows_font
 
 
 Usage
