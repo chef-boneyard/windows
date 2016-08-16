@@ -8,4 +8,5 @@ version          '1.44.1'
 supports         'windows'
 source_url       'https://github.com/chef-cookbooks/windows' if respond_to?(:source_url)
 issues_url       'https://github.com/chef-cookbooks/windows/issues' if respond_to?(:issues_url)
+chef_version     '>= 11.0' if respond_to?(:chef_version)
 depends          'chef_handler'
