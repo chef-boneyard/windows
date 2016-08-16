@@ -22,7 +22,6 @@ before_script:
 
 script:
   - /opt/chefdk/embedded/bin/chef --version
-  - /opt/chefdk/embedded/bin/chef exec rubocop --version
+  - /opt/chefdk/embedded/bin/cookstyle --version
   - /opt/chefdk/embedded/bin/foodcritic --version
-  - /opt/chefdk/bin/chef exec rake style
-  - /opt/chefdk/bin/chef exec rake spec
+  - /opt/chefdk/bin/chef exec rake
