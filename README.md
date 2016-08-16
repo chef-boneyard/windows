@@ -57,7 +57,7 @@ end
 
 ### windows_batch
 
-This resource is now deprecated and will be removed in a future version of this cookbook. Chef >= 11.6.0 includes a built-in [batch](http://docs.chef.io/resource_batch.html) resource.
+This resource is now deprecated and will be removed in a future version of this cookbook. Chef >= 11.6.0 includes a built-in [batch](https://docs.chef.io/resource_batch.html) resource.
 
 Execute a batch script using the cmd.exe interpreter (much like the script resources for bash, csh, powershell, perl, python and ruby). A temporary file is created and executed like other script resources, rather than run inline. By their nature, Script resources are not idempotent, as they are completely up to the user's imagination. Use the `not_if` or `only_if` meta parameters to guard the resource for idempotence.
 
@@ -519,7 +519,7 @@ end
 
 ### windows_reboot
 
-This resource is now deprecated and will be removed in a future version of this cookbook. Chef >= 12.0.0 includes a built-in [reboot](http://docs.chef.io/resource_reboot.html) resource.
+This resource is now deprecated and will be removed in a future version of this cookbook. Chef >= 12.0.0 includes a built-in [reboot](https://docs.chef.io/resource_reboot.html) resource.
 
 Sets required data in the node's run_state to notify `WindowsRebootHandler` a reboot is requested. If Chef run completes successfully a reboot will occur if the `WindowsRebootHandler` is properly registered as a report handler. As an action of `:request` will cause a node to reboot every Chef run, this resource is usually notified by other resources...ie restart node after a package is installed (see example below).
 
