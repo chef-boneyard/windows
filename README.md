@@ -109,10 +109,10 @@ Installs a certificate into the Windows certificate store from a file, and grant
 
 #### Attribute Parameters
 
-- `source` - name attribute. The source file (for create and acl_add), thumprint (for delete and acl_add) or subject (for delete).
+- `source` - name attribute. The source file (for create and acl_add), thumbprint (for delete and acl_add) or subject (for delete).
 - `pfx_password` - the password to access the source if it is a pfx file.
 - `private_key_acl` - array of 'domain\account' entries to be granted read-only access to the certificate's private key. This is not idempotent.
-- `store_name` - the certificate store to maniplate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
+- `store_name` - the certificate store to manipulate. One of MY (default : personal store), CA (trusted intermediate store) or ROOT (trusted root store).
 - `user_store` - if false (default) then use the local machine store; if true then use the current user's store.
 
 #### Examples
@@ -150,7 +150,7 @@ Binds a certificate to an HTTP port in order to enable TLS communication.
 
 #### Attribute Parameters
 
-- `cert_name` - name attribute. The thumprint(hash) or subject that identifies the certicate to be bound.
+- `cert_name` - name attribute. The thumbprint(hash) or subject that identifies the certificate to be bound.
 - `name_kind` - indicates the type of cert_name. One of :subject (default) or :hash.
 - `address` - the address to bind against. Default is 0.0.0.0 (all IP addresses).
 - `port` - the port to bind against. Default is 443.
@@ -494,7 +494,7 @@ The Windows Printer LWRP will automatically create a TCP/IP printer port for you
 - `location` - Printer location, e.g. 'Fifth floor copy room', or 'US/NYC/Floor42/Room4207'
 - `shared` - Boolean. Defaults to false.
 - `share_name` - Printer share name.
-- `ipv4_address` - Printer IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP addresss to set it. Required.
+- `ipv4_address` - Printer IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP address to set it. Required.
 
 An error of "Set-WmiInstance : Generic failure" is most likely due to the printer driver name not matching or not being installed.
 
@@ -755,7 +755,7 @@ windows_task 'chef-client' do
 end
 ```
 
-Delete a taks named `old task`
+Delete a task named `old task`
 
 ```ruby
 windows_task 'old task' do
