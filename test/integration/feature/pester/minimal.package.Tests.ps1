@@ -1,6 +1,6 @@
 $global:progressPreference = 'SilentlyContinue'
 
-describe 'minimal::feature' {
+describe 'test::feature' {
   context 'minimal_feature' {
 
     it "feature TelnetClient was created"  {

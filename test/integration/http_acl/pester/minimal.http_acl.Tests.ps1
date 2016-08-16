@@ -1,6 +1,6 @@
 $global:progressPreference = 'SilentlyContinue'
 
-describe 'minimal::http_acl' {
+describe 'test::http_acl' {
   context 'minimal_http_acl' {
 
     it "http_acl added for some user to access google.com"  {

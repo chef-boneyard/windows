@@ -1,3 +1,5 @@
+include_recipe 'windows::default'
+
 windows_task 'task_from_name' do
   command 'dir'
 end

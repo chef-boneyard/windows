@@ -1,5 +1,5 @@
 ---
-driver: 
+driver:
   name: azurerm
   subscription_id: <%= ENV['AZURE_SUBSCRIPTION_ID'] %>
   location: 'Central US'
@@ -20,24 +20,7 @@ platforms:
         winrm set winrm/config/service '@{AllowUnencrypted="true"}'
         winrm set winrm/config/service/auth '@{Basic="true"}'
         netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" profile=public protocol=tcp localport=5985 remoteip=localsubnet new remoteip=any
-    provisioner:
-      require_chef_omnibus: 11.18.6
-  - name: windows-2012-chef11.18.6
-    driver:
-      image_urn: MicrosoftWindowsServer:WindowsServer:2012-Datacenter:latest
-    provisioner:
-      require_chef_omnibus: 11.18.6
-  - name: windows-2012r2-chef11.18.6
-    driver:
-      image_urn: MicrosoftWindowsServer:WindowsServer:2012-R2-Datacenter:latest
-    provisioner:
-      require_chef_omnibus: 11.18.6
-  - name: windows-2016-tp-chef11.18.6
-    driver:
-      image_urn: MicrosoftWindowsServer:WindowsServer:Windows-Server-Technical-Preview:latest
-    provisioner:
-      require_chef_omnibus: 11.18.6
-  - name: windows-2008r2-chef12
+  - name: windows-2008r2
     driver:
       image_urn: MicrosoftWindowsServer:WindowsServer:2008-R2-SP1:latest
       winrm_powershell_script: |-
@@ -47,12 +30,12 @@ platforms:
         winrm set winrm/config/service '@{AllowUnencrypted="true"}'
         winrm set winrm/config/service/auth '@{Basic="true"}'
         netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" profile=public protocol=tcp localport=5985 remoteip=localsubnet new remoteip=any
-  - name: windows-2012-chef12
+  - name: windows-2012
     driver:
       image_urn: MicrosoftWindowsServer:WindowsServer:2012-Datacenter:latest
-  - name: windows-2012r2-chef12
+  - name: windows-2012r2
     driver:
       image_urn: MicrosoftWindowsServer:WindowsServer:2012-R2-Datacenter:latest
-  - name: windows-2016-tp-chef12
+  - name: windows-2016-tp
     driver:
       image_urn: MicrosoftWindowsServer:WindowsServer:Windows-Server-Technical-Preview:latest
