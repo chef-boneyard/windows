@@ -68,6 +68,7 @@ def load_current_resource
   @current_resource.address(@new_resource.address)
   @current_resource.port(@new_resource.port)
   @current_resource.store_name(@new_resource.store_name)
+  @current_resource.app_id(@new_resource.app_id)
 
   @command = locate_sysnative_cmd('netsh.exe')
   getCurrentHash
@@ -130,5 +131,7 @@ def getHashFromSubject
     raise "Couldn't find thumbprint for subject #{@current_resource.cert_name}"
   end
 
-  p.stdout.strip
+  # seem to get a UTF-8 string with BOM returned sometimes! Strip any such BOM
+  hash = p.stdout.strip
+  hash[0].ord == 239 ? hash.force_encoding("UTF-8").delete!("\xEF\xBB\xBF".force_encoding("UTF-8")) : hash
 end

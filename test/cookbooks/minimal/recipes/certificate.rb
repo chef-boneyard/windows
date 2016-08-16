@@ -26,3 +26,10 @@ windows_certificate_binding 'ChefDummyCertForTest' do
   store_name 'CA'
   port 443
 end
+
+windows_certificate_binding '444-appid' do
+  cert_name 'ChefDummyCertForTest'
+  store_name 'CA'
+  port 444
+  app_id '{00000000-0000-0000-0000-000000000000}'
+end

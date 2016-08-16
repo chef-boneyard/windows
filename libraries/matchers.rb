@@ -7,6 +7,7 @@ if defined?(ChefSpec)
                   end
 
   define_method.call :windows_certificate
+  define_method.call :windows_certificate_binding
   define_method.call :windows_package
   define_method.call :windows_feature
   define_method.call :windows_task
@@ -95,6 +96,56 @@ if defined?(ChefSpec)
   #
   def add_acl_to_windows_certificate(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_certificate, :acl_add, resource_name)
+  end
+
+  #
+  # Assert that a +windows_certificate_binding+ resource exists in the Chef run with the
+  # action +:create+. Given a Chef Recipe that creates a binding for 'ChefDummyCertForTest' to port 443
+  #
+  #     windows_certificate_binding 'ChefDummyCertForTest' do
+  #       action :create
+  #       store_name 'CA'
+  #     end
+  #
+  # The Examples section demonstrates the different ways to test a
+  # +windows_certificate_binding+ resource with ChefSpec.
+  #
+  # @example Assert that a +windows_certificate_binding+ was created
+  #   expect(chef_run).to create_windows_certificate_binding('ChefDummyCertForTest')
+  #
+  #
+  # @param [String, Regex] resource_name
+  #   the name of the resource to match
+  #
+  # @return [ChefSpec::Matchers::ResourceMatcher]
+  #
+  def create_windows_certificate_binding(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_certificate_binding, :create, resource_name)
+  end
+
+  #
+  # Assert that a +windows_certificate_binding+ resource exists in the Chef run with the
+  # action +:delete+. Given a Chef Recipe that deletes "ChefDummyCertForTest" as a
+  # +windows_certificate_binding+:
+  #
+  #     windows_certificate_binding 'ChefDummyCertForTest' do
+  #       action :delete
+  #     end
+  #
+  # The Examples section demonstrates the different ways to test a
+  # +windows_certificate_binding+ resource with ChefSpec.
+  #
+  # @example Assert that a +windows_certificate_binding+ was _not_ deleted
+  #   expect(chef_run).to_not delete_windows_certificate_binding('ChefDummyCertForTest')
+  #
+  #
+  # @param [String, Regex] resource_name
+  #   the name of the resource to match
+  #
+  # @return [ChefSpec::Matchers::ResourceMatcher]
+  #
+  def delete_windows_certificate_binding(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_certificate_binding, :delete, resource_name)
   end
 
   #
