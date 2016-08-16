@@ -18,11 +18,7 @@
 # limitations under the License.
 #
 
-def initialize(name, run_context = nil)
-  super
-  @action = :add
-end
-
 actions :add, :remove
+default_action :add
 
 attribute :path, kind_of: String, name_attribute: true
