@@ -1,15 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'berkshelf', '~> 4.3'
-gem 'chefspec', '~> 4.6'
-gem 'cookstyle'
-gem 'foodcritic', '~> 6.2'
-gem 'kitchen-dokken'
-gem 'kitchen-inspec', '~> 0.12'
-gem 'kitchen-vagrant', '~> 0.20'
+gem 'tomlrb'
 gem 'rake'
 gem 'stove'
-gem 'test-kitchen', '~> 1.9'
-gem 'tomlrb'
+gem 'community_cookbook_releaser'
+
 gem 'kitchen-pester'
-gem 'winrm-fs', '~> 0.4.2'
