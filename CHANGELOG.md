@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 1.44.3 (2016-08-16)
+
+- Remove support for ChefSpec <4.1 in the matchers
+- Add missing Chefspec matchers
+
 ## 1.44.2 (2016-08-15)
 
 - Add missing windows_font matcher
