@@ -23,7 +23,6 @@
 require 'resolv'
 
 actions :create, :delete
-
 default_action :create
 
 attribute :device_id, kind_of: String, name_attribute: true,

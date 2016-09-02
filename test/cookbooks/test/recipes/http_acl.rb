@@ -1,3 +1,5 @@
+include_recipe 'windows::default'
+
 user 'space user' do
   password 'Pass@word1'
 end

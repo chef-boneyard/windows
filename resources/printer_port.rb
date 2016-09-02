@@ -23,7 +23,6 @@
 require 'resolv'
 
 actions :create, :delete
-
 default_action :create
 
 attribute :ipv4_address, name_attribute: true, kind_of: String,

@@ -6,10 +6,6 @@ Lint/HandleExceptions:
     - 'libraries/registry_helper.rb'
     - 'libraries/windows_helper.rb'
 
-Lint/RescueException:
-  Exclude:
-    - 'providers/registry.rb'
-
 Lint/ShadowingOuterLocalVariable:
   Exclude:
     - 'libraries/registry_helper.rb'
@@ -17,7 +13,6 @@ Lint/ShadowingOuterLocalVariable:
 Lint/UselessAssignment:
   Exclude:
     - 'libraries/registry_helper.rb'
-    - 'providers/registry.rb'
 
 Metrics/BlockNesting:
   Max: 5

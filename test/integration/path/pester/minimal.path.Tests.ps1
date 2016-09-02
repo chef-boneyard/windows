@@ -1,6 +1,6 @@
 $global:progressPreference = 'SilentlyContinue'
 
-describe 'minimal::path' {
+describe 'test::path' {
   context 'windows_path' {
     $SystemVariables  = get-itemproperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
     $UserVariables = get-itemproperty 'HKCU:\Environment'

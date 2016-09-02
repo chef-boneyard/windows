@@ -3,7 +3,7 @@
 # Cookbook Name:: windows
 # Provider:: feature_dism
 #
-# Copyright:: 2011-2015, Chef Software, Inc.
+# Copyright:: 2011-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-use_inline_resources if defined?(use_inline_resources)
+
+use_inline_resources
 
 include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::ShellOut

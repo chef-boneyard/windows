@@ -17,7 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-use_inline_resources if defined?(use_inline_resources)
+
+use_inline_resources
 
 # See this for info on certutil
 # https://technet.microsoft.com/en-gb/library/cc732443.aspx

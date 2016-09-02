@@ -1,6 +1,6 @@
 $global:progressPreference = 'SilentlyContinue'
 
-describe 'minimal::package' {
+describe 'test::package' {
   context 'minimal_package' {
 
     it "task 'task_for_system' was created"  {

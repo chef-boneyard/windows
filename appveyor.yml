@@ -15,7 +15,7 @@ clone_depth: 1
 
 # Install the latest nightly of ChefDK
 install:
-  - ps: iex (irm https://omnitruck.chef.io/install.ps1); Install-Project -Project chefdk -channel current 
+  - ps: iex (irm https://omnitruck.chef.io/install.ps1); Install-Project -Project chefdk -channel current
   - ps: 'Get-CimInstance win32_operatingsystem -Property Caption, OSArchitecture, Version | fl Caption, OSArchitecture, Version'
   - ps: $PSVersionTable
   - c:\opscode\chefdk\bin\chef.bat exec ruby --version
@@ -32,10 +32,9 @@ build_script:
   - ps: c:\opscode\chefdk\bin\chef.bat shell-init powershell | iex; cmd /c c:\opscode\chefdk\bin\chef.bat --version
 
 test_script:
-  - c:\opscode\chefdk\bin\chef.bat exec rubocop --version
+  - c:\opscode\chefdk\bin\cookstyle --version
   - c:\opscode\chefdk\bin\chef.bat exec foodcritic --version
-  - c:\opscode\chefdk\bin\chef.bat exec rake style
-  - c:\opscode\chefdk\bin\chef.bat exec rake spec
+  - c:\opscode\chefdk\bin\chef.bat exec rake
   - c:\opscode\chefdk\bin\chef.bat exec kitchen verify
 
 deploy: off

@@ -19,11 +19,10 @@
 #
 
 actions :set, :delete
+default_action :set
 
 attribute :name, kind_of: String, name_attribute: true
 attribute :system_managed, kind_of: [TrueClass, FalseClass]
 attribute :automatic_managed, kind_of: [TrueClass, FalseClass], default: false
 attribute :initial_size, kind_of: Integer
 attribute :maximum_size, kind_of: Integer
-
-default_action :set
