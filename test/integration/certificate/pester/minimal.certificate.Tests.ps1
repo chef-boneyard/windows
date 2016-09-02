@@ -1,6 +1,6 @@
 $global:progressPreference = 'SilentlyContinue'
 
-describe 'minimal::certificate' {
+describe 'test::certificate' {
   context 'windows_certificate' {
 
     it "installs der-cert1"  {
