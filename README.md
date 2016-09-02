@@ -16,7 +16,7 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 
 ### Chef
 
-- Chef 12+
+- Chef 12.1+
 
 ### Cookbooks
 
