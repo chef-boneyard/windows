@@ -4,6 +4,10 @@ driver:
     cpus: 2
     memory: 4096
 
+transport:
+  name: winrm
+  elevated: true
+
 provisioner:
   name: chef_zero
 
@@ -11,20 +15,36 @@ verifier:
   name: pester
 
 platforms:
-  - name: windows-2008r2-chef11.18.6
+  - name: windows-7
+    driver_config:
+      box: chef/windows-7-professional
+  - name: windows-7-chef12.1
+    driver_config:
+      box: chef/windows-7-professional
+    provisioner:
+      require_chef_omnibus: 12.1
+  - name: windows-8.1
+    driver_config:
+      box: chef/windows-8.1-professional
+  - name: windows-8.1-chef12.1
+    driver_config:
+      box: chef/windows-8.1-professional
+    provisioner:
+      require_chef_omnibus: 12.1
+  - name: windows-2008r2-chef12.1
     driver_config:
       box: chef/windows-server-2008r2-standard
     provisioner:
-      require_chef_omnibus: 11.18.6
-  - name: windows-2008r2-chef12
+      require_chef_omnibus: 12.1
+  - name: windows-2008r2
     driver_config:
       box: chef/windows-server-2008r2-standard
-  - name: windows-2012r2-chef11.18.6
+  - name: windows-2012r2-chef12.1
     driver_config:
       box: chef/windows-server-2012r2-standard
     provisioner:
-      require_chef_omnibus: 11.18.6
-  - name: windows-2012r2-chef12
+      require_chef_omnibus: 12.1
+  - name: windows-2012r2
     driver_config:
       box: chef/windows-server-2012r2-standard
 
@@ -32,29 +52,29 @@ suites:
   - name: tasks
     run_list:
       - recipe[windows::default]
-      - recipe[minimal::tasks]
+      - recipe[test::tasks]
   - name: path
     run_list:
       - recipe[windows::default]
-      - recipe[minimal::path]
+      - recipe[test::path]
   - name: certificate
     run_list:
       - recipe[windows::default]
-      - recipe[minimal::certificate]
+      - recipe[test::certificate]
   - name: package
     run_list:
       - recipe[windows::default]
-      - recipe[minimal::package]
+      - recipe[test::package]
   - name: feature
     run_list:
       - recipe[windows::default]
-      - recipe[minimal::feature]
+      - recipe[test::feature]
   - name: http_acl
     run_list:
       - recipe[windows::default]
-      - recipe[minimal::http_acl]
+      - recipe[test::http_acl]
 
   - name: font
     run_list:
       - recipe[windows::default]
-      - recipe[minimal::font]
+      - recipe[test::font]
