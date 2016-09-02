@@ -18,7 +18,4 @@
 # limitations under the License.
 #
 
-default['windows']['allow_pending_reboots'] = true
-default['windows']['allow_reboot_on_failure'] = false
 default['windows']['rubyzipversion'] = nil
-default['windows']['reboot_timeout'] = 60
