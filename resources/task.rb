@@ -3,7 +3,7 @@
 # Cookbook Name:: windows
 # Resource:: task
 #
-# Copyright:: 2012-2015, Chef Software, Inc.
+# Copyright:: 2012-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 # Passwords can't be loaded for existing tasks, making :modify both confusing
 # and not very useful
 actions :create, :delete, :run, :end, :change, :enable, :disable
+default_action :create
 
 attribute :task_name, kind_of: String, name_attribute: true, regex: [/\A[^\/\:\*\?\<\>\|]+\z/]
 attribute :command, kind_of: String
@@ -47,8 +48,3 @@ attribute :months, kind_of: String, default: nil
 attribute :idle_time, kind_of: Integer, default: nil
 
 attr_accessor :exists, :status, :enabled
-
-def initialize(name, run_context = nil)
-  super
-  @action = :create
-end

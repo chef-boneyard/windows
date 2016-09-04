@@ -6,7 +6,7 @@
 # Provider:: registry
 #
 # Copyright:: 2010, VMware, Inc.
-# Copyright:: 2011-2015, Chef Software, Inc.
+# Copyright:: 2011-2016, Chef Software, Inc.
 # Copyright:: 2011, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

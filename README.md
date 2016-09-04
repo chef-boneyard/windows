@@ -16,16 +16,7 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 
 ### Chef
 
-- Chef 12+
-
-### Cookbooks
-
-- chef_handler (`windows::reboot_handler` leverages the chef_handler LWRP)
-
-## Attributes
-
-- `node['windows']['allow_pending_reboots']` - used to configure the `WindowsRebootHandler` (via the `windows::reboot_handler` recipe) to act on pending reboots. default is true (ie act on pending reboots). The value of this attribute only has an effect if the `windows::reboot_handler` is in a node's run list.
-- `node['windows']['allow_reboot_on_failure']` - used to register the `WindowsRebootHandler` (via the `windows::reboot_handler` recipe) as an exception handler too to act on reboots not only at the end of successful Chef runs, but even at the end of failed runs. default is false (ie reboot only after successful runs). The value of this attribute only has an effect if the `windows::reboot_handler` is in a node's run list.
+- Chef 12.1+
 
 ## Resource/Provider
 
@@ -719,18 +710,6 @@ if is_package_installed?('Windows Software Development Kit')
 end
 ```
 
-## Exception/Report Handlers
-
-### WindowsRebootHandler
-
-Required reboots are a necessary evil of configuring and managing Windows nodes. This report handler (ie fires at the end of Chef runs) acts on requested (Chef initiated) or pending (as determined by the OS per configuration action we performed) reboots. The `allow_pending_reboots` initialization argument should be set to false if you do not want the handler to automatically reboot a node if it has been determined a reboot is pending. Reboots can still be requested explicitly via the `windows_reboot` LWRP.
-
-### Initialization Arguments
-
-- `allow_pending_reboots` - indicator on whether the handler should act on a the Window's 'pending reboot' state. default is true
-- `timeout` - timeout delay in seconds to wait before proceeding with the reboot. default is 60 seconds
-- `reason` - comment on the reason for the reboot. default is 'Chef Software Chef initiated reboot'
-
 ## Windows ChefSpec Matchers
 
 The Windows cookbook includes custom [ChefSpec](https://github.com/sethvargo/chefspec) matchers you can use to test your own cookbooks that consume Windows cookbook LWRPs.
@@ -788,24 +767,6 @@ depends 'windows'
 ### default
 
 Convenience recipe that installs supporting gems for many of the resources/providers that ship with this cookbook.
-
-### reboot_handler
-
-Leverages the `chef_handler` LWRP to register the `WindowsRebootHandler` report handler that ships as part of this cookbook. By default this handler is set to automatically act on pending reboots. If you would like to change this behavior override `node['windows']['allow_pending_reboots']` and set the value to false. For example:
-
-```ruby
-name 'base'
-description 'base role'
-override_attributes(
-  'windows' => {
-    'allow_pending_reboots' => false
-  }
-)
-```
-
-This will still allow a reboot to be explicitly requested via the `windows_reboot` LWRP.
-
-By default, the handler will only be registered as a report handler, meaning that it will only fire at the end of successful Chef runs. If the run fails, pending or requested reboots will be ignored. This can lead to a situation where some package was installed and notified a reboot request via the `windows_reboot` LWRP, and then the run fails for some unrelated reason, and the reboot request gets dropped because the resource that notified the reboot request will already be up-to-date at the next run and will not request a reboot again, and thus the requested reboot will never be performed. To change this behavior and register the handler as an exception handler that fires at the end of failed runs too, override `node['windows']['allow_reboot_on_failure']` and set the value to true.
 
 ## License & Authors
 
