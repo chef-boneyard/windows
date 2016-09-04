@@ -1,3 +1,7 @@
+# This provider has been deprecated as the same logic is included
+# in Chef 12.6 and later. In the near future this provider will be
+# removed from this cookbook.
+
 require 'chef/resource/lwrp_base'
 require 'chef/provider/lwrp_base'
 
