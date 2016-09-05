@@ -17,26 +17,28 @@ platforms:
   - name: windows-2012r2
     driver_config:
       box: chef/windows-server-2012r2-standard
-
 suites:
-  - name: tasks
+  - name: autorun
     run_list:
-      - recipe[test::tasks]
-  - name: path
-    run_list:
-      - recipe[test::path]
+      - recipe[test::autorun]
   - name: certificate
     run_list:
       - recipe[test::certificate]
-  - name: package
-    run_list:
-      - recipe[test::package]
   - name: feature
     run_list:
       - recipe[test::feature]
-  - name: http_acl
-    run_list:
-      - recipe[test::http_acl]
   - name: font
     run_list:
       - recipe[test::font]
+  - name: http_acl
+    run_list:
+      - recipe[test::http_acl]
+  - name: package
+    run_list:
+      - recipe[test::package]
+  - name: path
+    run_list:
+      - recipe[test::path]
+  - name: tasks
+    run_list:
+      - recipe[test::tasks]

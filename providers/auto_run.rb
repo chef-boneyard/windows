@@ -18,17 +18,30 @@
 # limitations under the License.
 #
 
+def whyrun_supported?
+  true
+end
+
 use_inline_resources
 
 action :create do
-  windows_registry 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
-    values new_resource.name => "\"#{new_resource.program}\" #{new_resource.args}"
+  registry_key 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
+    values [{
+      name: new_resource.name,
+      type: :string,
+      data: "\"#{new_resource.program}\" #{new_resource.args}"
+    }]
+    action :create
   end
 end
 
 action :remove do
-  windows_registry 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
-    values new_resource.name => ''
-    action :remove
+  registry_key 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
+    values [{
+      name: new_resource.name,
+      type: :string,
+      data: ''
+    }]
+    action :delete
   end
 end
