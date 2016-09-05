@@ -17,7 +17,7 @@ This cookbook now requires Chef 12.1+. Resources (lwrps) that have been moved in
 
 #### Changes resource behavior
 
-- For Chef clients 12.6 and later the windows_package provider will no longer be used as windows_package logic is now included in Chef Don't use the package provider on Chef 12.6+
+- For Chef clients 12.6 and later the windows_package provider will no longer be used as windows_package logic is now included in Chef. Chef 12.1 - 12.5.1 clients will continue to default to the windows_package provider in this cookbook for full compatibility.
 
 #### Additional changes
 
