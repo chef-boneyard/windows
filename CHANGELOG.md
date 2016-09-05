@@ -2,6 +2,31 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## Unreleased (future 2.0)
+
+This cookbook now requires Chef 12.1+. Resources (lwrps) that have been moved into the chef-client have been removed from this cookbook. While the functionality in the chef-client is similar, and in many cases improved, the names and properties have changed in some cases. Make sure to check <https://docs.chef.io/resources.html> for full documentation on each of these resources, and as usual carefully test your cookbooks before upgrading to this new release.
+
+### Removed resources and helpers:
+
+- windows_reboot provider
+- windows_batch provider
+- windows_registry provider
+- Powershell out for only_if / not_if statements
+- Windows Architecture Helper
+- Reboot handler and the dependency on the chef_handler cookbook
+
+#### Changes resource behavior
+
+- For Chef clients 12.6 and later the windows_package provider will no longer be used as windows_package logic is now included in Chef Don't use the package provider on Chef 12.6+
+
+#### Additional changes
+
+- Updated and expanded testing
+- Fixed the windows_feature powershell provider to run on Windows 2008 / 2008 R2
+- Added TrustedPublisher as a valid cert store_name
+- Updated the certificate_binding resource to respect the app_id property
+- Added why-run support to the auto_run resource
+
 ## 1.44.3 (2016-08-16)
 
 - Remove support for ChefSpec <4.1 in the matchers
