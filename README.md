@@ -15,7 +15,7 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 
 ### Chef
 
-- Chef 12.1+
+- Chef 12.4+
 
 ## Resource/Provider
 
