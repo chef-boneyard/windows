@@ -8,9 +8,8 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 
 ### Platforms
 
-- Windows Vista
 - Windows 7
-- Windows Server 2008 (R1, R2)
+- Windows Server 2008 R2
 - Windows 8, 8.1
 - Windows Server 2012 (R1, R2)
 
