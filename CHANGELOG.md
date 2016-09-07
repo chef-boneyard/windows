@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 2.0.1 (2016-09-07)
+- Clarify the platforms we support in the readme
+- Require Chef 12.4 which included powershell_out
+
 ## 2.0.0 (2016-09-07)
 
 This cookbook now requires Chef 12.1+. Resources (lwrps) that have been moved into the chef-client have been removed from this cookbook. While the functionality in the chef-client is similar, and in many cases improved, the names and properties have changed in some cases. Make sure to check <https://docs.chef.io/resources.html> for full documentation on each of these resources, and as usual carefully test your cookbooks before upgrading to this new release.
