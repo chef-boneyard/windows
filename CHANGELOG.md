@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
-## 2.1.0 (2016-09-07)
+## 2.0.2 (2016-09-07)
 
 - Added the powershell_out mixin back to allow for Chef 12.1-12.3 compatibility
 - Set the dependency back to Chef 12.1
