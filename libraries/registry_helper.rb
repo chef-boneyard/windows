@@ -34,6 +34,7 @@ module Windows
       @@native_registry_constant = 0x0100
     else
       @@native_registry_constant = 0x0200
+    end
 
     def get_hive_name(path)
       Chef::Log.debug('Resolving registry shortcuts to full names')
