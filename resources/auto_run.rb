@@ -18,13 +18,9 @@
 # limitations under the License.
 #
 
-def initialize(name,run_context=nil)
-  super
-  @action = :create
-end
-
 actions :create, :remove
+default_action :create
 
-attribute :program, :kind_of => String
-attribute :name, :kind_of => String, :name_attribute => true
-attribute :args, :kind_of => String, :default => ''
+attribute :program, kind_of: String
+attribute :name, kind_of: String, name_attribute: true
+attribute :args, kind_of: String, default: ''

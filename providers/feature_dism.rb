@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
+# Author:: Seth Chisamore (<schisamo@chef.io>)
 # Cookbook Name:: windows
 # Provider:: feature_dism
 #
-# Copyright:: 2011, Opscode, Inc.
+# Copyright:: 2011-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,47 +18,55 @@
 # limitations under the License.
 #
 
+use_inline_resources
+
 include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::ShellOut
 include Windows::Helper
 
-def install_feature(name)
-  addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ""
-  addall = @new_resource.all ? "/All" : ""
-  shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", {:returns => [0,42,127,3010]})
+def install_feature(_name)
+  addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ''
+  addall = @new_resource.all ? '/All' : ''
+  shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010])
 end
 
-def remove_feature(name)
-  shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /norestart", {:returns => [0,42,127,3010]})
+def remove_feature(_name)
+  shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /norestart", returns: [0, 42, 127, 3010])
 end
 
-def delete_feature(name)
-  if win_version.major_version >= 6 and win_version.minor_version >=2
-    shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /Remove /norestart", {:returns => [0,42,127,3010]})
+def delete_feature(_name)
+  if win_version.major_version >= 6 && win_version.minor_version >= 2
+    shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /Remove /norestart", returns: [0, 42, 127, 3010])
   else
-    raise Chef::Exceptions::UnsupportedAction, "#{self.to_s} :delete action not support on #{win_version.sku}"
+    raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on #{win_version.sku}"
   end
 end
 
 def installed?
   @installed ||= begin
-    cmd = shell_out("#{dism} /online /Get-Features", {:returns => [0,42,127]})
-    cmd.stderr.empty? && (cmd.stdout =~  /^Feature Name : #{@new_resource.feature_name}.?$\n^State : Enabled.?$/i)
+    # Win32_OptionalFeature wmi class is only available in Win7+ (NT >= 6.1), but is way faster than dism.exe
+    if win_version.major_version > 6 || (win_version.major_version == 6 && win_version.minor_version >= 1)
+      !execute_wmi_query("SELECT * FROM Win32_OptionalFeature WHERE Name='#{@new_resource.feature_name}' AND InstallState=1").nil?
+    else
+      cmd = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127])
+      cmd.stderr.empty? && (cmd.stdout =~ /^Feature Name : #{@new_resource.feature_name}.?$\n^State : Enabled.?$/i)
+    end
   end
 end
 
 def available?
   @available ||= begin
-    cmd = shell_out("#{dism} /online /Get-Features", {:returns => [0,42,127]})
-    cmd.stderr.empty? && (cmd.stdout !~  /^Feature Name : #{@new_resource.feature_name}.?$\n^State : .* with payload removed.?$/i)
+    cmd = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127])
+    cmd.stderr.empty? && (cmd.stdout !~ /^Feature Name : #{@new_resource.feature_name}.?$\n^State : .* with payload removed.?$/i)
   end
 end
 
 private
+
 # account for File System Redirector
 # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
 def dism
   @dism ||= begin
-    locate_sysnative_cmd("dism.exe")
+    locate_sysnative_cmd('dism.exe')
   end
 end

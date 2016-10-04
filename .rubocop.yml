@@ -1,0 +1,76 @@
+# Rubocop todo
+
+Lint/HandleExceptions:
+  Exclude:
+    - 'libraries/powershell_out.rb'
+    - 'libraries/registry_helper.rb'
+    - 'libraries/windows_helper.rb'
+
+Lint/ShadowingOuterLocalVariable:
+  Exclude:
+    - 'libraries/registry_helper.rb'
+
+Lint/UselessAssignment:
+  Exclude:
+    - 'libraries/registry_helper.rb'
+
+Metrics/BlockNesting:
+  Max: 5
+
+Style/AccessorMethodName:
+  Exclude:
+    - 'libraries/matchers.rb'
+    - 'libraries/version.rb'
+    - 'providers/font.rb'
+    - 'providers/pagefile.rb'
+    - 'providers/task.rb'
+
+Style/ClassVars:
+  Exclude:
+    - 'libraries/registry_helper.rb'
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: format, sprintf, percent
+Style/FormatString:
+  Exclude:
+    - 'libraries/windows_package.rb'
+
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Exclude:
+    - 'libraries/registry_helper.rb'
+    - 'libraries/windows_privileged.rb'
+    - 'providers/certificate_binding.rb'
+    - 'providers/printer.rb'
+    - 'providers/printer_port.rb'
+
+Style/IfInsideElse:
+  Exclude:
+    - 'libraries/powershell_helper.rb'
+    - 'libraries/windows_package.rb'
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: snake_case, camelCase
+Style/MethodName:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Exclude:
+    - 'providers/task.rb'
+
+Style/MultilineTernaryOperator:
+  Exclude:
+    - 'libraries/windows_architecture_helper.rb'
+
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
+# SupportedStyles: slashes, percent_r, mixed
+Style/RegexpLiteral:
+  Exclude:
+    - 'libraries/windows_helper.rb'
+    - 'resources/task.rb'
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+# SupportedStyles: snake_case, camelCase
+Style/VariableName:
+  Enabled: false

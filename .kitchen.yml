@@ -1,0 +1,60 @@
+driver:
+  name: vagrant
+  customize:
+    cpus: 2
+    memory: 4096
+
+transport:
+  name: winrm
+  elevated: true
+
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: pester
+
+platforms:
+  - name: windows-7
+    driver_config:
+      box: chef/windows-7-professional
+  - name: windows-8.1
+    driver_config:
+      box: chef/windows-8.1-professional
+  - name: windows-2008r2
+    driver_config:
+      box: chef/windows-server-2008r2-standard
+  - name: windows-2012r2
+    driver_config:
+      box: chef/windows-server-2012r2-standard
+  - name: windows-2012r2-chef-12.1
+    driver_config:
+      box: chef/windows-server-2012r2-standard
+    provisioner:
+      require_chef_omnibus: 12.1.0
+
+suites:
+  - name: autorun
+    run_list:
+      - recipe[test::autorun]
+  - name: certificate
+    run_list:
+      - recipe[test::certificate]
+  - name: feature
+    run_list:
+      - recipe[test::feature]
+  - name: font
+    run_list:
+      - recipe[test::font]
+  - name: http_acl
+    run_list:
+      - recipe[test::http_acl]
+  - name: package
+    run_list:
+      - recipe[test::package]
+  - name: path
+    run_list:
+      - recipe[test::path]
+  - name: tasks
+    run_list:
+      - recipe[test::tasks]

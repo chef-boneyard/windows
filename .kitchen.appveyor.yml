@@ -1,0 +1,40 @@
+---
+driver:
+  name: proxy
+  host: localhost
+  reset_command: "exit 0"
+  port: 5985
+  username: <%= ENV["machine_user"] %>
+  password: <%= ENV["machine_pass"] %>
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: windows-2012R2
+
+verifier:
+  name: pester
+
+suites:
+  - name: tasks
+    run_list:
+      - recipe[test::tasks]
+  - name: path
+    run_list:
+      - recipe[test::path]
+  - name: certificate
+    run_list:
+      - recipe[test::certificate]
+  - name: package
+    run_list:
+      - recipe[test::package]
+  - name: feature
+    run_list:
+      - recipe[test::feature]
+  - name: http_acl
+    run_list:
+      - recipe[test::http_acl]
+  - name: font
+    run_list:
+      - recipe[test::font]

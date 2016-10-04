@@ -1,11 +1,11 @@
 #
 # Author:: Doug MacEachern (<dougm@vmware.com>)
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
+# Author:: Seth Chisamore (<schisamo@chef.io>)
 # Cookbook Name:: windows
-# Resource:: unzip
+# Resource:: zipfile
 #
 # Copyright:: 2010, VMware, Inc.
-# Copyright:: 2011, Opscode, Inc.
+# Copyright:: 2011-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,13 +21,9 @@
 #
 
 actions :unzip, :zip
+default_action :unzip
 
-attribute :path, :kind_of => String, :name_attribute => true
-attribute :source, :kind_of => String
-attribute :overwrite, :kind_of => [ TrueClass, FalseClass ], :default => false
-attribute :checksum, :kind_of => String
-
-def initialize(name, run_context=nil)
-  super
-  @action = :unzip
-end
+attribute :path, kind_of: String, name_attribute: true
+attribute :source, kind_of: String
+attribute :overwrite, kind_of: [TrueClass, FalseClass], default: false
+attribute :checksum, kind_of: String
