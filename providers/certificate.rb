@@ -49,7 +49,6 @@ end
 
 # acl_add is a modify-if-exists operation : not idempotent
 action :acl_add do
-
   code_script << acl_script(thumbprint(@new_resource.source))
   guard_script << cert_exists_script(hash)
 
