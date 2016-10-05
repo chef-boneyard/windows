@@ -26,3 +26,6 @@ attribute :pfx_password, kind_of: String
 attribute :private_key_acl, kind_of: Array
 attribute :store_name, kind_of: String, default: 'MY', regex: /^(?:MY|CA|ROOT|TrustedPublisher)$/
 attribute :user_store, kind_of: [TrueClass, FalseClass], default: false
+attribute :type, kind_of: Symbol, equal_to: [:certificate, :pfx], default: :certificate
+
+attr_accessor :exists
