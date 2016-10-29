@@ -34,3 +34,9 @@ end
     compile_time false
   end
 end
+
+# Install Dism Feature Plugin
+
+ohai_plugin 'dism_features' do
+  compile_time true
+end
