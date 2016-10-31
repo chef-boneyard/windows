@@ -29,20 +29,20 @@ def install_feature(_name)
   addall = @new_resource.all ? '/All' : ''
   shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010])
   # Reload ohai data
-  reload_ohai_features_plugin(@new_resource.action,@new_resource.feature_name)
+  reload_ohai_features_plugin(@new_resource.action, @new_resource.feature_name)
 end
 
 def remove_feature(_name)
   shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /norestart", returns: [0, 42, 127, 3010])
   # Reload ohai data
-  reload_ohai_features_plugin(@new_resource.action,@new_resource.feature_name)
+  reload_ohai_features_plugin(@new_resource.action, @new_resource.feature_name)
 end
 
 def delete_feature(_name)
   if win_version.major_version >= 6 && win_version.minor_version >= 2
     shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /Remove /norestart", returns: [0, 42, 127, 3010])
     # Reload ohai data
-    reload_ohai_features_plugin(@new_resource.action,@new_resource.feature_name)
+    reload_ohai_features_plugin(@new_resource.action, @new_resource.feature_name)
   else
     raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on #{win_version.sku}"
   end
@@ -62,7 +62,7 @@ def available?
   end
 end
 
-def reload_ohai_features_plugin(take_action,feature_name)
+def reload_ohai_features_plugin(take_action, feature_name)
   ohai "Reloading Dism_Features Plugin - Action #{take_action} of feature #{feature_name}" do
     action :reload
     plugin 'dism_features'
