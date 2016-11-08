@@ -8,4 +8,4 @@ version          '2.0.2'
 supports         'windows'
 source_url       'https://github.com/chef-cookbooks/windows'
 issues_url       'https://github.com/chef-cookbooks/windows/issues'
-chef_version     '>= 12.1'
+chef_version     '>= 12.1' if respond_to?(:chef_version)
