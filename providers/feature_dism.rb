@@ -23,15 +23,20 @@ use_inline_resources
 include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::ShellOut
 include Windows::Helper
+include Chef::Provider::WindowsFeature::Base
+include Chef::Mixin::ShellOut
+include Windows::Helper
 
 def install_feature(_name)
   addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ''
   addall = @new_resource.all ? '/All' : ''
   shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010])
+  clear_cache
 end
 
 def remove_feature(_name)
   shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /norestart", returns: [0, 42, 127, 3010])
+  clear_cache
 end
 
 def delete_feature(_name)
@@ -40,24 +45,18 @@ def delete_feature(_name)
   else
     raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on #{win_version.sku}"
   end
+  clear_cache
 end
 
 def installed?
   @installed ||= begin
-    # Win32_OptionalFeature wmi class is only available in Win7+ (NT >= 6.1), but is way faster than dism.exe
-    if win_version.major_version > 6 || (win_version.major_version == 6 && win_version.minor_version >= 1)
-      !execute_wmi_query("SELECT * FROM Win32_OptionalFeature WHERE Name='#{@new_resource.feature_name}' AND InstallState=1").nil?
-    else
-      cmd = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127])
-      cmd.stderr.empty? && (cmd.stdout =~ /^Feature Name : #{@new_resource.feature_name}.?$\n^State : Enabled.?$/i)
-    end
+    get_feature_list[@new_resource.feature_name] == :Enabled
   end
 end
 
 def available?
   @available ||= begin
-    cmd = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127])
-    cmd.stderr.empty? && (cmd.stdout !~ /^Feature Name : #{@new_resource.feature_name}.?$\n^State : .* with payload removed.?$/i)
+    get_feature_list[@new_resource.feature_name] != :Removed
   end
 end
 
@@ -69,4 +68,22 @@ def dism
   @dism ||= begin
     locate_sysnative_cmd('dism.exe')
   end
+end
+@@feature_list = nil
+def get_feature_list
+  if @@feature_list.nil?
+    out = shell_out("#{dism} /online /Get-Features", returns: [0, 42, 127]).stdout
+    feature_matches = out.scan(/^Feature Name : (.*).?$\n^State : (.*)?$/)
+    @@feature_list = feature_matches.each_with_object({}) do |match, list|
+      name = match[0]
+      state = match[1]
+      state = 'Removed' if state.include? 'Payload Removed'
+      list[name] = state.to_sym
+    end
+  end
+  @@feature_list
+end
+
+def clear_cache
+  @@feature_list = nil
 end
