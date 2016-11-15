@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 2.x.x (2016-10-31)
+
+- Added ohai plugin to collect dism feature data
+- Added depends on ohai to metadata.rb
+- Update dism feature provider to use ohai data rather than costly dism executions
+
 ## 2.0.2 (2016-09-07)
 
 - Added the powershell_out mixin back to allow for Chef 12.1-12.3 compatibility
