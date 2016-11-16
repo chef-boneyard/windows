@@ -21,8 +21,11 @@ unless defined? Chef::Mixin::PowershellOut
         end
 
         def powershell_out(*command_args)
-          Chef::Log.warn 'The powershell_out library in the windows cookbook is deprecated.'
-          Chef::Log.warn 'Please upgrade to Chef 12.4.0 or later where it is built-in to core chef.'
+          Chef::Log.warn <<-EOF
+The powershell_out library in the windows cookbook is deprecated.
+Please upgrade to Chef 12.4.0 or later where it is built-in to core chef.
+This functionality will be removed from the next major version of the Windows cookbook on 4/2017.
+EOF
           script = command_args.first
           options = command_args.last.is_a?(Hash) ? command_args.last : nil
 
