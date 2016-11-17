@@ -708,6 +708,47 @@ if is_package_installed?('Windows Software Development Kit')
 end
 ```
 
+### Windows::VersionHelper
+
+Helper that allows you to get information of the windows version running on your node.
+It leverages windows ohai from kernel.os_info, easy to mock and to use even on linux.
+
+#### core_version?
+Determines whether given node is running on a windows Core.
+```ruby
+if ::Windows::VersionHelper.core_version? node
+  fail 'Windows Core is not supported'
+end
+```
+
+#### workstation_version?
+Determines whether given node is a windows workstation version (XP, Vista, 7, 8, 8.1, 10)
+```ruby
+if ::Windows::VersionHelper.workstation_version? node
+  fail 'Only server version of windows are supported'
+end
+```
+
+#### server_version?
+Determines whether given node is a windows server version (Server 2003, Server 2008, Server 2012, Server 2016)
+```ruby
+if ::Windows::VersionHelper.server_version? node
+  puts 'Server version of windows are cool'
+end
+```
+
+#### nt_version
+Determines NT version of the given node
+```ruby
+case ::Windows::VersionHelper.nt_version node
+  when '6.0' then 'Windows vista or Server 2008'
+  when '6.1' then 'Windows 7 or Server 2008R2'
+  when '6.2' then 'Windows 8 or Server 2012'
+  when '6.3' then 'Windows 8.1 or Server 2012R2'
+  when '10.0' then 'Windows 10'
+end
+```
+
 ## Windows ChefSpec Matchers
 
 The Windows cookbook includes custom [ChefSpec](https://github.com/sethvargo/chefspec) matchers you can use to test your own cookbooks that consume Windows cookbook LWRPs.
