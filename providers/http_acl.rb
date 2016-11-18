@@ -24,6 +24,7 @@ use_inline_resources
 
 include Chef::Mixin::ShellOut
 include Windows::Helper
+include Windows::UrlAcl
 
 # Support whyrun
 def whyrun_supported?
@@ -34,7 +35,8 @@ action :create do
   raise 'No user property set' if @new_resource.user.nil? || @new_resource.user.empty?
 
   if @current_resource.exists
-    needsChange = (@current_resource.user.casecmp(@new_resource.user) != 0)
+    new_username = to_domain_notation(@new_resource.user)
+    needsChange = (@current_resource.user.casecmp(new_username) != 0)
 
     if needsChange
       converge_by("Changing #{@current_resource.url}") do
@@ -71,15 +73,30 @@ end
 
 private
 
-def getCurrentAcl
-  cmd = shell_out!("#{@command} http show urlacl url=#{@current_resource.url}")
-  Chef::Log.debug "netsh reports: #{cmd.stdout}"
+# If no domain is given either by x\y notation in user or by specifying domain seperately
+# the result will be "user", otherwise it will be "domain\user"
+def to_domain_notation(user, domain = nil)
+  part_array = user.split('\\')
+  if part_array.length == 2
+    part_array.shift if part_array[0].nil? || part_array[0].empty?
+  else
+    part_array.unshift(domain) unless domain.nil?
+  end
 
-  m = cmd.stdout.scan(/User:\s*(.+)/)
-  if m.empty?
+  part_array.join('\\')
+end
+
+def getCurrentAcl
+  users = get_urlacl(@current_resource.url)
+
+  if users.empty?
     @current_resource.exists = false
   else
-    @current_resource.user(m[0][0].chomp)
+    # TODO: URL might be registered for more than one user.
+    # For now .first will do for most cases (I've never seen more than one user registered)
+    user = users.first
+    username = to_domain_notation(user[:user], user[:domain])
+    @current_resource.user(username)
     @current_resource.exists = true
   end
 end
