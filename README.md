@@ -235,13 +235,21 @@ Sets the Access Control List for an http URL to grant non-admin accounts permiss
 #### Attribute Parameters
 
 - `url` - the name of the url to be created/deleted.
-- `user` - the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create. Only one user or group can be granted permission so this replaces any previously defined entry.
+- `sddl` - the DACL string configuring all permissions to URL. Mandatory for create if user is not provided. Can't be use with `user`.
+- `user` - the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create if sddl is not provided. Can't be use with `sddl`. Only one user or group can be granted permission so this replaces any previously defined entry.
 
 #### Examples
 
 ```ruby
 windows_http_acl 'http://+:50051/' do
     user 'pc\\fred'
+end
+```
+
+```ruby
+# Grant access to users "NT SERVICE\WinRM" and "NT SERVICE\Wecsvc" via sddl
+windows_http_acl 'http://+:5985/' do
+  sddl 'D:(A;;GX;;;S-1-5-80-569256582-2953403351-2909559716-1301513147-412116970)(A;;GX;;;S-1-5-80-4059739203-877974739-1245631912-527174227-2996563517)'
 end
 ```
 
