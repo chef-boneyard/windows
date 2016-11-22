@@ -152,7 +152,7 @@ servermanagercmd -query
 
 - **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
 - **Chef::Provider::WindowsFeature::ServerManagerCmd**: Uses Server Manager to manage roles/features.
-- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features. (see [COOK-3714](https://tickets.opscode.com/browse/COOK-3714)
+- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features.
 
 #### Examples
 
@@ -718,11 +718,12 @@ end
 
 ### Windows::VersionHelper
 
-Helper that allows you to get information of the windows version running on your node.
-It leverages windows ohai from kernel.os_info, easy to mock and to use even on linux.
+Helper that allows you to get information of the windows version running on your node. It leverages windows ohai from kernel.os_info, easy to mock and to use even on linux.
 
 #### core_version?
+
 Determines whether given node is running on a windows Core.
+
 ```ruby
 if ::Windows::VersionHelper.core_version? node
   fail 'Windows Core is not supported'
@@ -730,7 +731,9 @@ end
 ```
 
 #### workstation_version?
+
 Determines whether given node is a windows workstation version (XP, Vista, 7, 8, 8.1, 10)
+
 ```ruby
 if ::Windows::VersionHelper.workstation_version? node
   fail 'Only server version of windows are supported'
@@ -738,7 +741,9 @@ end
 ```
 
 #### server_version?
+
 Determines whether given node is a windows server version (Server 2003, Server 2008, Server 2012, Server 2016)
+
 ```ruby
 if ::Windows::VersionHelper.server_version? node
   puts 'Server version of windows are cool'
@@ -746,7 +751,9 @@ end
 ```
 
 #### nt_version
+
 Determines NT version of the given node
+
 ```ruby
 case ::Windows::VersionHelper.nt_version node
   when '6.0' then 'Windows vista or Server 2008'
