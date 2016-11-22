@@ -2,6 +2,14 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 2.1.0 (2016-11-22)
+- Reduce expensive executions of dism in windows_feature by using a new Ohai plugin
+- Add guard around chef_version metadata for Opsworks and older Chef 12 clients
+- Update the rakefile to the latest
+- Add deprecation dates for the windows_package and powershell functionality that has been moved to core Chef. These will be removed 4/17 when we release Chef 13
+- Provide helper method to get windows version info
+- Allow defining http acl using SDDL
+
 ## 2.x.x (2016-10-31)
 
 - Added ohai plugin to collect dism feature data
