@@ -1,5 +1,3 @@
-include_recipe 'windows::default'
-
 node.default['windows']['feature_provider'] = 'dism'
 
 windows_feature 'TelnetClient' do

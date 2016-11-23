@@ -50,6 +50,8 @@ end
 
 def installed?
   @installed ||= begin
+    install_ohai_plugin unless node['dism_features']
+
     # Compare against ohai plugin instead of costly dism run
     node['dism_features'].key?(@new_resource.feature_name) && node['dism_features'][@new_resource.feature_name] =~ /Enable/
   end
@@ -57,6 +59,8 @@ end
 
 def available?
   @available ||= begin
+    install_ohai_plugin unless node['dism_features']
+
     # Compare against ohai plugin instead of costly dism run
     node['dism_features'].key?(@new_resource.feature_name) && node['dism_features'][@new_resource.feature_name] !~ /with payload removed/
   end
@@ -66,6 +70,15 @@ def reload_ohai_features_plugin(take_action, feature_name)
   ohai "Reloading Dism_Features Plugin - Action #{take_action} of feature #{feature_name}" do
     action :reload
     plugin 'dism_features'
+  end
+end
+
+def install_ohai_plugin
+  Chef::Log.info("node['dism_features'] data missing. Installing the dism_features Ohai plugin")
+
+  ohai_plugin 'dism_features' do
+    compile_time true
+    cookbook 'windows'
   end
 end
 
