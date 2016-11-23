@@ -36,6 +36,7 @@ private
 
 def locate_default_provider
   if node['windows'].attribute?(:feature_provider)
+    Chef::Log.warn('Specifying the windows_feature provider to use by attribute has been deprecated. Please specify the provider in your resource instead. See the readme for examples. This feature will be removed on 4/2017 after the release of Chef 13.')
     "windows_feature_#{node['windows']['feature_provider']}"
   elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
     :windows_feature_dism
