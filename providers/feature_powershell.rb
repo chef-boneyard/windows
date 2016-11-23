@@ -6,6 +6,9 @@
 
 use_inline_resources
 
+provides :windows_feature_powershell
+provides :windows_feature
+
 include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::PowershellOut
 include Windows::Helper

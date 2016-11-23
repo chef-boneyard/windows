@@ -18,30 +18,17 @@
 # limitations under the License.
 #
 
+# why is this here?
 include Windows::Helper
 
 actions :install, :remove, :delete
 default_action :install
 
+provider :windows_feature_servermanagercmd
+provider :windows_feature do
+  ::File.exist?(locate_sysnative_cmd('servermanagercmd.exe'))
+end
+
 attribute :feature_name, kind_of: String, name_attribute: true
 attribute :source, kind_of: String
 attribute :all, kind_of: [TrueClass, FalseClass], default: false
-
-def initialize(name, run_context = nil)
-  super
-  @provider = lookup_provider_constant(locate_default_provider)
-end
-
-private
-
-def locate_default_provider
-  if node['windows'].attribute?(:feature_provider)
-    "windows_feature_#{node['windows']['feature_provider']}"
-  elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
-    :windows_feature_dism
-  elsif ::File.exist?(locate_sysnative_cmd('servermanagercmd.exe'))
-    :windows_feature_servermanagercmd
-  else
-    :windows_feature_powershell
-  end
-end
