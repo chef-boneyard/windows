@@ -1,9 +1,9 @@
 #
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Library:: version_helper
 # Author:: Baptiste Courtois (<b.courtois@criteo.com>)
 #
-# Copyright (C) 2015 Criteo
+# Copyright:: 2015-2016, Criteo
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

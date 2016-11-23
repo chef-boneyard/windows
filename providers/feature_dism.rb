@@ -1,6 +1,6 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: feature_dism
 #
 # Copyright:: 2011-2016, Chef Software, Inc.

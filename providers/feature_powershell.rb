@@ -1,6 +1,6 @@
 #
 # Author:: Greg Zapp (<greg.zapp@gmail.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: feature_powershell
 #
 
