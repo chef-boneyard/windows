@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 2.1.1 (2016-11-23)
+- Make sure the ohai plugin is available when installing features
+
 ## 2.1.0 (2016-11-22)
 - Reduce expensive executions of dism in windows_feature by using a new Ohai plugin
 - Add guard around chef_version metadata for Opsworks and older Chef 12 clients
