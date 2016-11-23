@@ -261,7 +261,7 @@ end
 
 ### windows_package
 
-This resource is now deprecated and will be removed in a future version of this cookbook. Chef >= 12.6.0 includes a built-in [package](https://docs.chef.io/resource_windows_package.html) resource.
+This resource is now deprecated and will be removed on 4/2017 after the release of Chef 13\. Chef >= 12.6.0 includes a built-in [package](https://docs.chef.io/resource_windows_package.html) resource which includes support for Windows pacakges.
 
 Manage Windows application packages in an unattended, idempotent way.
 
