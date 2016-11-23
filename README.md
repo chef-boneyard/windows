@@ -472,6 +472,41 @@ windows_printer 'HP LaserJet 5th Floor' do
 end
 ```
 
+### windows_share
+
+Creates, modifies and removes Windows shares. All properties are idempotent.
+
+#### Actions
+
+- :create: creates/modifies a share
+- :delete: deletes a share
+
+#### Properties
+
+- share_name: name attribute, the share name.
+- path: path to the directory to be shared. Required when creating. If the share already exists on a different path then it is deleted and re-created.
+- description: description to be applied to the share
+- full_users: array of users which should have "Full control" permissions
+- change_users: array of users which should have "Change" permissions
+- read_users: array of users which should have "Read" permissions
+
+#### Examples
+
+```ruby
+windows_share "foo" do
+  action :create
+  path "C:\\foo"
+  full_users ["DOMAIN_A\\some_user", "DOMAIN_B\\some_other_user"]
+  read_users ["DOMAIN_C\\Domain users"]
+end
+```
+
+```ruby
+windows_share "foo" do
+  action :delete
+end
+```
+
 ### windows_shortcut
 
 Creates and modifies Windows shortcuts.
