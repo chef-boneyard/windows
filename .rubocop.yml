@@ -1,5 +1,8 @@
 # Rubocop todo
 
+Style/AsciiComments:
+  Enabled: false
+
 Lint/HandleExceptions:
   Exclude:
     - 'libraries/powershell_out.rb'
