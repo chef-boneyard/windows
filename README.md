@@ -818,10 +818,6 @@ Place an explicit dependency on this cookbook (using depends in the cookbook's m
 depends 'windows'
 ```
 
-### default
-
-Convenience recipe that installs supporting gems for many of the resources/providers that ship with this cookbook.
-
 ## License & Authors
 
 - Author:: Seth Chisamore ([schisamo@chef.io](mailto:schisamo@chef.io))
