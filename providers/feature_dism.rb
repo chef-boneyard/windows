@@ -20,6 +20,11 @@
 
 use_inline_resources
 
+provides :windows_feature_dism
+provides :windows_feature do
+  ::File.exist?(locate_sysnative_cmd('dism.exe'))
+end
+
 include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::ShellOut
 include Windows::Helper

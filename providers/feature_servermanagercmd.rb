@@ -20,6 +20,11 @@
 
 use_inline_resources
 
+provider :windows_feature_servermanagercmd
+provider :windows_feature do
+  ::File.exist?(locate_sysnative_cmd('servermanagercmd.exe'))
+end
+
 include Chef::Provider::WindowsFeature::Base
 include Chef::Mixin::ShellOut
 include Windows::Helper
