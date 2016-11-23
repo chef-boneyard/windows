@@ -22,11 +22,11 @@
 actions :create, :delete
 default_action :create
 
-attribute :share_name, :kind_of => String, :name_attribute => true
-attribute :path, :kind_of => String
-attribute :description, :kind_of => String, :default => ''
-attribute :full_users, :kind_of => Array, :default => []
-attribute :change_users, :kind_of => Array, :default => []
-attribute :read_users, :kind_of => Array, :default => []
+attribute :share_name, kind_of: String, name_attribute: true
+attribute :path, kind_of: String
+attribute :description, kind_of: String, default: ''
+attribute :full_users, kind_of: Array, default: []
+attribute :change_users, kind_of: Array, default: []
+attribute :read_users, kind_of: Array, default: []
 
 attr_accessor :exists
