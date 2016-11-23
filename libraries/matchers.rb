@@ -11,6 +11,7 @@ if defined?(ChefSpec)
   ChefSpec.define_matcher :windows_path
   ChefSpec.define_matcher :windows_printer
   ChefSpec.define_matcher :windows_printer_port
+  ChefSpec.define_matcher :windows_share
   ChefSpec.define_matcher :windows_shortcut
   ChefSpec.define_matcher :windows_task
   ChefSpec.define_matcher :windows_zipfile
@@ -505,6 +506,56 @@ if defined?(ChefSpec)
   #
   def zip_windows_zipfile_to(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_zipfile, :zip, resource_name)
+  end
+
+  #
+  # Assert that a +windows_share+ resource exists in the Chef run with the
+  # action +:create+. Given a Chef Recipe that shares "c:/src"
+  # as Src
+  #
+  #     windows_share "Src" do
+  #       path "c:/src"
+  #       action :create
+  #     end
+  #
+  # The Examples section demonstrates the different ways to test a
+  # +windows_share+ resource with ChefSpec.
+  #
+  # @example Assert that a +windows_share+ was created
+  #   expect(chef_run).to create_windows_share('Src')
+  #
+  #
+  # @param [String, Regex] resource_name
+  #   the name of the resource to match
+  #
+  # @return [ChefSpec::Matchers::ResourceMatcher]
+  #
+  def create_windows_share(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_share, :create, resource_name)
+  end
+
+  #
+  # Assert that a +windows_share+ resource exists in the Chef run with the
+  # action +:delete+. Given a Chef Recipe that deletes share "c:/src"
+  #
+  #     windows_share "Src" do
+  #       action :delete
+  #     end
+  #
+  # The Examples section demonstrates the different ways to test a
+  # +windows_share+ resource with ChefSpec.
+  #
+  # @example Assert that a +windows_share+ was created
+  #   expect(chef_run).to delete_windows_share('Src')
+  #
+  #
+  # @param [String, Regex] resource_name
+  #   the name of the resource to match
+  #
+  # @return [ChefSpec::Matchers::ResourceMatcher]
+  #
+  def delete_windows_share(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_share, :delete, resource_name)
   end
 
   # All the other less commonly used LWRPs
