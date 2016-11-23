@@ -91,13 +91,13 @@ def load_current_resource
     @current_resource.exists = true
     @current_resource.path(share.Path)
     @current_resource.description(share.Description)
-    get_share_permissions
+    share_permissions
   end
 end
 
 private
 
-def get_share_permissions
+def share_permissions
   wmi = WIN32OLE.connect('winmgmts://')
   shares = wmi.ExecQuery("SELECT * FROM Win32_LogicalShareSecuritySetting WHERE name = '#{@current_resource.share_name}'")
 
