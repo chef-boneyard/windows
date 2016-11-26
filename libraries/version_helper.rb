@@ -25,26 +25,26 @@ module Windows
     # n.b. Prefix - PRODUCT_ - and suffix - _CORE- have been removed
     module CoreSKU
       # Server Datacenter Core
-      DATACENTER_SERVER   = 0x0C unless defined?(DATACENTER_SERVER)
+      DATACENTER_SERVER   = 0x0C unless constants.include?(DATACENTER_SERVER)
       # Server Datacenter without Hyper-V Core
-      DATACENTER_SERVER_V = 0x27 unless defined?(DATACENTER_SERVER_V)
+      DATACENTER_SERVER_V = 0x27 unless constants.include?(DATACENTER_SERVER_V)
       # Server Enterprise Core
-      ENTERPRISE_SERVER   = 0x0E unless defined?(ENTERPRISE_SERVER)
+      ENTERPRISE_SERVER   = 0x0E unless constants.include?(ENTERPRISE_SERVER)
       # Server Enterprise without Hyper-V Core
-      ENTERPRISE_SERVER_V = 0x29 unless defined?(ENTERPRISE_SERVER_V)
+      ENTERPRISE_SERVER_V = 0x29 unless constants.include?(ENTERPRISE_SERVER_V)
       # Server Standard Core
-      STANDARD_SERVER     = 0x0D unless defined?(STANDARD_SERVER)
+      STANDARD_SERVER     = 0x0D unless constants.include?(STANDARD_SERVER)
       # Server Standard without Hyper-V Core
-      STANDARD_SERVER_V   = 0x28 unless defined?(STANDARD_SERVER_V)
+      STANDARD_SERVER_V   = 0x28 unless constants.include?(STANDARD_SERVER_V)
     end
 
     # Module referencing product type contants
     # see. https://msdn.microsoft.com/windows/desktop/ms724833#VER_NT_SERVER
     # n.b. Prefix - VER_NT_ - has been removed
     module ProductType
-      WORKSTATION         = 0x1 unless defined?(WORKSTATION)
-      DOMAIN_CONTROLLER   = 0x2 unless defined?(DOMAIN_CONTROLLER)
-      SERVER              = 0x3 unless defined?(SERVER)
+      WORKSTATION         = 0x1 unless constants.include?(WORKSTATION)
+      DOMAIN_CONTROLLER   = 0x2 unless constants.include?(DOMAIN_CONTROLLER)
+      SERVER              = 0x3 unless constants.include?(SERVER)
     end
 
     # Determines whether current node is running a windows Core version
