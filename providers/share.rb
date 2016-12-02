@@ -109,7 +109,7 @@ def share_permissions
   read = []
   change = []
   full = []
-  for dacl in sd.DACL do
+  sd.DACL.each do |dacl|
     trustee = "#{dacl.Trustee.Domain}\\#{dacl.Trustee.Name}".downcase
     case dacl.AccessMask
     when ACCESS_FULL
