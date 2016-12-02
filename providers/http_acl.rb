@@ -36,8 +36,16 @@ action :create do
   raise 'When provided sddl property can\'t be empty' if @new_resource.sddl && @new_resource.sddl.empty?
 
   if @current_resource.exists
-    sddl_changed = (@current_resource.sddl.casecmp(@new_resource.sddl) != 0)
-    user_changed = (@current_resource.user.casecmp(@new_resource.user) != 0)
+    sddl_changed = (
+      @new_resource.sddl &&
+      @current_resource.sddl &&
+      @current_resource.sddl.casecmp(@new_resource.sddl) != 0
+    )
+    user_changed = (
+      @new_resource.user &&
+      @current_resource.user &&
+      @current_resource.user.casecmp(@new_resource.user) != 0
+    )
 
     if sddl_changed || user_changed
       converge_by("Changing #{@current_resource.url}") do
