@@ -20,7 +20,7 @@
 #
 include Windows::Helper
 
-require 'win32ole'
+require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
 use_inline_resources
 
