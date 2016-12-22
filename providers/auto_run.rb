@@ -29,7 +29,7 @@ action :create do
     values [{
       name: new_resource.name,
       type: :string,
-      data: "\"#{new_resource.program}\" #{new_resource.args}"
+      data: "\"#{new_resource.program}\" #{new_resource.args}",
     }]
     action :create
   end
@@ -40,7 +40,7 @@ action :remove do
     values [{
       name: new_resource.name,
       type: :string,
-      data: ''
+      data: '',
     }]
     action :delete
   end

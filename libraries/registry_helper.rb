@@ -45,7 +45,7 @@ module Windows
       hkey = {
         'HKLM' => 'HKEY_LOCAL_MACHINE',
         'HKCU' => 'HKEY_CURRENT_USER',
-        'HKU'  => 'HKEY_USERS'
+        'HKU'  => 'HKEY_USERS',
       }[hive_name] || hive_name
 
       Chef::Log.debug("Hive resolved to #{hkey}")
@@ -62,7 +62,7 @@ module Windows
       hive = {
         'HKEY_LOCAL_MACHINE' => ::Win32::Registry::HKEY_LOCAL_MACHINE,
         'HKEY_USERS' => ::Win32::Registry::HKEY_USERS,
-        'HKEY_CURRENT_USER' => ::Win32::Registry::HKEY_CURRENT_USER
+        'HKEY_CURRENT_USER' => ::Win32::Registry::HKEY_CURRENT_USER,
       }[hkey]
 
       unless hive
@@ -117,7 +117,7 @@ module Windows
             expand_string: ::Win32::Registry::REG_EXPAND_SZ,
             dword: ::Win32::Registry::REG_DWORD,
             dword_big_endian: ::Win32::Registry::REG_DWORD_BIG_ENDIAN,
-            qword: ::Win32::Registry::REG_QWORD
+            qword: ::Win32::Registry::REG_QWORD,
           }[type]
 
           reg.write(key, reg_type, val)

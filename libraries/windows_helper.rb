@@ -97,7 +97,7 @@ module Windows
       # We pick 32k because that is the largest it could be:
       # http://msdn.microsoft.com/en-us/library/windows/desktop/ms724265%28v=vs.85%29.aspx
       buf = 0.chr * 32 * 1024 # 32k
-      if ExpandEnvironmentStrings.call(path.dup, buf, buf.length) == 0
+      if ExpandEnvironmentStrings.call(path.dup, buf, buf.length).zero?
         raise Chef::Exceptions::Win32APIError, 'Failed calling ExpandEnvironmentStrings (received 0)'
       end
       buf.strip
