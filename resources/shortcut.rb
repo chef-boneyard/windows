@@ -1,9 +1,9 @@
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: shortcut
 #
-# Copyright:: 2010, VMware, Inc.
+# Copyright:: 2010-2016, VMware, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 actions :create
 
 default_action :create
+default_action :create
 
 attribute :name, kind_of: String
 attribute :target, kind_of: String
@@ -28,9 +29,3 @@ attribute :arguments, kind_of: String
 attribute :description, kind_of: String
 attribute :cwd, kind_of: String
 attribute :iconlocation, kind_of: String
-
-# Covers 0.10.8 and earlier
-def initialize(*args)
-  super
-  @action = :create
-end

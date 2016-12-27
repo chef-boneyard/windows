@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 #
-# Author:: Seth Chisamore (<schisamo@chef.io>)
+# Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>), Richard Lavey (richard.lavey@calastone.com)
 # Cookbook Name:: windows
-# Resource:: reboot
+# Resource:: share
 #
-# Copyright:: 2011-2015, Chef Software, Inc.
+# Copyright:: 2014, Sölvi Páll Ásgeirsson.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,17 +19,14 @@
 # limitations under the License.
 #
 
-actions :request, :cancel
+actions :create, :delete
+default_action :create
 
-attribute :timeout, kind_of: Integer, name_attribute: true
-attribute :reason, kind_of: String, default: 'Chef client run'
+attribute :share_name, kind_of: String, name_attribute: true
+attribute :path, kind_of: String
+attribute :description, kind_of: String, default: ''
+attribute :full_users, kind_of: Array, default: []
+attribute :change_users, kind_of: Array, default: []
+attribute :read_users, kind_of: Array, default: []
 
-def initialize(name, run_context = nil)
-  super
-  @action = :request
-  Chef::Log.warn <<-EOF
-The windows_reboot resource is deprecated. Please use the reboot resource in
-Chef Client 12. windows_reboot will be removed in the next major version
-release of the Windows cookbook.
-EOF
-end
+attr_accessor :exists

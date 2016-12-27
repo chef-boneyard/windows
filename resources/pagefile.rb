@@ -1,9 +1,9 @@
 #
 # Author:: Kevin Moser (<kevin.moser@nordstrom.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: pagefile
 #
-# Copyright:: 2012, Nordstrom, Inc.
+# Copyright:: 2012-2016, Nordstrom, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,11 +19,10 @@
 #
 
 actions :set, :delete
+default_action :set
 
 attribute :name, kind_of: String, name_attribute: true
 attribute :system_managed, kind_of: [TrueClass, FalseClass]
 attribute :automatic_managed, kind_of: [TrueClass, FalseClass], default: false
 attribute :initial_size, kind_of: Integer
 attribute :maximum_size, kind_of: Integer
-
-default_action :set

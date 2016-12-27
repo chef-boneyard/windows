@@ -1,6 +1,6 @@
 $global:progressPreference = 'SilentlyContinue'
 
-describe 'minimal::font' {
+describe 'test::font' {
   context 'windows_font' {
 
     it "installs CodeNewRoman"  {

@@ -1,11 +1,11 @@
 #
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: zipfile
 #
-# Copyright:: 2010, VMware, Inc.
-# Copyright:: 2011-2015, Chef Software, Inc.
+# Copyright:: 2010-2016, VMware, Inc.
+# Copyright:: 2011-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-use_inline_resources if defined?(use_inline_resources)
+
+use_inline_resources
 
 include Windows::Helper
 

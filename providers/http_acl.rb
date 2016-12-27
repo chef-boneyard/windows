@@ -1,9 +1,9 @@
 #
 # Author:: Richard Lavey (richard.lavey@calastone.com)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: http_acl
 #
-# Copyright:: 2015, Calastone Ltd.
+# Copyright:: 2015-2016, Calastone Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-use_inline_resources if defined?(use_inline_resources)
+
+use_inline_resources
 
 # See https://msdn.microsoft.com/en-us/library/windows/desktop/cc307236%28v=vs.85%29.aspx for netsh info
 
@@ -30,12 +31,23 @@ def whyrun_supported?
 end
 
 action :create do
-  raise 'No user property set' if @new_resource.user.nil? || @new_resource.user.empty?
+  raise '`user` xor `sddl` can\'t be used together' if @new_resource.user && @new_resource.sddl
+  raise 'When provided user property can\'t be empty' if @new_resource.user && @new_resource.user.empty?
+  raise 'When provided sddl property can\'t be empty' if @new_resource.sddl && @new_resource.sddl.empty?
 
   if @current_resource.exists
-    needsChange = (@current_resource.user.casecmp(@new_resource.user) != 0)
+    sddl_changed = (
+      @new_resource.sddl &&
+      @current_resource.sddl &&
+      @current_resource.sddl.casecmp(@new_resource.sddl) != 0
+    )
+    user_changed = (
+      @new_resource.user &&
+      @current_resource.user &&
+      @current_resource.user.casecmp(@new_resource.user) != 0
+    )
 
-    if needsChange
+    if sddl_changed || user_changed
       converge_by("Changing #{@current_resource.url}") do
         deleteAcl
         setAcl
@@ -71,20 +83,30 @@ end
 private
 
 def getCurrentAcl
-  cmd = shell_out!("#{@command} http show urlacl url=#{@current_resource.url}")
-  Chef::Log.debug "netsh reports: #{cmd.stdout}"
+  cmd_out = shell_out!("#{@command} http show urlacl url=#{@current_resource.url}").stdout
+  Chef::Log.debug "netsh reports: #{cmd_out}"
 
-  m = cmd.stdout.scan(/User:\s*(.+)/)
-  if m.empty?
-    @current_resource.exists = false
-  else
-    @current_resource.user(m[0][0].chomp)
+  if cmd_out.include? @current_resource.url
     @current_resource.exists = true
+
+    # Checks first for sddl, because it generates user(s)
+    sddl_match = cmd_out.match(/SDDL:\s*(?<sddl>.+)/)
+    if sddl_match
+      @current_resource.sddl(sddl_match['sddl'])
+    else
+      # if no sddl, tries to find a single user
+      user_match = cmd_out.match(/User:\s*(?<user>.+)/)
+      @current_resource.user user_match['user']
+    end
   end
 end
 
 def setAcl
-  shell_out!("#{@command} http add urlacl url=#{@new_resource.url} user=\"#{@new_resource.user}\"")
+  if @current_resource.sddl
+    shell_out!("#{@command} http add urlacl url=#{@new_resource.url} sddl=\"#{@new_resource.sddl}\"")
+  else
+    shell_out!("#{@command} http add urlacl url=#{@new_resource.url} user=\"#{@new_resource.user}\"")
+  end
 end
 
 def deleteAcl

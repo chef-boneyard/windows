@@ -1,9 +1,9 @@
 #
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: auto_run
 #
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2011-2016, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,12 +18,8 @@
 # limitations under the License.
 #
 
-def initialize(name, run_context = nil)
-  super
-  @action = :create
-end
-
 actions :create, :remove
+default_action :create
 
 attribute :program, kind_of: String
 attribute :name, kind_of: String, name_attribute: true

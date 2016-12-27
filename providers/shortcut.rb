@@ -1,9 +1,9 @@
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: shortcut
 #
-# Copyright:: 2010, VMware, Inc.
+# Copyright:: 2010-2016, VMware, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-use_inline_resources if defined?(use_inline_resources)
+
+use_inline_resources
 
 def load_current_resource
   require 'win32ole'

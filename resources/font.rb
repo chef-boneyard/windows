@@ -1,9 +1,9 @@
 #
 # Author:: Sander Botman <sbotman@schubergphilis.com>
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: font
 #
-# Copyright:: 2014, Schuberg Philis BV.
+# Copyright:: 2014-2016, Schuberg Philis BV.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 #
 
 actions :install
-
 default_action :install
 
 attribute :file, kind_of: String, name_attribute: true

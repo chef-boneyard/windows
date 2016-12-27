@@ -1,9 +1,9 @@
 #
 # Author:: Richard Lavey (richard.lavey@calastone.com)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: http_acl
 #
-# Copyright:: 2015, Calastone Ltd.
+# Copyright:: 2015-2016, Calastone Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,5 +23,6 @@ default_action :create
 
 attribute :url, kind_of: String, name_attribute: true, required: true
 attribute :user, kind_of: String
+attribute :sddl, kind_of: String
 
 attr_accessor :exists

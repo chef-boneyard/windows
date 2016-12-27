@@ -1,3 +1,5 @@
+include_recipe 'windows::default'
+
 windows_font 'CodeNewRoman.otf'
 
 cookbook_file 'C:/Asimov.otf' do

@@ -1,3 +1,7 @@
+# This provider has been deprecated as the same logic is included
+# in Chef 12.6 and later. In the near future this provider will be
+# removed from this cookbook.
+
 require 'chef/resource/lwrp_base'
 require 'chef/provider/lwrp_base'
 
@@ -11,7 +15,7 @@ class Chef
       include Chef::Mixin::ShellOut
       include Windows::Helper
 
-      use_inline_resources if defined?(use_inline_resources)
+      use_inline_resources
 
       # the logic in all action methods mirror that of
       # the Chef::Provider::Package which will make
@@ -116,7 +120,7 @@ class Chef
           end
         end
         Chef::Log.info("Removing #{@new_resource} with uninstall command '#{uninstall_command}'")
-        shell_out!(uninstall_command, { returns: @new_resource.success_codes })
+        shell_out!(uninstall_command, returns: @new_resource.success_codes)
       end
 
       private
@@ -220,26 +224,19 @@ class Chef
                     end
 
         Chef::Log.warn <<-EOF
-Please use the package resource available in Chef Client 12.6.
+Please use the package resource available in Chef Client 12.6+.
 windows_package will be removed in the next major version release
-of the Windows cookbook.
+of the Windows cookbook on 4/2017.
 EOF
       end
     end
   end
 end
 
-if Gem::Version.new(Chef::VERSION) < Gem::Version.new('12')
-  # this wires up the cookbook version of the windows_package resource as Chef::Resource::WindowsPackage,
-  # which is kinda hella janky
-  Chef::Resource.send(:remove_const, :WindowsPackage) if defined? Chef::Resource::WindowsPackage
-  Chef::Resource.const_set('WindowsPackage', Chef::Resource::WindowsCookbookPackage)
-else
-  if Chef.respond_to?(:set_resource_priority_array)
-    # this wires up the dynamic resource resolver to favor the cookbook version of windows_package over
-    # the internal version (but the internal Chef::Resource::WindowsPackage is still the internal version
-    # and a wrapper cookbook can override this e.g. for users that want to use the windows cookbook but
-    # want the internal windows_package resource)
-    Chef.set_resource_priority_array(:windows_package, [Chef::Resource::WindowsCookbookPackage], platform: 'windows')
-  end
+if Gem::Version.new(Chef::VERSION) < Gem::Version.new('12.6') && Chef.respond_to?(:set_resource_priority_array)
+  # this wires up the dynamic resource resolver to favor the cookbook version of windows_package over
+  # the internal version (but the internal Chef::Resource::WindowsPackage is still the internal version
+  # and a wrapper cookbook can override this e.g. for users that want to use the windows cookbook but
+  # want the internal windows_package resource)
+  Chef.set_resource_priority_array(:windows_package, [Chef::Resource::WindowsCookbookPackage], platform: 'windows')
 end

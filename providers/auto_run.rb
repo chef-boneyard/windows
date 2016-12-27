@@ -1,9 +1,9 @@
 #
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: auto_run
 #
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2011-2016, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,17 +17,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-use_inline_resources if defined?(use_inline_resources)
+
+def whyrun_supported?
+  true
+end
+
+use_inline_resources
 
 action :create do
-  windows_registry 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
-    values new_resource.name => "\"#{new_resource.program}\" #{new_resource.args}"
+  registry_key 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
+    values [{
+      name: new_resource.name,
+      type: :string,
+      data: "\"#{new_resource.program}\" #{new_resource.args}"
+    }]
+    action :create
   end
 end
 
 action :remove do
-  windows_registry 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
-    values new_resource.name => ''
-    action :remove
+  registry_key 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
+    values [{
+      name: new_resource.name,
+      type: :string,
+      data: ''
+    }]
+    action :delete
   end
 end

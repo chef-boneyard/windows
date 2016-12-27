@@ -1,9 +1,9 @@
 #
 # Author:: Sander Botman <sbotman@schubergphilis.com>
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: font
 #
-# Copyright:: 2014, Schuberg Philis BV.
+# Copyright:: 2014-2016, Schuberg Philis BV.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-use_inline_resources if defined?(use_inline_resources)
+
+use_inline_resources
 
 include Windows::Helper
 
@@ -70,13 +71,13 @@ def install_font
 end
 
 action :install do
-  unless font_exists?
+  if font_exists?
+    Chef::Log.debug("Not installing font: #{@new_resource.file}, font already installed.")
+    new_resource.updated_by_last_action(false)
+  else
     get_cookbook_font
     install_font
     del_cookbook_font
     new_resource.updated_by_last_action(true)
-  else
-    Chef::Log.debug("Not installing font: #{@new_resource.file}, font already installed.")
-    new_resource.updated_by_last_action(false)
   end
 end

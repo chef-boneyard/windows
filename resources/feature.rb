@@ -1,9 +1,9 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: feature
 #
-# Copyright:: 2011-2015, Chef Software, Inc.
+# Copyright:: 2011-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 include Windows::Helper
 
 actions :install, :remove, :delete
+default_action :install
 
 attribute :feature_name, kind_of: String, name_attribute: true
 attribute :source, kind_of: String
@@ -28,7 +29,6 @@ attribute :all, kind_of: [TrueClass, FalseClass], default: false
 
 def initialize(name, run_context = nil)
   super
-  @action = :install
   @provider = lookup_provider_constant(locate_default_provider)
 end
 
@@ -36,6 +36,7 @@ private
 
 def locate_default_provider
   if node['windows'].attribute?(:feature_provider)
+    Chef::Log.warn('Specifying the windows_feature provider to use by attribute has been deprecated. Please specify the provider in your resource instead. See the readme for examples. This feature will be removed on 4/2017 after the release of Chef 13.')
     "windows_feature_#{node['windows']['feature_provider']}"
   elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
     :windows_feature_dism

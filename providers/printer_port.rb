@@ -1,9 +1,9 @@
 #
 # Author:: Doug Ireton (<doug.ireton@nordstrom.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: printer_port
 #
-# Copyright:: 2012, Nordstrom, Inc.
+# Copyright:: 2012-2016, Nordstrom, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-use_inline_resources if defined?(use_inline_resources)
+
+use_inline_resources
 
 # Support whyrun
 def whyrun_supported?

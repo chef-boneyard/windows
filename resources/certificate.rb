@@ -1,9 +1,9 @@
 #
 # Author:: Richard Lavey (richard.lavey@calastone.com)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: certificate
 #
-# Copyright:: 2015, Calastone Ltd.
+# Copyright:: 2015-2016, Calastone Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,5 +24,5 @@ default_action :create
 attribute :source, kind_of: String, name_attribute: true, required: true
 attribute :pfx_password, kind_of: String
 attribute :private_key_acl, kind_of: Array
-attribute :store_name, kind_of: String, default: 'MY', regex: /^(?:MY|CA|ROOT|TRUSTEDPEOPLE)$/
+attribute :store_name, kind_of: String, default: 'MY', regex: /^(?:MY|CA|ROOT|TrustedPublisher|TRUSTEDPEOPLE)$/
 attribute :user_store, kind_of: [TrueClass, FalseClass], default: false
