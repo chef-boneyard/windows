@@ -10,5 +10,10 @@ describe 'test::feature' {
     it "feature TFTP Client was created"  {
       Get-Command tftp -ErrorAction SilentlyContinue | Should Not Be $Null
     }
+
+    it "feature ASP.NET 4.5 was created"  {
+      # use G-WF | Select Installed ...
+      Get-WindowsFeature -Name Web-Asp-Net45 | Select Installed | Should Be $True
+    }
   }
 }
