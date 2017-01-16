@@ -145,7 +145,7 @@ servermanagercmd -query
 #### Properties
 
 - `feature_name` - name of the feature/role to install. The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
-- `all` - Boolean. Optional. Default: false. DISM provider only. Forces all dependencies to be installed.
+- `all` - Boolean. Optional. Default: false. DISM and Powershell providers only. Forces all dependencies to be installed.
 - `source` - String. Optional. DISM provider only. Uses local repository for feature install.
 
 #### Providers
