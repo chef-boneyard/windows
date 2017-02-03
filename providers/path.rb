@@ -26,7 +26,7 @@ action :add do
   env 'path' do
     action :modify
     delim ::File::PATH_SEPARATOR
-    value new_resource.path
+    value new_resource.path.gsub('/','\\')
     notifies :run, "ruby_block[fix ruby ENV['PATH']]", :immediately
   end
 
@@ -48,6 +48,6 @@ action :remove do
   env 'path' do
     action :delete
     delim ::File::PATH_SEPARATOR
-    value new_resource.path
+    value new_resource.path.gsub('/','\\')
   end
 end
