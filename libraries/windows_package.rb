@@ -158,7 +158,7 @@ class Chef
             @new_resource.installer_type
           else
             basename = ::File.basename(cached_file(@new_resource.source, @new_resource.checksum))
-            if basename.split('.').last.casecmp('msi').zero? # Microsoft MSI
+            if basename.split('.').last.casecmp('msi') == 0 # Microsoft MSI
               :msi
             else
               # search the binary file for installer type
