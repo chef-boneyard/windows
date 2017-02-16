@@ -1,5 +1,3 @@
-include_recipe 'windows::default'
-
 directory 'C:\path_test_path'
 
 windows_path 'C:\path_test_path' do

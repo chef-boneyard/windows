@@ -1,8 +1,6 @@
 # We don't support reading the source from the cookbook yet.  So manually point us to
 # the correct place in the chef file cache.
 
-include_recipe 'windows::default'
-
 windows_certificate "#{Chef::Config[:file_cache_path]}/cookbooks/test/files/default/der-cert1.cer" do
   action :create
 end

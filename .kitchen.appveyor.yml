@@ -26,9 +26,6 @@ suites:
   - name: certificate
     run_list:
       - recipe[test::certificate]
-  - name: package
-    run_list:
-      - recipe[test::package]
   - name: feature
     run_list:
       - recipe[test::feature]

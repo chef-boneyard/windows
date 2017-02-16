@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/chef-cookbooks/windows.svg?branch=master)](http://travis-ci.org/chef-cookbooks/windows) [![Cookbook Version](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)
 
-Provides a set of Windows-specific primitives (Chef resources) meant to aid in the creation of cookbooks/recipes targeting the Windows platform.
+Provides a set of Windows-specific resources to aid in the creation of cookbooks/recipes targeting the Windows platform.
 
 ## Requirements
 
@@ -15,7 +15,7 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 
 ### Chef
 
-- Chef 12.1+
+- Chef 12.6+
 
 ## Resources
 
@@ -256,121 +256,6 @@ end
 ```ruby
 windows_http_acl 'http://+:50051/' do
     action :delete
-end
-```
-
-### windows_package
-
-This resource is now deprecated and will be removed on 4/2017 after the release of Chef 13\. Chef >= 12.6.0 includes a built-in [package](https://docs.chef.io/resource_windows_package.html) resource which includes support for Windows pacakges.
-
-Manage Windows application packages in an unattended, idempotent way.
-
-The following application installers are currently supported:
-
-- MSI packages
-- InstallShield
-- Wise InstallMaster
-- Inno Setup
-- Nullsoft Scriptable Install System
-
-If the proper installer type is not passed into the resource's installer_type attribute, the provider will do it's best to identify the type by introspecting the installation package. If the installation type cannot be properly identified the `:custom` value can be passed into the installer_type attribute along with the proper flags for silent/quiet installation (using the `options` attribute..see example below).
-
-**PLEASE NOTE** - For proper idempotence the resource's `package_name` should be the same as the 'DisplayName' registry value in the uninstallation data that is created during package installation. The easiest way to definitively find the proper 'DisplayName' value is to install the package on a machine and search for the uninstall information under the following registry keys:
-
-- `HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall`
-- `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall`
-- `HKEY_LOCAL_MACHINE\Software\Wow6464Node\Microsoft\Windows\CurrentVersion\Uninstall`
-
-For maximum flexibility the `source` attribute supports both remote and local installation packages.
-
-#### Actions
-
-- `:install` - install a package
-- `:remove` - remove a package. The remove action is completely hit or miss as many application uninstallers do not support a full silent/quiet mode.
-
-#### Properties
-
-- `package_name` - name attribute. The 'DisplayName' of the application installation package.
-- `source` - The source of the windows installer. This can either be a URI or a local path.
-- `installer_type` - They type of windows installation package. Valid values include :msi, :inno, :nsis, :wise, :installshield, :custom. If this value is not provided, the provider will do it's best to identify the installer type through introspection of the file.
-- `checksum` - useful if source is remote, the SHA-256 checksum of the file--if the local file matches the checksum, Chef will not download it
-- `options` - Additional options to pass the underlying installation command
-- `timeout` - set a timeout for the package download (default 600 seconds)
-- `version` - The version number of this package, as indicated by the 'DisplayVersion' value in one of the 'Uninstall' registry keys. If the given version number does equal the 'DisplayVersion' in the registry, the package will be installed.
-- `success_codes` - set an array of possible successful installation return codes. Previously this was hardcoded, but certain MSIs may have a different return code, e.g. 3010 for reboot required. Must be an array, and defaults to `[0, 42, 127]`.
-
-#### Examples
-
-Install PuTTY (InnoSetup installer)
-
-```ruby
-windows_package 'PuTTY version 0.60' do
-  source 'http://the.earth.li/~sgtatham/putty/latest/x86/putty-0.60-installer.exe'
-  installer_type :inno
-  action :install
-end
-```
-
-Install 7-Zip (MSI installer)
-
-```ruby
-windows_package '7-Zip 9.20 (x64 edition)' do
-  source 'http://downloads.sourceforge.net/sevenzip/7z920-x64.msi'
-  action :install
-end
-```
-
-Install Notepad++ (Y U No Emacs?) using a local installer
-
-```ruby
-windows_package 'Notepad++' do
-  source 'c:/installation_files/npp.5.9.2.Installer.exe'
-  action :install
-end
-```
-
-Install VLC for that Xvid (NSIS installer)
-
-```ruby
-windows_package 'VLC media player 1.1.10' do
-  source 'http://superb-sea2.dl.sourceforge.net/project/vlc/1.1.10/win32/vlc-1.1.10-win32.exe'
-  action :install
-end
-```
-
-Install Firefox as custom installer and manually set the silent install flags
-
-```ruby
-windows_package 'Mozilla Firefox 5.0 (x86 en-US)' do
-  source 'http://archive.mozilla.org/pub/mozilla.org/mozilla.org/firefox/releases/5.0/win32/en-US/Firefox%20Setup%205.0.exe'
-  options '-ms'
-  installer_type :custom
-  action :install
-end
-```
-
-Google Chrome FTW (MSI installer)
-
-```ruby
-windows_package 'Google Chrome' do
-  source 'https://dl-ssl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7B806F36C0-CB54-4A84-A3F3-0CF8A86575E0%7D%26lang%3Den%26browser%3D3%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dfalse/edgedl/chrome/install/GoogleChromeStandaloneEnterprise.msi'
-  action :install
-end
-```
-
-Remove Google Chrome
-
-```ruby
-windows_package 'Google Chrome' do
-  action :remove
-end
-```
-
-Remove 7-Zip
-
-```ruby
-windows_package '7-Zip 9.20 (x64 edition)' do
-  action :remove
 end
 ```
 
