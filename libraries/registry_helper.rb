@@ -2,12 +2,12 @@
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: registry
 #
-# Copyright:: 2010, VMware, Inc.
+# Copyright:: 2010-2016, VMware, Inc.
 # Copyright:: 2011-2016, Chef Software, Inc.
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2011-2016, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ module Windows
       hkey = {
         'HKLM' => 'HKEY_LOCAL_MACHINE',
         'HKCU' => 'HKEY_CURRENT_USER',
-        'HKU'  => 'HKEY_USERS'
+        'HKU'  => 'HKEY_USERS',
       }[hive_name] || hive_name
 
       Chef::Log.debug("Hive resolved to #{hkey}")
@@ -62,7 +62,7 @@ module Windows
       hive = {
         'HKEY_LOCAL_MACHINE' => ::Win32::Registry::HKEY_LOCAL_MACHINE,
         'HKEY_USERS' => ::Win32::Registry::HKEY_USERS,
-        'HKEY_CURRENT_USER' => ::Win32::Registry::HKEY_CURRENT_USER
+        'HKEY_CURRENT_USER' => ::Win32::Registry::HKEY_CURRENT_USER,
       }[hkey]
 
       unless hive
@@ -117,7 +117,7 @@ module Windows
             expand_string: ::Win32::Registry::REG_EXPAND_SZ,
             dword: ::Win32::Registry::REG_DWORD,
             dword_big_endian: ::Win32::Registry::REG_DWORD_BIG_ENDIAN,
-            qword: ::Win32::Registry::REG_QWORD
+            qword: ::Win32::Registry::REG_QWORD,
           }[type]
 
           reg.write(key, reg_type, val)

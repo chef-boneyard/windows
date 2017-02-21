@@ -1,6 +1,6 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Recipe:: default
 #
 # Copyright:: 2011-2016, Chef Software, Inc.
@@ -18,19 +18,4 @@
 # limitations under the License.
 #
 
-# gems with precompiled binaries
-%w( win32-api win32-service ).each do |win_gem|
-  chef_gem win_gem do
-    options '--platform=mswin32'
-    action :install
-    compile_time false
-  end
-end
-
-# the rest
-%w( windows-api windows-pr win32-dir win32-event win32-mutex ).each do |win_gem|
-  chef_gem win_gem do
-    action :install
-    compile_time false
-  end
-end
+Chef::Log.warn('The windows::default recipe has been deprecated. The gems previously installed in this recipe ship in the Chef MSI.')

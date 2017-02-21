@@ -17,7 +17,7 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 
 - Chef 12.1+
 
-## Resource/Provider
+## Resources
 
 ### windows_auto_run
 
@@ -26,7 +26,7 @@ Provides a set of Windows-specific primitives (Chef resources) meant to aid in t
 - `:create` - Create an item to be run at login
 - `:remove` - Remove an item that was previously setup to run at login
 
-#### Attribute Parameters
+#### Properties
 
 - `name` - Name attribute. The name of the value to be stored in the registry
 - `program` - The program to be run at login
@@ -46,7 +46,7 @@ end
 
 ### windows_certificate
 
-Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts. Due to current limitations in winrm, installing certificated remotely may not work if the operation requires a user profile. Operations on the local machine store should still work.
+Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts. Due to current limitations in WinRM, installing certificated remotely may not work if the operation requires a user profile. Operations on the local machine store should still work.
 
 #### Actions
 
@@ -54,7 +54,7 @@ Installs a certificate into the Windows certificate store from a file, and grant
 - `:delete` - deletes a certificate.
 - `:acl_add` - adds read-only entries to a certificate's private key ACL.
 
-#### Attribute Parameters
+#### Properties
 
 - `source` - name attribute. The source file (for create and acl_add), thumbprint (for delete and acl_add) or subject (for delete).
 - `pfx_password` - the password to access the source if it is a pfx file.
@@ -80,7 +80,7 @@ end
 ```
 
 ```ruby
-# Remove all certicates matching the subject
+# Remove all certificates matching the subject
 windows_certificate "me.acme.com" do
     action :delete
 end
@@ -95,7 +95,7 @@ Binds a certificate to an HTTP port in order to enable TLS communication.
 - `:create` - creates or updates a binding.
 - `:delete` - deletes a binding.
 
-#### Attribute Parameters
+#### Properties
 
 - `cert_name` - name attribute. The thumbprint(hash) or subject that identifies the certificate to be bound.
 - `name_kind` - indicates the type of cert_name. One of :subject (default) or :hash.
@@ -142,17 +142,17 @@ servermanagercmd -query
 - `:install` - install a Windows role/feature
 - `:remove` - remove a Windows role/feature
 
-#### Attribute Parameters
+#### Properties
 
 - `feature_name` - name of the feature/role to install. The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
-- `all` - Boolean. Optional. Default: false. DISM provider only. Forces all dependencies to be installed.
+- `all` - Boolean. Optional. Default: false. DISM and Powershell providers only. Forces all dependencies to be installed.
 - `source` - String. Optional. DISM provider only. Uses local repository for feature install.
 
 #### Providers
 
 - **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
 - **Chef::Provider::WindowsFeature::ServerManagerCmd**: Uses Server Manager to manage roles/features.
-- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features. (see [COOK-3714](https://tickets.opscode.com/browse/COOK-3714)
+- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features.
 
 #### Examples
 
@@ -212,7 +212,7 @@ Font files should be included in the cookbooks
 
 - `:install` - install a font to the system fonts directory.
 
-#### Attribute Parameters
+#### Properties
 
 - `file` - The name of the font file name to install. The path defaults to the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
 - `source` - Set an alternate path to the font file.
@@ -232,16 +232,24 @@ Sets the Access Control List for an http URL to grant non-admin accounts permiss
 - `:create` - creates or updates the ACL for a URL.
 - `:delete` - deletes the ACL from a URL.
 
-#### Attribute Parameters
+#### Properties
 
 - `url` - the name of the url to be created/deleted.
-- `user` - the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create. Only one user or group can be granted permission so this replaces any previously defined entry.
+- `sddl` - the DACL string configuring all permissions to URL. Mandatory for create if user is not provided. Can't be use with `user`.
+- `user` - the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create if sddl is not provided. Can't be use with `sddl`. Only one user or group can be granted permission so this replaces any previously defined entry.
 
 #### Examples
 
 ```ruby
 windows_http_acl 'http://+:50051/' do
     user 'pc\\fred'
+end
+```
+
+```ruby
+# Grant access to users "NT SERVICE\WinRM" and "NT SERVICE\Wecsvc" via sddl
+windows_http_acl 'http://+:5985/' do
+  sddl 'D:(A;;GX;;;S-1-5-80-569256582-2953403351-2909559716-1301513147-412116970)(A;;GX;;;S-1-5-80-4059739203-877974739-1245631912-527174227-2996563517)'
 end
 ```
 
@@ -253,7 +261,7 @@ end
 
 ### windows_package
 
-This resource is now deprecated and will be removed in a future version of this cookbook. Chef >= 12.6.0 includes a built-in [package](https://docs.chef.io/resource_windows_package.html) resource.
+This resource is now deprecated and will be removed on 4/2017 after the release of Chef 13\. Chef >= 12.6.0 includes a built-in [package](https://docs.chef.io/resource_windows_package.html) resource which includes support for Windows pacakges.
 
 Manage Windows application packages in an unattended, idempotent way.
 
@@ -280,7 +288,7 @@ For maximum flexibility the `source` attribute supports both remote and local in
 - `:install` - install a package
 - `:remove` - remove a package. The remove action is completely hit or miss as many application uninstallers do not support a full silent/quiet mode.
 
-#### Attribute Parameters
+#### Properties
 
 - `package_name` - name attribute. The 'DisplayName' of the application installation package.
 - `source` - The source of the windows installer. This can either be a URI or a local path.
@@ -375,7 +383,7 @@ Create and delete TCP/IPv4 printer ports.
 - `:create` - Create a TCIP/IPv4 printer port. This is the default action.
 - `:delete` - Delete a TCIP/IPv4 printer port
 
-#### Attribute Parameters
+#### Properties
 
 - `ipv4_address` - Name attribute. Required. IPv4 address, e.g. '10.0.24.34'
 - `port_name` - Port name. Optional. Defaults to 'IP_' + `ipv4_address`
@@ -432,7 +440,7 @@ The Windows Printer LWRP will automatically create a TCP/IP printer port for you
 - `:create` - Create a new printer
 - `:delete` - Delete a new printer
 
-#### Attribute Parameters
+#### Properties
 
 - `device_id` - Name attribute. Required. Printer queue name, e.g. 'HP LJ 5200 in fifth floor copy room'
 - `comment` - Optional string describing the printer queue.
@@ -464,6 +472,41 @@ windows_printer 'HP LaserJet 5th Floor' do
 end
 ```
 
+### windows_share
+
+Creates, modifies and removes Windows shares. All properties are idempotent.
+
+#### Actions
+
+- :create: creates/modifies a share
+- :delete: deletes a share
+
+#### Properties
+
+- share_name: name attribute, the share name.
+- path: path to the directory to be shared. Required when creating. If the share already exists on a different path then it is deleted and re-created.
+- description: description to be applied to the share
+- full_users: array of users which should have "Full control" permissions
+- change_users: array of users which should have "Change" permissions
+- read_users: array of users which should have "Read" permissions
+
+#### Examples
+
+```ruby
+windows_share "foo" do
+  action :create
+  path "C:\\foo"
+  full_users ["DOMAIN_A\\some_user", "DOMAIN_B\\some_other_user"]
+  read_users ["DOMAIN_C\\Domain users"]
+end
+```
+
+```ruby
+windows_share "foo" do
+  action :delete
+end
+```
+
 ### windows_shortcut
 
 Creates and modifies Windows shortcuts.
@@ -472,7 +515,7 @@ Creates and modifies Windows shortcuts.
 
 - `:create` - create or modify a windows shortcut
 
-#### Attribute Parameters
+#### Properties
 
 - `name` - name attribute. The shortcut to create/modify.
 - `target` - what the shortcut links to
@@ -511,7 +554,7 @@ BgInfo = Registry.get_value('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
 - `:add` - Add an item to the system path
 - `:remove` - Remove an item from the system path
 
-#### Attribute Parameters
+#### Properties
 
 - `path` - Name attribute. The name of the value to add to the system path
 
@@ -547,7 +590,7 @@ Creates, deletes or runs a Windows scheduled task. Requires Windows Server 2008 
 - `:enable` - enable a task
 - `:disable` - disable a task
 
-#### Attribute Parameters
+#### Properties
 
 - `task_name` - name attribute, The task name. ("Task Name" or "/Task Name")
 - `force` - When used with create, will update the task.
@@ -626,7 +669,7 @@ Most version of Windows do not ship with native cli utility for managing compres
 - `:unzip` - unzip a compressed file
 - `:zip` - zip a directory (recursively)
 
-#### Attribute Parameters
+#### Properties
 
 - `path` - name attribute. The path where files will be (un)zipped to.
 - `source` - source of the zip file (either a URI or local path) for :unzip, or directory to be zipped for :zip.
@@ -708,6 +751,54 @@ if is_package_installed?('Windows Software Development Kit')
 end
 ```
 
+### Windows::VersionHelper
+
+Helper that allows you to get information of the windows version running on your node. It leverages windows ohai from kernel.os_info, easy to mock and to use even on linux.
+
+#### core_version?
+
+Determines whether given node is running on a windows Core.
+
+```ruby
+if ::Windows::VersionHelper.core_version? node
+  fail 'Windows Core is not supported'
+end
+```
+
+#### workstation_version?
+
+Determines whether given node is a windows workstation version (XP, Vista, 7, 8, 8.1, 10)
+
+```ruby
+if ::Windows::VersionHelper.workstation_version? node
+  fail 'Only server version of windows are supported'
+end
+```
+
+#### server_version?
+
+Determines whether given node is a windows server version (Server 2003, Server 2008, Server 2012, Server 2016)
+
+```ruby
+if ::Windows::VersionHelper.server_version? node
+  puts 'Server version of windows are cool'
+end
+```
+
+#### nt_version
+
+Determines NT version of the given node
+
+```ruby
+case ::Windows::VersionHelper.nt_version node
+  when '6.0' then 'Windows vista or Server 2008'
+  when '6.1' then 'Windows 7 or Server 2008R2'
+  when '6.2' then 'Windows 8 or Server 2012'
+  when '6.3' then 'Windows 8.1 or Server 2012R2'
+  when '10.0' then 'Windows 10'
+end
+```
+
 ## Windows ChefSpec Matchers
 
 The Windows cookbook includes custom [ChefSpec](https://github.com/sethvargo/chefspec) matchers you can use to test your own cookbooks that consume Windows cookbook LWRPs.
@@ -761,10 +852,6 @@ Place an explicit dependency on this cookbook (using depends in the cookbook's m
 ```ruby
 depends 'windows'
 ```
-
-### default
-
-Convenience recipe that installs supporting gems for many of the resources/providers that ship with this cookbook.
 
 ## License & Authors
 

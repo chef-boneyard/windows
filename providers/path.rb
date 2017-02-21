@@ -1,9 +1,9 @@
 #
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: path
 #
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2011-2016, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ action :add do
   env 'path' do
     action :modify
     delim ::File::PATH_SEPARATOR
-    value new_resource.path
+    value new_resource.path.tr('/', '\\')
     notifies :run, "ruby_block[fix ruby ENV['PATH']]", :immediately
   end
 
@@ -48,6 +48,6 @@ action :remove do
   env 'path' do
     action :delete
     delim ::File::PATH_SEPARATOR
-    value new_resource.path
+    value new_resource.path.tr('/', '\\')
   end
 end

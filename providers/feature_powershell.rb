@@ -1,6 +1,6 @@
 #
 # Author:: Greg Zapp (<greg.zapp@gmail.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: feature_powershell
 #
 
@@ -19,7 +19,8 @@ def remove_feature_cmdlet
 end
 
 def install_feature(_name)
-  cmd = powershell_out!("#{install_feature_cmdlet} #{@new_resource.feature_name}")
+  addall = @new_resource.all ? '-IncludeAllSubFeature' : ''
+  cmd = powershell_out!("#{install_feature_cmdlet} #{@new_resource.feature_name} #{addall}")
   Chef::Log.info(cmd.stdout)
 end
 

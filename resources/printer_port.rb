@@ -1,9 +1,9 @@
 #
 # Author:: Doug Ireton (<doug.ireton@nordstrom.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: printer_port
 #
-# Copyright:: 2012, Nordstrom, Inc.
+# Copyright:: 2012-2016, Nordstrom, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ default_action :create
 
 attribute :ipv4_address, name_attribute: true, kind_of: String, required: true, regex: Resolv::IPv4::Regex
 attribute :port_name, kind_of: String
-attribute :port_number, kind_of: Fixnum, default: 9100
+attribute :port_number, kind_of: Integer, default: 9100
 attribute :port_description, kind_of: String
 attribute :snmp_enabled, kind_of: [TrueClass, FalseClass], default: false
-attribute :port_protocol, kind_of: Fixnum, default: 1, equal_to: [1, 2]
+attribute :port_protocol, kind_of: Integer, default: 1, equal_to: [1, 2]
 
 attr_accessor :exists

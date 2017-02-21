@@ -1,11 +1,11 @@
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Library:: windows_privileged
 #
-# Copyright:: 2010, VMware, Inc.
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2010-2016, VMware, Inc.
+# Copyright:: 2011-2016, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

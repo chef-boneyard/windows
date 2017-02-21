@@ -1,6 +1,6 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Library:: version
 #
 # Copyright:: 2011-2016, Chef Software, Inc.
@@ -124,7 +124,7 @@ module Windows
       0x00000047 => { ms_const: 'PRODUCT_ULTIMATE_E', name: 'Not supported' },
       0x0000001C => { ms_const: 'PRODUCT_ULTIMATE_N', name: 'Ultimate N' },
       0x00000011 => { ms_const: 'PRODUCT_WEB_SERVER', name: 'Web Server (full installation)' },
-      0x0000001D => { ms_const: 'PRODUCT_WEB_SERVER_CORE', name: 'Web Server (core installation)' }
+      0x0000001D => { ms_const: 'PRODUCT_WEB_SERVER_CORE', name: 'Web Server (core installation)' },
     }.freeze unless defined?(SKU)
 
     attr_reader :major_version, :minor_version, :build_number, :service_pack_major_version, :service_pack_minor_version
@@ -150,7 +150,7 @@ module Windows
       'Windows Home Server' => { major: 5, minor: 2, callable: -> { (@product_suite & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER } },
       'Windows Server 2003' => { major: 5, minor: 2, callable: -> { Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) == 0 } },
       'Windows XP' => { major: 5, minor: 1 },
-      'Windows 2000' => { major: 5, minor: 0 }
+      'Windows 2000' => { major: 5, minor: 0 },
     }.freeze unless defined?(WIN_VERSIONS)
 
     marketing_names = []

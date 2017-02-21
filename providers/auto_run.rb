@@ -1,9 +1,9 @@
 #
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: auto_run
 #
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2011-2016, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ action :create do
     values [{
       name: new_resource.name,
       type: :string,
-      data: "\"#{new_resource.program}\" #{new_resource.args}"
+      data: "\"#{new_resource.program}\" #{new_resource.args}",
     }]
     action :create
   end
@@ -40,7 +40,7 @@ action :remove do
     values [{
       name: new_resource.name,
       type: :string,
-      data: ''
+      data: '',
     }]
     action :delete
   end

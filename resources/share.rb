@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 #
-# Author:: Richard Lavey (richard.lavey@calastone.com)
-# Cookbook:: windows
-# Resource:: certificate
+# Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>), Richard Lavey (richard.lavey@calastone.com)
+# Cookbook Name:: windows
+# Resource:: share
 #
-# Copyright:: 2015-2016, Calastone Ltd.
+# Copyright:: 2014, Sölvi Páll Ásgeirsson.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,11 +19,14 @@
 # limitations under the License.
 #
 
-actions :create, :delete, :acl_add
+actions :create, :delete
 default_action :create
 
-attribute :source, kind_of: String, name_attribute: true, required: true
-attribute :pfx_password, kind_of: String
-attribute :private_key_acl, kind_of: Array
-attribute :store_name, kind_of: String, default: 'MY', regex: /^(?:MY|CA|ROOT|TrustedPublisher|TRUSTEDPEOPLE)$/
-attribute :user_store, kind_of: [TrueClass, FalseClass], default: false
+attribute :share_name, kind_of: String, name_attribute: true
+attribute :path, kind_of: String
+attribute :description, kind_of: String, default: ''
+attribute :full_users, kind_of: Array, default: []
+attribute :change_users, kind_of: Array, default: []
+attribute :read_users, kind_of: Array, default: []
+
+attr_accessor :exists

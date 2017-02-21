@@ -10,6 +10,7 @@ transport:
 
 provisioner:
   name: chef_zero
+  deprecations_as_errors: true
 
 verifier:
   name: pester
@@ -58,3 +59,6 @@ suites:
   - name: tasks
     run_list:
       - recipe[test::tasks]
+  - name: share
+    run_list:
+      - recipe[test::share]
