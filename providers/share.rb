@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 #
 # Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>), Richard Lavey (richard.lavey@calastone.com)
-# Cookbook Name:: windows
+# Cookbook::  windows
 # Provider:: share
 #
-# Copyright:: 2014, Sölvi Páll Ásgeirsson
+# Copyright:: 2014-2016, Sölvi Páll Ásgeirsson
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ end
 def find_share_by_name(name)
   wmi = WIN32OLE.connect('winmgmts://')
   shares = wmi.ExecQuery("SELECT * FROM Win32_Share WHERE name = '#{name}'")
-  shares.Count == 0 ? nil : shares.ItemIndex(0)
+  shares.Count.zero? ? nil : shares.ItemIndex(0)
 end
 
 def delete_share
@@ -152,7 +152,7 @@ def create_share
                    nil, # The share password, unused.
                    nil) # The share security descriptor
 
-  raise "Could not create share.  Win32_Share.create returned #{r}" unless r == 0
+  raise "Could not create share.  Win32_Share.create returned #{r}" unless r.zero?
 end
 
 # set_share_permissions - Enforce the share permissions as dictated by the resource attributes

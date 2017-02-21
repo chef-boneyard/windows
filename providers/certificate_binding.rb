@@ -81,7 +81,7 @@ def getCurrentHash
   cmd = shell_out("#{@command} http show sslcert ipport=#{@current_resource.address}:#{@current_resource.port}")
   Chef::Log.debug "netsh reports: #{cmd.stdout}"
 
-  if cmd.exitstatus == 0
+  if cmd.exitstatus.zero?
     m = cmd.stdout.scan(/Certificate Hash\s+:\s?([A-Fa-f0-9]{40})/)
     if m.empty?
       raise "Failed to extract hash from command output #{cmd.stdout}"
