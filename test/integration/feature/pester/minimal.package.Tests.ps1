@@ -12,7 +12,7 @@ describe 'test::feature' {
     }
 
     it "feature ASP.NET 4.5 was created"  {
-      Get-WindowsFeature -Name Web-Asp-Net45 | Select Installed | Should Be $True
+      (Get-WindowsFeature -Name Web-Asp-Net45).Installed | Should Be $True
     }
   }
 }
