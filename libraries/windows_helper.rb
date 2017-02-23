@@ -124,6 +124,12 @@ module Windows
       end
     end
 
+    # Returns an array
+    def to_array(var)
+      var = var.is_a?(Array) ? var : [var]
+      var.reject(&:nil?)
+    end
+
     private
 
     def extract_installed_packages_from_key(hkey = ::Win32::Registry::HKEY_LOCAL_MACHINE, desired = ::Win32::Registry::Constants::KEY_READ)

@@ -9,8 +9,13 @@ windows_feature 'TFTP-Client' do
   provider :windows_feature_powershell
 end
 
-windows_feature 'Web-Asp-Net45' do
+windows_feature 'Web-Ftp-Server' do
   action :install
   all    true
+  provider :windows_feature_powershell
+end
+
+windows_feature ['Web-Asp-Net45', 'Web-Net-Ext45'] do
+  action :install
   provider :windows_feature_powershell
 end
