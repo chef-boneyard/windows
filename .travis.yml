@@ -1,9 +1,11 @@
 # Use Travis's cointainer based infrastructure
 sudo: false
+dist: trusty
+
 addons:
   apt:
     sources:
-      - chef-stable-precise
+      - chef-stable-trusty
     packages:
       - chefdk
 
@@ -17,9 +19,9 @@ branches:
 # Ensure we make ChefDK's Ruby the default
 before_script:
   - eval "$(/opt/chefdk/bin/chef shell-init bash)"
-
-script:
   - /opt/chefdk/embedded/bin/chef --version
   - /opt/chefdk/embedded/bin/cookstyle --version
   - /opt/chefdk/embedded/bin/foodcritic --version
+
+script:
   - /opt/chefdk/bin/chef exec rake
