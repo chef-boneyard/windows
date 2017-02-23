@@ -27,20 +27,20 @@ include Windows::Helper
 def install_feature(_name)
   addsource = @new_resource.source ? "/LimitAccess /Source:\"#{@new_resource.source}\"" : ''
   addall = @new_resource.all ? '/All' : ''
-  shell_out!("#{dism} /online /enable-feature /featurename:#{@new_resource.feature_name} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010])
+  shell_out!("#{dism} /online /enable-feature #{to_array(@new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010])
   # Reload ohai data
   reload_ohai_features_plugin(@new_resource.action, @new_resource.feature_name)
 end
 
 def remove_feature(_name)
-  shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /norestart", returns: [0, 42, 127, 3010])
+  shell_out!("#{dism} /online /disable-feature #{to_array(@new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart", returns: [0, 42, 127, 3010])
   # Reload ohai data
   reload_ohai_features_plugin(@new_resource.action, @new_resource.feature_name)
 end
 
 def delete_feature(_name)
   if win_version.major_version >= 6 && win_version.minor_version >= 2
-    shell_out!("#{dism} /online /disable-feature /featurename:#{@new_resource.feature_name} /Remove /norestart", returns: [0, 42, 127, 3010])
+    shell_out!("#{dism} /online /disable-feature #{to_array(@new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /Remove /norestart", returns: [0, 42, 127, 3010])
     # Reload ohai data
     reload_ohai_features_plugin(@new_resource.action, @new_resource.feature_name)
   else

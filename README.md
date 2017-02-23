@@ -144,7 +144,7 @@ servermanagercmd -query
 
 #### Properties
 
-- `feature_name` - name of the feature/role to install. The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
+- `feature_name` - name of the feature/role(s) to install. The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
 - `all` - Boolean. Optional. Default: false. DISM and Powershell providers only. Forces all dependencies to be installed.
 - `source` - String. Optional. DISM provider only. Uses local repository for feature install.
 
@@ -152,11 +152,11 @@ servermanagercmd -query
 
 - **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
 - **Chef::Provider::WindowsFeature::ServerManagerCmd**: Uses Server Manager to manage roles/features.
-- **Chef::Provider::WindowsFeaturePowershell**: Uses Powershell to manage roles/features.
+- **Chef::Provider::WindowsFeature::Powershell**: Uses PowerShell to manage roles/features.
 
 #### Examples
 
-Enable the node as a DHCP Server
+Install the DHCP Server feature
 
 ```ruby
 windows_feature 'DHCPServer' do
@@ -164,15 +164,7 @@ windows_feature 'DHCPServer' do
 end
 ```
 
-Enable TFTP
-
-```ruby
-windows_feature 'TFTP' do
-  action :install
-end
-```
-
-Enable .Net 3.5.1 on Server 2012 using repository files on DVD and install all dependencies
+Install the .Net 3.5.1 feature on Server 2012 using repository files on DVD and install all dependencies
 
 ```ruby
 windows_feature "NetFx3" do
@@ -182,22 +174,29 @@ windows_feature "NetFx3" do
 end
 ```
 
-Disable Telnet client/server
+Remove Telnet Server and Client features
 
 ```ruby
-%w[TelnetServer TelnetClient].each do |feature|
-  windows_feature feature do
-    action :remove
-  end
+windows_feature ['TelnetServer', 'TelnetClient'] do
+  action :remove
 end
 ```
 
-Add SMTP Feature with powershell provider
+Add the SMTP Server feature using the PowerShell provider
 
 ```ruby
 windows_feature "smtp-server" do
   action :install
   all true
+  provider :windows_feature_powershell
+end
+```
+
+Install multiple features using one resource with the PowerShell provider
+
+```ruby
+windows_feature ['Web-Asp-Net45', 'Web-Net-Ext45'] do
+  action :install
   provider :windows_feature_powershell
 end
 ```

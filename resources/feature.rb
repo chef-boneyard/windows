@@ -23,7 +23,7 @@ include Windows::Helper
 actions :install, :remove, :delete
 default_action :install
 
-attribute :feature_name, kind_of: String, name_attribute: true
+attribute :feature_name, kind_of: [Array, String], name_attribute: true
 attribute :source, kind_of: String
 attribute :all, kind_of: [TrueClass, FalseClass], default: false
 

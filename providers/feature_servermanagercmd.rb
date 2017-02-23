@@ -38,11 +38,11 @@ def check_reboot(result, feature)
 end
 
 def install_feature(_name)
-  check_reboot(shell_out("#{servermanagercmd} -install #{@new_resource.feature_name}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
+  check_reboot(shell_out("#{servermanagercmd} -install #{to_array(@new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
 end
 
 def remove_feature(_name)
-  check_reboot(shell_out("#{servermanagercmd} -remove #{@new_resource.feature_name}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
+  check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(@new_resource.feature_name}).join(' '), returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
 end
 
 def installed?
