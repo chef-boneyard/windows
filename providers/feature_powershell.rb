@@ -37,7 +37,7 @@ end
 def installed?
   @installed ||= begin
     cmd = powershell_out("(Get-WindowsFeature #{to_array(@new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Installed\'}).count")
-    cmd.stderr.empty? && cmd.stdout.chomp.to_i.zero?
+    cmd.stderr.empty? && cmd.stdout.chomp.to_i == 0
   end
 end
 
