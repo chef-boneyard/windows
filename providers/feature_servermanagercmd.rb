@@ -28,10 +28,10 @@ include Windows::Helper
 
 def check_reboot(result, feature)
   if result.exitstatus == 3010 # successful, but needs reboot
-    node.run_state[:reboot_requested] = true
+    node.run_state['reboot_requested'] = true
     Chef::Log.warn("Require reboot to install #{feature}")
   elsif result.exitstatus == 1001 # failure, but needs reboot before we can do anything else
-    node.run_state[:reboot_requested] = true
+    node.run_state['reboot_requested'] = true
     Chef::Log.warn("Failed installing #{feature} and need to reboot")
   end
   result.error! # throw for any other bad results. The above results will also get raised, and should cause a reboot via the handler.
@@ -42,7 +42,7 @@ def install_feature(_name)
 end
 
 def remove_feature(_name)
-  check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(@new_resource.feature_name}).join(' '), returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
+  check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(@new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
 end
 
 def installed?
