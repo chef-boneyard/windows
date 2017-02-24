@@ -42,7 +42,7 @@ def install_feature(_name)
 end
 
 def remove_feature(_name)
-  check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(@new_resource.feature_name}).join(' '), returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
+  check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(@new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), @new_resource.feature_name)
 end
 
 def installed?
