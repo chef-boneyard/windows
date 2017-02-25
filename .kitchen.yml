@@ -53,15 +53,18 @@ suites:
   - name: package
     run_list:
       - recipe[test::package]
-  - name: path
-    run_list:
-      - recipe[test::path]
-  - name: tasks
-    run_list:
-      - recipe[test::tasks]
-  - name: share
-    run_list:
-      - recipe[test::share]
   - name: pagefile
     run_list:
       - recipe[test::pagefile]
+  - name: path
+    run_list:
+      - recipe[test::path]
+  - name: share
+    run_list:
+      - recipe[test::share]
+  - name: tasks
+    run_list:
+      - recipe[test::tasks]
+  - name: zipfile
+    run_list:
+      - recipe[test::zipfile]
