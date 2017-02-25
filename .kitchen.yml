@@ -62,3 +62,6 @@ suites:
   - name: share
     run_list:
       - recipe[test::share]
+  - name: pagefile
+    run_list:
+      - recipe[test::pagefile]
