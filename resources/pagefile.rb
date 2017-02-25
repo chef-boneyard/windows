@@ -28,7 +28,6 @@ include Chef::Mixin::ShellOut
 include Windows::Helper
 
 action :set do
-
   pagefile = new_resource.name
   initial_size = new_resource.initial_size
   maximum_size = new_resource.maximum_size
@@ -64,9 +63,8 @@ end
 
 action_class do
   def validate_name
-    unless /^.:.*.sys/.match(new_resource.name)
-      raise "#{new_resource.name} does not match the format DRIVE:\\path\\file.sys for pagefiles. Example: C:\\pagefile.sys"
-    end
+    return if /^.:.*.sys/ =~ new_resource.name
+    raise "#{new_resource.name} does not match the format DRIVE:\\path\\file.sys for pagefiles. Example: C:\\pagefile.sys"
   end
 
   def exists?(pagefile)
