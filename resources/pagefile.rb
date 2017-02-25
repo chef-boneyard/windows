@@ -42,6 +42,7 @@ action :set do
 
     # Check that the resource is not just trying to unset automatic managed, if it is do nothing more
     if (initial_size && maximum_size) || system_managed
+      validate_name
       create(pagefile) unless exists?(pagefile)
 
       if system_managed
@@ -56,11 +57,18 @@ action :set do
 end
 
 action :delete do
+  validate_name
   pagefile = new_resource.name
   delete(pagefile) if exists?(pagefile)
 end
 
 action_class do
+  def validate_name
+    unless /^.:.*.sys/.match(new_resource.name)
+      raise "#{new_resource.name} does not match the format DRIVE:\\path\\file.sys for pagefiles. Example: C:\\pagefile.sys"
+    end
+  end
+
   def exists?(pagefile)
     @exists ||= begin
       Chef::Log.debug("Checking if #{pagefile} exists")
