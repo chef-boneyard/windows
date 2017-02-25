@@ -59,7 +59,7 @@ action_class do
   end
 
   def install_font
-    require 'win32ole'
+    require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
     folder = WIN32OLE.new('Shell.Application').Namespace(fonts_dir)
     converge_by("install font #{new_resource.name}") do
@@ -73,7 +73,7 @@ action_class do
   # <true>:: If the font is installed
   # <false>:: If the font is not instaled
   def font_exists?
-    require 'win32ole'
+    require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
     ::File.exist?(win_friendly_path(::File.join(fonts_dir, new_resource.name)))
   end

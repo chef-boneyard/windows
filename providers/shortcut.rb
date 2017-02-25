@@ -21,7 +21,7 @@
 use_inline_resources
 
 def load_current_resource
-  require 'win32ole'
+  require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
   @link = WIN32OLE.new('WScript.Shell').CreateShortcut(@new_resource.name)
 
