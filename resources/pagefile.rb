@@ -28,60 +28,39 @@ include Chef::Mixin::ShellOut
 include Windows::Helper
 
 action :set do
+
   pagefile = new_resource.name
   initial_size = new_resource.initial_size
   maximum_size = new_resource.maximum_size
   system_managed = new_resource.system_managed
   automatic_managed = new_resource.automatic_managed
-  updated = false
 
   if automatic_managed
-    unless automatic_managed?
-      set_automatic_managed
-      updated = true
-    end
+    set_automatic_managed unless automatic_managed?
   else
-    if automatic_managed?
-      unset_automatic_managed
-      updated = true
-    end
+    unset_automatic_managed if automatic_managed?
 
     # Check that the resource is not just trying to unset automatic managed, if it is do nothing more
     if (initial_size && maximum_size) || system_managed
       create(pagefile) unless exists?(pagefile)
 
       if system_managed
-        unless max_and_min_set?(pagefile, 0, 0)
-          set_system_managed(pagefile)
-          updated = true
-        end
+        set_system_managed(pagefile) unless max_and_min_set?(pagefile, 0, 0)
       else
         unless max_and_min_set?(pagefile, initial_size, maximum_size)
           set_custom_size(pagefile, initial_size, maximum_size)
-          updated = true
         end
       end
     end
   end
-
-  new_resource.updated_by_last_action(updated)
 end
 
 action :delete do
   pagefile = new_resource.name
-  updated = false
-
-  if exists?(pagefile)
-    delete(pagefile)
-    updated = true
-  end
-
-  new_resource.updated_by_last_action(updated)
+  delete(pagefile) if exists?(pagefile)
 end
 
-
 action_class do
-
   def exists?(pagefile)
     @exists ||= begin
       Chef::Log.debug("Checking if #{pagefile} exists")
@@ -99,47 +78,53 @@ action_class do
   end
 
   def create(pagefile)
-    Chef::Log.debug("Creating pagefile #{pagefile}")
-    cmd = shell_out("#{wmic} pagefileset create name=\"#{win_friendly_path(pagefile)}\"")
-    check_for_errors(cmd.stderr)
+    converge_by("create pagefile #{pagefile}") do
+      cmd = shell_out("#{wmic} pagefileset create name=\"#{win_friendly_path(pagefile)}\"")
+      check_for_errors(cmd.stderr)
+    end
   end
 
   def delete(pagefile)
-    Chef::Log.debug("Removing pagefile #{pagefile}")
-    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" delete")
-    check_for_errors(cmd.stderr)
+    converge_by("remove pagefile #{pagefile}") do
+      cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" delete")
+      check_for_errors(cmd.stderr)
+    end
   end
 
   def automatic_managed?
     @automatic_managed ||= begin
-      Chef::Log.debug("Checking if pagefiles are automatically managed")
+      Chef::Log.debug('Checking if pagefiles are automatically managed')
       cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" get AutomaticManagedPagefile /format:list")
       cmd.stderr.empty? && (cmd.stdout =~ /AutomaticManagedPagefile=TRUE/i)
     end
   end
 
   def set_automatic_managed
-    Chef::Log.debug('Setting pagefile to Automatic Managed')
-    cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=True")
-    check_for_errors(cmd.stderr)
+    converge_by('set pagefile to Automatic Managed') do
+      cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=True")
+      check_for_errors(cmd.stderr)
+    end
   end
 
   def unset_automatic_managed
-    Chef::Log.debug('Setting pagefile to User Managed')
-    cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=False")
-    check_for_errors(cmd.stderr)
+    converge_by('set pagefile to User Managed') do
+      cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=False")
+      check_for_errors(cmd.stderr)
+    end
   end
 
   def set_custom_size(pagefile, min, max)
-    Chef::Log.debug("Setting #{pagefile} to InitialSize=#{min} & MaximumSize=#{max}")
-    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=#{min},MaximumSize=#{max}", returns: [0])
-    check_for_errors(cmd.stderr)
+    converge_by("set #{pagefile} to InitialSize=#{min} & MaximumSize=#{max}") do
+      cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=#{min},MaximumSize=#{max}", returns: [0])
+      check_for_errors(cmd.stderr)
+    end
   end
 
-  def set_system_managed(pagefile)
-    Chef::Log.debug("Setting #{pagefile} to System Managed")
-    cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0", returns: [0])
-    check_for_errors(cmd.stderr)
+  def set_system_managed(pagefile) # rubocop: disable Style/AccessorMethodName
+    converge_by("set #{pagefile} to System Managed") do
+      cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0", returns: [0])
+      check_for_errors(cmd.stderr)
+    end
   end
 
   def get_setting_id(pagefile)
