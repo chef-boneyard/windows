@@ -18,7 +18,36 @@
 # limitations under the License.
 #
 
-actions :add, :remove
-default_action :add
+property :path, String, name_attribute: true
 
-attribute :path, kind_of: String, name_attribute: true
+include Windows::Helper
+
+action :add do
+  env 'path' do
+    action :modify
+    delim ::File::PATH_SEPARATOR
+    value new_resource.path.tr('/', '\\')
+    notifies :run, "ruby_block[fix ruby ENV['PATH']]", :immediately
+  end
+
+  # The windows Env provider does not correctly expand variables in
+  # the PATH environment variable. Ruby expects these to be expanded.
+  # This is a temporary fix for that.
+  #
+  # Follow at https://github.com/chef/chef/pull/1876
+  #
+  ruby_block "fix ruby ENV['PATH']" do
+    block do
+      ENV['PATH'] = expand_env_vars(ENV['PATH'])
+    end
+    action :nothing
+  end
+end
+
+action :remove do
+  env 'path' do
+    action :delete
+    delim ::File::PATH_SEPARATOR
+    value new_resource.path.tr('/', '\\')
+  end
+end
