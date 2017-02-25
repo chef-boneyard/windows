@@ -4,12 +4,12 @@ directory 'create test dir' do
 end
 
 file 'C:\testdir\testfile1' do
-  content "test file 1"
+  content 'test file 1'
   action :create
 end
 
 file 'C:\testdir\testfile2' do
-  content "test file 2"
+  content 'test file 2'
   action :create
 end
 

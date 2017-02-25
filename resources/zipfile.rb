@@ -57,7 +57,7 @@ action :zip do
     Chef::Log.info("file #{new_resource.path} already exists and overwrite is set to false, exiting")
   else
     # delete the archive if it already exists, because we are recreating it.
-     if ::File.exist?(new_resource.path)
+    if ::File.exist?(new_resource.path)
       converge_by("delete existing file at #{new_resource.path}") do
         ::File.unlink(new_resource.path)
       end
