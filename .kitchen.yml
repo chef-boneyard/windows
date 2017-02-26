@@ -62,6 +62,9 @@ suites:
   - name: share
     run_list:
       - recipe[test::share]
+  - name: shortcut
+    run_list:
+      - recipe[test::shortcut]
   - name: tasks
     run_list:
       - recipe[test::tasks]
