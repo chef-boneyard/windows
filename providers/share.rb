@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 #
 # Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>), Richard Lavey (richard.lavey@calastone.com)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Provider:: share
 #
-# Copyright:: 2014, Sölvi Páll Ásgeirsson
+# Copyright:: 2014-2017, Sölvi Páll Ásgeirsson
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

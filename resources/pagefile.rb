@@ -3,7 +3,7 @@
 # Cookbook:: windows
 # Resource:: pagefile
 #
-# Copyright:: 2012-2016, Nordstrom, Inc.
+# Copyright:: 2012-2017, Nordstrom, Inc.
 # Copyright:: 2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

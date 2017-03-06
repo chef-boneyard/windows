@@ -3,7 +3,7 @@
 # Cookbook:: windows
 # Resource:: font
 #
-# Copyright:: 2014-2016, Schuberg Philis BV.
+# Copyright:: 2014-2017, Schuberg Philis BV.
 # Copyright:: 2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
