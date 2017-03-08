@@ -3,7 +3,7 @@
 # Cookbook:: windows
 # Resource:: feature
 #
-# Copyright:: 2011-2016, Chef Software, Inc.
+# Copyright:: 2011-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,31 +18,61 @@
 # limitations under the License.
 #
 
+property :feature_name, [Array, String], name_attribute: true
+property :source, String
+property :all, [TrueClass, FalseClass], default: false
+property :install_method, Symbol, equal_to: [:windows_feature_dism, :windows_feature_powershell, :windows_feature_servermanagercmd]
+
 include Windows::Helper
 
-actions :install, :remove, :delete
-default_action :install
+action_class do
+  def locate_default_provider
+    if new_resource.install_method
+      new_resource.install_method
+    elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
+      :windows_feature_dism
+    elsif ::File.exist?(locate_sysnative_cmd('servermanagercmd.exe'))
+      :windows_feature_servermanagercmd
+    else
+      :windows_feature_powershell
+    end
+  end
 
-attribute :feature_name, kind_of: [Array, String], name_attribute: true
-attribute :source, kind_of: String
-attribute :all, kind_of: [TrueClass, FalseClass], default: false
-
-def initialize(name, run_context = nil)
-  super
-  @provider = lookup_provider_constant(locate_default_provider)
+  def run_default_provider(desired_action)
+    case locate_default_provider
+    when :windows_feature_dism
+      windows_feature_dism new_resource.name do
+        action desired_action
+        feature_name new_resource.feature_name
+        source new_resource.source if new_resource.source
+        all new_resource.all
+      end
+    when :windows_feature_servermanagercmd
+      windows_feature_servermanagercmd new_resource.name do
+        action desired_action
+        feature_name new_resource.feature_name
+        source new_resource.source if new_resource.source
+        all new_resource.all
+      end
+    when :windows_feature_powershell
+      windows_feature_powershell new_resource.name do
+        action desired_action
+        feature_name new_resource.feature_name
+        source new_resource.source if new_resource.source
+        all new_resource.all
+      end
+    end
+  end
 end
 
-private
+action :install do
+  run_default_provider :install
+end
 
-def locate_default_provider
-  if node['windows'].attribute?(:feature_provider)
-    Chef::Log.warn('Specifying the windows_feature provider to use by attribute has been deprecated. Please specify the provider in your resource instead. See the readme for examples. This feature will be removed on 4/2017 after the release of Chef 13.')
-    "windows_feature_#{node['windows']['feature_provider']}"
-  elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
-    :windows_feature_dism
-  elsif ::File.exist?(locate_sysnative_cmd('servermanagercmd.exe'))
-    :windows_feature_servermanagercmd
-  else
-    :windows_feature_powershell
-  end
+action :remove do
+  run_default_provider :remove
+end
+
+action :delete do
+  run_default_provider :delete
 end

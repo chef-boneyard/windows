@@ -124,35 +124,49 @@ end
 
 ### windows_feature
 
+**BREAKING CHANGE - Version 3.0.0**
+
+This resource has been moved from using LWRPs and multiple providers to using Custom Resources.  To maintain functionality, you'll need to change `provider` to `install_method`.
+
+
 Windows Roles and Features can be thought of as built-in operating system packages that ship with the OS. A server role is a set of software programs that, when they are installed and properly configured, lets a computer perform a specific function for multiple users or other computers within a network. A Role can have multiple Role Services that provide functionality to the Role. Role services are software programs that provide the functionality of a role. Features are software programs that, although they are not directly parts of roles, can support or augment the functionality of one or more roles, or improve the functionality of the server, regardless of which roles are installed. Collectively we refer to all of these attributes as 'features'.
 
 This resource allows you to manage these 'features' in an unattended, idempotent way.
 
-There are two providers for the `windows_features` which map into Microsoft's two major tools for managing roles/features: [Deployment Image Servicing and Management (DISM)](http://msdn.microsoft.com/en-us/library/dd371719%28v=vs.85%29.aspx) and [Servermanagercmd](http://technet.microsoft.com/en-us/library/ee344834%28WS.10%29.aspx) (The CLI for Server Manager). As Servermanagercmd is deprecated, Chef will set the default provider to `Chef::Provider::WindowsFeature::DISM` if DISM is present on the system being configured. The default provider will fall back to `Chef::Provider::WindowsFeature::ServerManagerCmd`.
+There are three methods for the `windows_feature` which map into Microsoft's three major tools for managing roles/features: [Deployment Image Servicing and Management (DISM)](http://msdn.microsoft.com/en-us/library/dd371719%28v=vs.85%29.aspx), [Servermanagercmd](http://technet.microsoft.com/en-us/library/ee344834%28WS.10%29.aspx) (The CLI for Server Manager), and [PowerShell](https://technet.microsoft.com/en-us/library/cc731774(v=ws.11).aspx). As Servermanagercmd is deprecated, Chef will set the default method to `:windows_feature_dism` if `dism.exe` is present on the system being configured. The default method will fall back to `:windows_feature_servermanagercmd`, and then `:windows_feature_powershell`.
 
 For more information on Roles, Role Services and Features see the [Microsoft TechNet article on the topic](http://technet.microsoft.com/en-us/library/cc754923.aspx). For a complete list of all features that are available on a node type either of the following commands at a command prompt:
 
+For Dism:
+
 ```text
 dism /online /Get-Features
+```
+
+For ServerManagerCmd:
+
+```text
 servermanagercmd -query
+```
+
+For PowerShell: 
+
+```text
+get-windowsfeature
 ```
 
 #### Actions
 
 - `:install` - install a Windows role/feature
 - `:remove` - remove a Windows role/feature
+- `:delete` - remove a Windows role/feature from the image (not supported by ServerManagerCmd)
 
 #### Properties
 
 - `feature_name` - name of the feature/role(s) to install. The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
 - `all` - Boolean. Optional. Default: false. DISM and Powershell providers only. Forces all dependencies to be installed.
 - `source` - String. Optional. DISM provider only. Uses local repository for feature install.
-
-#### Providers
-
-- **Chef::Provider::WindowsFeature::DISM**: Uses Deployment Image Servicing and Management (DISM) to manage roles/features.
-- **Chef::Provider::WindowsFeature::ServerManagerCmd**: Uses Server Manager to manage roles/features.
-- **Chef::Provider::WindowsFeature::Powershell**: Uses PowerShell to manage roles/features.
+- `install_method` - Symbol. Optional. **REPLACEMENT FOR THE PREVIOUS PROVIDER OPTION** If not supplied, Chef will determine which method to use (in the order of `:windows_feature_dism`, `:windows_feature_servercmd`, `:windows_feature_powershell`)
 
 #### Examples
 
@@ -188,7 +202,7 @@ Add the SMTP Server feature using the PowerShell provider
 windows_feature "smtp-server" do
   action :install
   all true
-  provider :windows_feature_powershell
+  install_method :windows_feature_powershell
 end
 ```
 
@@ -197,7 +211,7 @@ Install multiple features using one resource with the PowerShell provider
 ```ruby
 windows_feature ['Web-Asp-Net45', 'Web-Net-Ext45'] do
   action :install
-  provider :windows_feature_powershell
+  install_method :windows_feature_powershell
 end
 ```
 
