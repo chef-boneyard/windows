@@ -4,8 +4,8 @@
 # Cookbook:: windows
 # Resource:: zipfile
 #
-# Copyright:: 2010-2016, VMware, Inc.
-# Copyright:: 2011-2016, Chef Software, Inc.
+# Copyright:: 2010-2017, VMware, Inc.
+# Copyright:: 2011-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,83 @@
 # limitations under the License.
 #
 
-actions :unzip, :zip
-default_action :unzip
+property :path, String, name_attribute: true
+property :source, String
+property :overwrite, [TrueClass, FalseClass], default: false
+property :checksum, String
 
-attribute :path, kind_of: String, name_attribute: true
-attribute :source, kind_of: String
-attribute :overwrite, kind_of: [TrueClass, FalseClass], default: false
-attribute :checksum, kind_of: String
+include Windows::Helper
+require 'find'
+
+action :unzip do
+  ensure_rubyzip_gem_installed
+  Chef::Log.debug("unzip #{new_resource.source} => #{new_resource.path} (overwrite=#{new_resource.overwrite})")
+
+  converge_by("unzip #{new_resource.source}") do
+    Zip::File.open(cached_file(new_resource.source, new_resource.checksum)) do |zip|
+      zip.each do |entry|
+        path = ::File.join(new_resource.path, entry.name)
+        FileUtils.mkdir_p(::File.dirname(path))
+        if new_resource.overwrite && ::File.exist?(path) && !::File.directory?(path)
+          FileUtils.rm(path)
+        end
+        zip.extract(entry, path)
+      end
+    end
+  end
+end
+
+action :zip do
+  ensure_rubyzip_gem_installed
+  # sanitize paths for windows.
+  new_resource.source.downcase.gsub!(::File::SEPARATOR, ::File::ALT_SEPARATOR)
+  new_resource.path.downcase.gsub!(::File::SEPARATOR, ::File::ALT_SEPARATOR)
+  Chef::Log.debug("zip #{new_resource.source} => #{new_resource.path} (overwrite=#{new_resource.overwrite})")
+
+  if new_resource.overwrite == false && ::File.exist?(new_resource.path)
+    Chef::Log.info("file #{new_resource.path} already exists and overwrite is set to false, exiting")
+  else
+    # delete the archive if it already exists, because we are recreating it.
+    if ::File.exist?(new_resource.path)
+      converge_by("delete existing file at #{new_resource.path}") do
+        ::File.unlink(new_resource.path)
+      end
+    end
+
+    # only supporting compression of a single directory (recursively).
+    if ::File.directory?(new_resource.source)
+      converge_by("zipping #{new_resource.source} to #{new_resource.path}") do
+        z = Zip::File.new(new_resource.path, true)
+        unless new_resource.source =~ /::File::ALT_SEPARATOR$/
+          new_resource.source << ::File::ALT_SEPARATOR
+        end
+        Find.find(new_resource.source) do |f|
+          f.downcase.gsub!(::File::SEPARATOR, ::File::ALT_SEPARATOR)
+          # don't add root directory to the zipfile.
+          next if f == new_resource.source
+          # strip the root directory from the filename before adding it to the zipfile.
+          zip_fname = f.sub(new_resource.source, '')
+          Chef::Log.debug("adding #{zip_fname} to archive, sourcefile is: #{f}")
+          z.add(zip_fname, f)
+        end
+        z.close
+      end
+    else
+      Chef::Log.info("Single directory must be specified for compression, and #{new_resource.source} does not meet that criteria.")
+    end
+  end
+end
+
+action_class do
+  def ensure_rubyzip_gem_installed
+    require 'zip'
+  rescue LoadError
+    Chef::Log.info("Missing gem 'rubyzip'...installing now.")
+    chef_gem 'rubyzip' do
+      version node['windows']['rubyzipversion']
+      action :install
+      compile_time true
+    end
+    require 'zip'
+  end
+end

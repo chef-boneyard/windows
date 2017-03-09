@@ -3,7 +3,7 @@
 # Cookbook:: windows
 # Provider:: shortcut
 #
-# Copyright:: 2010-2016, VMware, Inc.
+# Copyright:: 2010-2017, VMware, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 use_inline_resources
 
 def load_current_resource
-  require 'win32ole'
+  require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
   @link = WIN32OLE.new('WScript.Shell').CreateShortcut(@new_resource.name)
 
