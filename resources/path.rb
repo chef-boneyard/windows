@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-property :path, String, name_attribute: true
+property :path, String, name_property: true
 
 include Windows::Helper
 

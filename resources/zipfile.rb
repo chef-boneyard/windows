@@ -20,9 +20,9 @@
 # limitations under the License.
 #
 
-property :path, String, name_attribute: true
+property :path, String, name_property: true
 property :source, String
-property :overwrite, [TrueClass, FalseClass], default: false
+property :overwrite, [true, false], default: false
 property :checksum, String
 
 include Windows::Helper

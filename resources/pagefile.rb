@@ -19,9 +19,9 @@
 # limitations under the License.
 #
 
-property :name, String, name_attribute: true
-property :system_managed, [TrueClass, FalseClass]
-property :automatic_managed, [TrueClass, FalseClass], default: false
+property :name, String, name_property: true
+property :system_managed, [true, false]
+property :automatic_managed, [true, false], default: false
 property :initial_size, Integer
 property :maximum_size, Integer
 

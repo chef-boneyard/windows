@@ -20,7 +20,7 @@
 
 property :feature_name, [Array, String], name_attribute: true
 property :source, String
-property :all, [TrueClass, FalseClass], default: false
+property :all, [true, false], default: false
 
 include Chef::Mixin::ShellOut
 include Windows::Helper

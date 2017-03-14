@@ -19,13 +19,13 @@
 # limitations under the License.
 #
 
-property :share_name, String, name_attribute: true
+property :share_name, String, name_property: true
 property :path, String
 property :description, String, default: ''
 property :full_users, Array, default: []
 property :change_users, Array, default: []
 property :read_users, Array, default: []
-property :exists, [TrueClass, FalseClass], desired_state: true
+property :exists, [true, false], desired_state: true
 
 include Windows::Helper
 include Chef::Mixin::PowershellOut
