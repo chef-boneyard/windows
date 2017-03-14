@@ -31,35 +31,25 @@ def whyrun_supported?
 end
 
 action :create do
-  hash = '$cert.GetCertHashString()'
-  code_script = cert_script(true) <<
-                within_store_script { |store| store + '.Add($cert)' } <<
-                acl_script(hash)
+  if @current_resource.exists
+    Chef::Log.debug("#{thumbprint(@new_resource.source)} already exists in store - nothing to do.")
+  else
+    cmd = 'certutil'
+    cmd << ' -user' if @new_resource.user_store
+    cmd << " -p #{@new_resource.pfx_password}" if @new_resource.pfx_password && @new_resource.type == :pfx
+    cmd << (@new_resource.type == :certificate ? ' -addstore' : ' -importPFX')
+    cmd << " #{@new_resource.store_name} #{@new_resource.source}"
 
-  guard_script = cert_script(false) <<
-                 cert_exists_script(hash)
-
-  powershell_script @new_resource.name do
-    guard_interpreter :powershell_script
-    convert_boolean_return true
-    code code_script
-    not_if guard_script
+    Chef::Log.debug(cmd)
+    shell_out!(cmd)
+    new_resource.updated_by_last_action true
+    Chef::Log.info("#{thumbprint(@new_resource.source)} added to store.")
   end
 end
 
 # acl_add is a modify-if-exists operation : not idempotent
 action :acl_add do
-  if ::File.exist?(@new_resource.source)
-    hash = '$cert.GetCertHashString()'
-    code_script = cert_script(false)
-    guard_script = cert_script(false)
-  else
-    # make sure we have no spaces in the hash string
-    hash = "\"#{@new_resource.source.gsub(/\s/, '')}\""
-    code_script = ''
-    guard_script = ''
-  end
-  code_script << acl_script(hash)
+  code_script << acl_script(thumbprint(@new_resource.source))
   guard_script << cert_exists_script(hash)
 
   powershell_script @new_resource.name do
@@ -71,82 +61,61 @@ action :acl_add do
 end
 
 action :delete do
-  # do we have a hash or a subject?
-  # TODO: It's a bit annoying to know the thumbprint of a cert you want to remove when you already
-  # have the file.  Support reading the hash directly from the file if provided.
-  search = if @new_resource.source =~ /^[a-fA-F0-9]{40}$/
-             "Thumbprint -eq '#{@new_resource.source}'"
-           else
-             "Subject -like '*#{@new_resource.source.sub(/\*/, '`*')}*'" # escape any * in the source
-           end
-  cert_command = "Get-ChildItem Cert:\\#{@location}\\#{@new_resource.store_name} | where { $_.#{search} }"
+  if !@current_resource.exists
+    Chef::Log.debug("#{thumbprint(@new_resource.source)} does not exists in store - nothing to do.")
+  else
+    cmd = 'certutil'
+    cmd << ' -user' if @new_resource.user_store # default is LocalMachine
+    cmd << " -delstore #{@new_resource.store_name} #{@new_resource.source}"
 
-  code_script = within_store_script do |store|
-    <<-EOH
-foreach ($c in #{cert_command})
-{
-  #{store}.Remove($c)
-}
-EOH
-  end
-  guard_script = "@(#{cert_command}).Count -gt 0\n"
-
-  powershell_script @new_resource.name do
-    guard_interpreter :powershell_script
-    convert_boolean_return true
-    code code_script
-    only_if guard_script
+    Chef::Log.debug(cmd)
+    shell_out!(cmd)
+    new_resource.updated_by_last_action true
+    Chef::Log.info("#{thumbprint(@new_resource.source)} removed from the store.")
   end
 end
 
 def load_current_resource
-  # Currently we don't read out the cert acl here and converge it in a very Chef-y way.
-  # We also don't read if the private key is available or populate "exists".  This means
-  # that if you converged a cert without persisting the private key once, we won't do it
-  # again, even if you have a cert with the keys now.
-  # TODO:  Make this more Chef-y and follow a more state-based patten of convergence.
   @current_resource = Chef::Resource::WindowsCertificate.new(@new_resource.name)
-  # TODO: Change to allow source to be read from the cookbook.  It makes testing
-  # and loading certs from the cookbook much easier.
   @current_resource.source(@new_resource.source)
   @current_resource.pfx_password(@new_resource.pfx_password)
   @current_resource.private_key_acl(@new_resource.private_key_acl)
   @current_resource.store_name(@new_resource.store_name)
   @current_resource.user_store(@new_resource.user_store)
-  @location = @current_resource.user_store ? 'CurrentUser' : 'LocalMachine'
+  @current_resource.type(@new_resource.type)
+
+  # try to determine type from extension for backwards compatability
+  @new_resource.type = :pfx if ::File.exist?(@new_resource.source) && ::File.extname(@new_resource.source) == '.pfx'
+
+  if cert_exists?(@new_resource.store_name, @new_resource.source)
+    @current_resource.exists = true
+  end
 end
 
 private
 
-def cert_script(persist)
-  cert_script = '$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2'
-  file = win_friendly_path(@new_resource.source)
-  cert_script << " \"#{file}\""
-  if ::File.extname(file.downcase) == '.pfx'
-    cert_script << ", \"#{@new_resource.pfx_password}\""
-    if persist && @new_resource.user_store
-      cert_script << ', [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet'
-    elsif persist
-      cert_script << ', ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet -bor [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::MachineKeyset)'
-    end
-  end
-  cert_script << "\n"
+def cert_exists?(store, source)
+  Chef::Log.debug "Checking to see if this cert is in the store: '#{thumbprint(source)}'"
+  cmd = shell_out("certutil -store #{store} #{thumbprint(source)}")
+  cmd.stdout =~ /-store command completed successfully/i
+end
+
+def thumbprint(source)
+  # If it's not a file assume it's a name or thumbprint
+  return unless ::File.exist?(source)
+
+  Chef::Log.debug 'Getting the Thumbprint of the cert'
+  file = win_friendly_path(source)
+  output = shell_out!("certutil -hashfile #{file}", returns: [0]).stdout
+
+  # Thumbprint is on the second line
+  output.split("\n").slice!(1, 1).join('').gsub(/\s+/, '')
 end
 
 def cert_exists_script(hash)
   <<-EOH
 $hash = #{hash}
 Test-Path "Cert:\\#{@location}\\#{@new_resource.store_name}\\$hash"
-EOH
-end
-
-def within_store_script
-  inner_script = yield '$store'
-  <<-EOH
-$store = New-Object System.Security.Cryptography.X509Certificates.X509Store "#{@new_resource.store_name}", ([System.Security.Cryptography.X509Certificates.StoreLocation]::#{@location})
-$store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
-#{inner_script}
-$store.Close()
 EOH
 end
 
