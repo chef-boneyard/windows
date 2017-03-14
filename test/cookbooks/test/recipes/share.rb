@@ -25,6 +25,7 @@ windows_share 'create no_share' do
   share_name      'no_share'
   path            'C:/test_share'
 end
+
 windows_share 'no_share' do
   action          :delete
 end
@@ -34,6 +35,7 @@ windows_share 'create changed_dir' do
   share_name      'changed_dir'
   path            'C:/'
 end
+
 windows_share 'alter changed_dir' do
   share_name      'changed_dir'
   path            'C:/test_share'
