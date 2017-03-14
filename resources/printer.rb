@@ -22,16 +22,82 @@
 
 require 'resolv'
 
-actions :create, :delete
-default_action :create
+attribute :device_id, String, name_attribute: true, required: true
+attribute :comment, String
+attribute :default, [TrueClass, FalseClass], default: false
+attribute :driver_name, String, required: true
+attribute :location, String
+attribute :shared, [TrueClass, FalseClass], default: false
+attribute :share_name, String
+attribute :ipv4_address, String, regex: Resolv::IPv4::Regex
+property :exists, [TrueClass, FalseClass], desired_state: true
 
-attribute :device_id, kind_of: String, name_attribute: true, required: true
-attribute :comment, kind_of: String
-attribute :default, kind_of: [TrueClass, FalseClass], default: false
-attribute :driver_name, kind_of: String, required: true
-attribute :location, kind_of: String
-attribute :shared, kind_of: [TrueClass, FalseClass], default: false
-attribute :share_name, kind_of: String
-attribute :ipv4_address, kind_of: String, regex: Resolv::IPv4::Regex
+PRINTERS_REG_KEY = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Print\Printers\\'.freeze unless defined?(PRINTERS_REG_KEY)
 
-attr_accessor :exists
+def printer_exists?(name)
+  printer_reg_key = PRINTERS_REG_KEY + name
+  Chef::Log.debug "Checking to see if this reg key exists: '#{printer_reg_key}'"
+  Registry.key_exists?(printer_reg_key)
+end
+
+load_current_value do |desired|
+  name desired.name
+  exists printer_exists?(desired.name)
+  # TODO: Set @current_resource printer properties from registry
+end
+
+action :create do
+  if @current_resource.exists
+    Chef::Log.info "#{@new_resource} already exists - nothing to do."
+  else
+    converge_by("Create #{@new_resource}") do
+      create_printer
+    end
+  end
+end
+
+action :delete do
+  if @current_resource.exists
+    converge_by("Delete #{@new_resource}") do
+      delete_printer
+    end
+  else
+    Chef::Log.info "#{@current_resource} doesn't exist - can't delete."
+  end
+end
+
+action_class do
+  def create_printer
+    # Create the printer port first
+    windows_printer_port new_resource.ipv4_address do
+    end
+
+    port_name = "IP_#{new_resource.ipv4_address}"
+
+    powershell_script "Creating printer: #{new_resource.name}" do
+      code <<-EOH
+
+        Set-WmiInstance -class Win32_Printer `
+          -EnableAllPrivileges `
+          -Argument @{ DeviceID   = "#{new_resource.device_id}";
+                      Comment    = "#{new_resource.comment}";
+                      Default    = "$#{new_resource.default}";
+                      DriverName = "#{new_resource.driver_name}";
+                      Location   = "#{new_resource.location}";
+                      PortName   = "#{port_name}";
+                      Shared     = "$#{new_resource.shared}";
+                      ShareName  = "#{new_resource.share_name}";
+                    }
+      EOH
+    end
+  end
+
+  def delete_printer
+    powershell_script "Deleting printer: #{new_resource.name}" do
+      code <<-EOH
+        $printer = Get-WMIObject -class Win32_Printer -EnableAllPrivileges -Filter "name = '#{new_resource.name}'"
+        $printer.Delete()
+      EOH
+    end
+  end
+end
