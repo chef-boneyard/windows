@@ -18,4 +18,7 @@
 # limitations under the License.
 #
 
-Chef::Log.warn('The windows::default recipe has been deprecated. The gems previously installed in this recipe ship in the Chef MSI.')
+# Install Dism Feature Plugin
+ohai_plugin 'dism_features' do
+  compile_time true
+end
