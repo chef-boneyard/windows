@@ -2,10 +2,44 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.0.0 (UNRELEASED!)
+
+**Warning** This release includes multiple breaking changes as we refactored all existing resources and resolved many longstanding bugs. We highly recommend exercising caution and fully testing this new version before rolling it out to a production environment.
+
+### Breaking changes
+
+- This cookbook now requires Chef 12.6 or later and we highly recommend even more recent Chef 12 releases as they resolve critical Windows bugs and include new Windows specific functionality.
+- The windows_package resource has been removed as it is built into chef-client 12.6+ and the built in version is faster / more robust.
+- The powershell out helper has been removed as it is now included in chef-client 12.6+
+- The default recipe no longer installs the various Windows rubygems required for non-omnibus chef-client installs. This was a leftover from Chef 10 and is no longer necessary, or desired, as we ship these gems in every Windows chef release.
+- windows_feature has been heavily refactored and in doing so the method used to control the underlying providers has changed. You can no longer specify which windows_feature provider to use by setting `node['windows']['feature_provider']` or by setting the `provider` property on the resource itself. Instead you must set `install_method` to specify the correct underlying installation method. You can also now reference the resources directly by using `windows_feature_servermanagercmd`, `windows_feature_powershell` or `windows_feature_dism` instead of `windows_feature`
+
+- Windows_font's `file` property has been renamed to `name` to avoid collisions with the Chef file resource.
+
+### Other Changes
+
+- windows_printer, windows_printer_port, windows_auto_run, windows_pagefile, windows_zipfile, windows_shortcut, windows_font, windows_feature, and windows_path have been updated from LWRPs to modern custom resources
+- windows_path, windows_shortcut, and windows_zipfile have been updated to be idempotent with support for why-run mode and proper notification when the resources actually update
+- windows_pagefile now validates the name of the pagefile to avoid cryptic error messages
+- A new `share` resource has been added for setting up Windows shares
+- TrustedPeople certificate store has been added to the list of allowed store_names in the certificate resources
+- version helper constant definitions has been improved
+- A new `all` property has been added to the Windows feature resource to install all dependent features. See the windows feature test recipe for usage examples.
+- Windows feature now accepts an array of features, which greatly speeds up feature installs and simplifies recipe code
+- The path resource now accepts paths with either forward slashes or backslashes and correctly adds the path using Windows style backslash.
+- The powershell provider for windows_feature resource has been fixed to properly import ServerManager in the :remove action
+- Testing has been switched from a Rakefile to the new Delivery local mode
+- Several issues with testing the resources on non-Windows hosts in ChefSpec have been resolved
+- A new `source` property has been added to the windows_feature_powershell resource
+- Additional test suites have been added to Test Kitchen to cover all resources and those test suites are now being executed in AppVeyer on every PR
+- Travis CI testing has been removed and all testing is being performed in AppVeyer
+
 ## 2.1.1 (2016-11-23)
+
 - Make sure the ohai plugin is available when installing features
 
 ## 2.1.0 (2016-11-22)
+
 - Reduce expensive executions of dism in windows_feature by using a new Ohai plugin
 - Add guard around chef_version metadata for Opsworks and older Chef 12 clients
 - Update the rakefile to the latest
