@@ -21,7 +21,6 @@
 actions :create
 
 default_action :create
-default_action :create
 
 attribute :name, kind_of: String
 attribute :target, kind_of: String
