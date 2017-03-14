@@ -18,9 +18,9 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], name_attribute: true
+property :feature_name, [Array, String], name_property: true
 property :source, String
-property :all, [TrueClass, FalseClass], default: false
+property :all, [true, false], default: false
 property :install_method, Symbol, equal_to: [:windows_feature_dism, :windows_feature_powershell, :windows_feature_servermanagercmd]
 
 include Windows::Helper
