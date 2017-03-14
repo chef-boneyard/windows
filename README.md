@@ -717,8 +717,16 @@ expect(chef_run).to install_windows_package('Node.js').with(
 - create_windows_certificate_binding
 - delete_windows_certificate_binding
 - install_windows_feature
+- install_windows_feature_dism
+- install_windows_feature_servermanagercmd
+- install_windows_feature_powershell
 - remove_windows_feature
+- remove_windows_feature_dism
+- remove_windows_feature_servermanagercmd
+- remove_windows_feature_powershell
 - delete_windows_feature
+- delete_windows_feature_dism
+- delete_windows_feature_powershell
 - install_windows_font
 - create_windows_http_acl
 - delete_windows_http_acl
