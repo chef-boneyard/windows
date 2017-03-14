@@ -4,6 +4,9 @@ if defined?(ChefSpec)
   ChefSpec.define_matcher :windows_certificate
   ChefSpec.define_matcher :windows_certificate_binding
   ChefSpec.define_matcher :windows_feature
+  ChefSpec.define_matcher :windows_feature_dism
+  ChefSpec.define_matcher :windows_feature_servermanagercmd
+  ChefSpec.define_matcher :windows_feature_powershell
   ChefSpec.define_matcher :windows_font
   ChefSpec.define_matcher :windows_http_acl
   ChefSpec.define_matcher :windows_pagefile
@@ -119,6 +122,18 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_feature, :install, resource_name)
   end
 
+  def install_windows_feature_servermanagercmd(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_feature_servermanagercmd, :install, resource_name)
+  end
+
+  def install_windows_feature_dism(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_feature_dism, :install, resource_name)
+  end
+
+  def install_windows_feature_powershell(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_feature_powershell, :install, resource_name)
+  end
+
   #
   # Assert that a +windows_feature+ resource exists in the Chef run with the
   # action +:remove+. Given a Chef Recipe that removes "NetFX3" as a
@@ -144,6 +159,18 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_feature, :remove, resource_name)
   end
 
+  def remove_windows_feature_servermanagercmd(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_feature_servermanagercmd, :remove, resource_name)
+  end
+
+  def remove_windows_feature_dism(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_feature_dism, :remove, resource_name)
+  end
+
+  def remove_windows_feature_powershell(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_feature_powershell, :remove, resource_name)
+  end
+
   #
   # Assert that a +windows_feature+ resource exists in the Chef run with the
   # action +:delete+. Given a Chef Recipe that deletes "NetFX3" as a
@@ -167,6 +194,14 @@ if defined?(ChefSpec)
   #
   def delete_windows_feature(resource_name)
     ChefSpec::Matchers::ResourceMatcher.new(:windows_feature, :delete, resource_name)
+  end
+
+  def delete_windows_feature_dism(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_feature_dism, :delete, resource_name)
+  end
+
+  def delete_windows_feature_powershell(resource_name)
+    ChefSpec::Matchers::ResourceMatcher.new(:windows_feature_powershell, :delete, resource_name)
   end
 
   #
