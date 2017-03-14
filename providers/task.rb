@@ -18,8 +18,6 @@
 # limitations under the License.
 #
 
-use_inline_resources
-
 require 'chef/mixin/shell_out'
 require 'rexml/document'
 
