@@ -1,6 +1,6 @@
 # Windows Cookbook
 
-[![Build Status](https://travis-ci.org/chef-cookbooks/windows.svg?branch=master)](http://travis-ci.org/chef-cookbooks/windows) [![Cookbook Version](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)
+[![Build status](https://ci.appveyor.com/api/projects/status/9x4uepmm1g4rktie/branch/master?svg=true)](https://ci.appveyor.com/project/ChefWindowsCookbooks/windows/branch/master) [![Cookbook Version](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)
 
 Provides a set of Windows-specific resources to aid in the creation of cookbooks/recipes targeting the Windows platform.
 
@@ -126,8 +126,7 @@ end
 
 **BREAKING CHANGE - Version 3.0.0**
 
-This resource has been moved from using LWRPs and multiple providers to using Custom Resources.  To maintain functionality, you'll need to change `provider` to `install_method`.
-
+This resource has been moved from using LWRPs and multiple providers to using Custom Resources. To maintain functionality, you'll need to change `provider` to `install_method`.
 
 Windows Roles and Features can be thought of as built-in operating system packages that ship with the OS. A server role is a set of software programs that, when they are installed and properly configured, lets a computer perform a specific function for multiple users or other computers within a network. A Role can have multiple Role Services that provide functionality to the Role. Role services are software programs that provide the functionality of a role. Features are software programs that, although they are not directly parts of roles, can support or augment the functionality of one or more roles, or improve the functionality of the server, regardless of which roles are installed. Collectively we refer to all of these attributes as 'features'.
 
@@ -149,7 +148,7 @@ For ServerManagerCmd:
 servermanagercmd -query
 ```
 
-For PowerShell: 
+For PowerShell:
 
 ```text
 get-windowsfeature
