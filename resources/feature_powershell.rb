@@ -39,8 +39,13 @@ action :install do
   Chef::Log.warn("Requested feature #{new_resource.feature_name} is not available on this system.") unless available?
   unless !available? || installed?
     converge_by("install Windows feature #{new_resource.feature_name}") do
+      addsource = new_resource.source ? "-Source \"#{new_resource.source}\"" : ''
       addall = new_resource.all ? '-IncludeAllSubFeature' : ''
-      cmd = powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addall}")
+      cmd = if node['os_version'].to_f < 6.2
+              powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addall}")
+            else
+              powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addsource} #{addall}")
+            end
       Chef::Log.info(cmd.stdout)
     end
   end
