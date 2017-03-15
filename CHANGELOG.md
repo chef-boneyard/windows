@@ -18,7 +18,7 @@ This file is used to list changes made in each version of the windows cookbook.
 
 ### Other Changes
 
-- windows_printer, windows_printer_port, windows_auto_run, windows_pagefile, windows_zipfile, windows_shortcut, windows_font, windows_feature, and windows_path have been updated from LWRPs to modern custom resources
+- All LWRPs in this cookbook have been refactored to be custom resources
 - windows_path, windows_shortcut, and windows_zipfile have been updated to be idempotent with support for why-run mode and proper notification when the resources actually update
 - windows_pagefile now validates the name of the pagefile to avoid cryptic error messages
 - A new `share` resource has been added for setting up Windows shares
