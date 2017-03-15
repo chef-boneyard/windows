@@ -60,12 +60,15 @@ windows_task 'delete task delete_me' do
   action :delete
 end
 
-windows_task 'task_for_system' do
-  command 'dir'
-  run_level :highest
-  user 'vagrant'
-  password 'vagrant'
-  cwd ENV['TEMP']
+# not everyone tests in vagrant
+if ENV['USERNAME'] == 'vagrant' || ENV['machine_user'] == 'vagrant'
+  windows_task 'task_for_system' do
+    command 'dir'
+    run_level :highest
+    user 'vagrant'
+    password 'vagrant'
+    cwd ENV['TEMP']
+  end
 end
 
 windows_task 'task_on_idle' do
