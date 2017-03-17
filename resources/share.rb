@@ -25,7 +25,6 @@ property :description, String, default: ''
 property :full_users, Array, default: []
 property :change_users, Array, default: []
 property :read_users, Array, default: []
-property :exists, [true, false], desired_state: true
 
 include Windows::Helper
 include Chef::Mixin::PowershellOut
@@ -38,41 +37,30 @@ ACCESS_READ = 1_179_817
 
 action :create do
   raise 'No path property set' unless new_resource.path
-  if current_resource.exists
-    recreate_required = (current_resource.path.casecmp(win_friendly_path(new_resource.path)) != 0)
 
-    # note that we downcase the new user arrays so they match the lower case current values
-    needs_change = recreate_required ||
-                   (current_resource.description != new_resource.description) ||
-                   (current_resource.full_users.count != new_resource.full_users.count) ||
-                   (current_resource.change_users.count != new_resource.change_users.count) ||
-                   (current_resource.read_users.count != new_resource.read_users.count) ||
-                   !(current_resource.full_users - new_resource.full_users.map(&:downcase)).empty? ||
-                   !(current_resource.change_users - new_resource.change_users.map(&:downcase)).empty? ||
-                   !(current_resource.read_users - new_resource.read_users.map(&:downcase)).empty?
-
-    if needs_change
-      converge_by("Changing #{current_resource.share_name}") do
-        if recreate_required
-          delete_share
-          create_share
-        end
-
-        set_share_permissions
+  if different_path?
+    unless current_resource.path.nil? || current_resource.path.empty?
+      converge_by('Removing previous share') do
+        delete_share
       end
-    else
-      Chef::Log.debug("#{current_resource.share_name} already set - nothing to do")
     end
-  else
-    converge_by("Creating #{current_resource.share_name}") do
+    converge_by("Creating share #{current_resource.share_name}") do
       create_share
+    end
+  end
+
+  if different_members?(:full_users) ||
+     different_members?(:change_users) ||
+     different_members?(:read_users) ||
+     different_description?
+    converge_by("Setting permissions and description for #{new_resource.share_name}") do
       set_share_permissions
     end
   end
 end
 
 action :delete do
-  if current_resource.exists
+  if !current_resource.path.nil? && !current_resource.path.empty?
     converge_by("Deleting #{current_resource.share_name}") do
       delete_share
     end
@@ -86,18 +74,17 @@ load_current_value do |desired|
   shares = wmi.ExecQuery("SELECT * FROM Win32_Share WHERE name = '#{desired.share_name}'")
   existing_share = shares.Count == 0 ? nil : shares.ItemIndex(0)
 
-  if existing_share.nil?
-    exists false
-  else
-    exists true
+  description ''
+  unless existing_share.nil?
     path existing_share.Path
     description existing_share.Description
-    @perms = share_permissions name
-    unless @perms.nil?
-      full_users @perms[:full_users]
-      change_users @perms[:change_users]
-      read_users @perms[:read_users]
-    end
+  end
+
+  perms = share_permissions name
+  unless perms.nil?
+    full_users perms[:full_users]
+    change_users perms[:change_users]
+    read_users perms[:read_users]
   end
 end
 
@@ -111,25 +98,26 @@ def share_permissions(name)
     shares.ItemIndex(0).GetSecurityDescriptor(sd)
     sd = WIN32OLE::ARGV[0]
   rescue WIN32OLERuntimeError
-    Chef::Log.info('Failed to retrieve any security information about the share.')
+    Chef::Log.warn('Failed to retrieve any security information about the share.')
   end
-
-  return if sd.nil?
 
   read = []
   change = []
   full = []
-  sd.DACL.each do |dacl|
-    trustee = "#{dacl.Trustee.Domain}\\#{dacl.Trustee.Name}".downcase
-    case dacl.AccessMask
-    when ACCESS_FULL
-      full.push(trustee)
-    when ACCESS_CHANGE
-      change.push(trustee)
-    when ACCESS_READ
-      read.push(trustee)
-    else
-      Chef::Log.warn "Unknown access mask #{dacl.AccessMask} for user #{trustee}. This will be lost if permissions are updated"
+
+  unless sd.nil?
+    sd.DACL.each do |dacl|
+      trustee = "#{dacl.Trustee.Domain}\\#{dacl.Trustee.Name}".downcase
+      case dacl.AccessMask
+      when ACCESS_FULL
+        full.push(trustee)
+      when ACCESS_CHANGE
+        change.push(trustee)
+      when ACCESS_READ
+        read.push(trustee)
+      else
+        Chef::Log.warn "Unknown access mask #{dacl.AccessMask} for user #{trustee}. This will be lost if permissions are updated"
+      end
     end
   end
 
@@ -141,6 +129,28 @@ def share_permissions(name)
 end
 
 action_class do
+  def description_exists?(resource)
+    !resource.description.nil?
+  end
+
+  def different_description?
+    if description_exists?(new_resource) && description_exists?(current_resource)
+      new_resource.description.casecmp(current_resource.description) != 0
+    else
+      description_exists?(new_resource) || description_exists?(current_resource)
+    end
+  end
+
+  def different_path?
+    return true if current_resource.path.nil?
+    win_friendly_path(new_resource.path).casecmp(win_friendly_path(current_resource.path)) != 0
+  end
+
+  def different_members?(permission_type)
+    !(current_resource.send(permission_type.to_sym) - new_resource.send(permission_type.to_sym).map(&:downcase)).empty? &&
+      !(new_resource.send(permission_type.to_sym).map(&:downcase) - current_resource.send(permission_type.to_sym)).empty?
+  end
+
   def find_share_by_name(name)
     wmi = WIN32OLE.connect('winmgmts://')
     shares = wmi.ExecQuery("SELECT * FROM Win32_Share WHERE name = '#{name}'")
