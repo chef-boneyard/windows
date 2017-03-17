@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.0.1 (2017-03-17)
+
+- Fix `windows_share` to be fully idempotent.  Fixes #447
+
 ## 3.0.0 (UNRELEASED!)
 
 **Warning** This release includes multiple breaking changes as we refactored all existing resources and resolved many longstanding bugs. We highly recommend exercising caution and fully testing this new version before rolling it out to a production environment.
