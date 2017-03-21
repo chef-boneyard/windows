@@ -13,7 +13,6 @@ Lint/UselessAssignment:
   Exclude:
     - 'libraries/registry_helper.rb'
 
-# Configuration parameters: CountBlocks.
 Metrics/BlockNesting:
   Max: 5
 
@@ -21,52 +20,20 @@ Style/AccessorMethodName:
   Exclude:
     - 'libraries/matchers.rb'
     - 'libraries/version.rb'
-    - 'providers/font.rb'
-    - 'providers/pagefile.rb'
-    - 'providers/task.rb'
 
 Style/ClassVars:
   Exclude:
     - 'libraries/registry_helper.rb'
 
-# Configuration parameters: MinBodyLength.
 Style/GuardClause:
   Exclude:
     - 'libraries/registry_helper.rb'
     - 'libraries/windows_privileged.rb'
-    - 'providers/certificate_binding.rb'
-    - 'providers/feature_dism.rb'
-    - 'providers/http_acl.rb'
-    - 'providers/printer.rb'
-    - 'providers/printer_port.rb'
-    - 'providers/task.rb'
 
 Style/IfInsideElse:
   Exclude:
     - 'libraries/powershell_helper.rb'
 
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: snake_case, camelCase
-Style/MethodName:
-  Exclude:
-    - 'providers/certificate_binding.rb'
-    - 'providers/http_acl.rb'
-
-Style/MultilineBlockChain:
-  Exclude:
-    - 'providers/task.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
 Style/RegexpLiteral:
   Exclude:
-    - 'libraries/windows_helper.rb'
     - 'resources/task.rb'
-
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: snake_case, camelCase
-Style/VariableName:
-  Exclude:
-    - 'providers/certificate_binding.rb'
-    - 'providers/share.rb'
