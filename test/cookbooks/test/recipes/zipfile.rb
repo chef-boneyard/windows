@@ -28,3 +28,8 @@ windows_zipfile 'C:\testdir' do
   source 'C:\test.zip'
   action :unzip
 end
+
+windows_zipfile 'C:\test\windows' do
+  source 'https://github.com/chef-cookbooks/windows/archive/master.zip'
+  action :unzip
+end
