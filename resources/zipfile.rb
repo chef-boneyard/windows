@@ -32,7 +32,7 @@ action :unzip do
   ensure_rubyzip_gem_installed
   Chef::Log.debug("unzip #{new_resource.source} => #{new_resource.path} (overwrite=#{new_resource.overwrite})")
 
-  cache_file_path = if new_resource.source =~ /^(file|ftp|http|https):\/\//
+  cache_file_path = if new_resource.source =~ %r{^(file|ftp|http|https):\/\/} # http://rubular.com/r/DGoIWjLfGI
                       uri = as_uri(source)
                       local_cache_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(::URI.unescape(uri.path))}"
                       Chef::Log.debug("Caching a copy of file #{new_resource.source} at #{cache_file_path}")
@@ -66,7 +66,6 @@ action :unzip do
       end
       action :run
     end
-
   end
 end
 
