@@ -70,28 +70,6 @@ module Windows
       URI.parse(URI.escape(source))
     end
 
-    # if a file is local it returns a windows friendly path version
-    # if a file is remote it caches it locally
-    def cached_file(source, checksum = nil, windows_path = true)
-      @installer_file_path ||= begin
-
-        if source =~ /^(file|ftp|http|https):\/\//
-          uri = as_uri(source)
-          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(::URI.unescape(uri.path))}"
-          Chef::Log.debug("Caching a copy of file #{source} at #{cache_file_path}")
-          remote_file cache_file_path do
-            source source
-            backup false
-            checksum checksum unless checksum.nil?
-          end.run_action(:create)
-        else
-          cache_file_path = source
-        end
-
-        windows_path ? win_friendly_path(cache_file_path) : cache_file_path
-      end
-    end
-
     # Expands the environment variables
     def expand_env_vars(path)
       # We pick 32k because that is the largest it could be:

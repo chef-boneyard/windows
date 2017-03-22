@@ -32,16 +32,39 @@ action :unzip do
   ensure_rubyzip_gem_installed
   Chef::Log.debug("unzip #{new_resource.source} => #{new_resource.path} (overwrite=#{new_resource.overwrite})")
 
+  cache_file_path = if new_resource.source =~ %r{^(file|ftp|http|https):\/\/} # http://rubular.com/r/DGoIWjLfGI
+                      uri = as_uri(source)
+                      local_cache_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(::URI.unescape(uri.path))}"
+                      Chef::Log.debug("Caching a copy of file #{new_resource.source} at #{cache_file_path}")
+
+                      remote_file local_cache_path do
+                        source new_resource.source
+                        backup false
+                        checksum new_resource.checksum unless new_resource.checksum.nil?
+                      end
+
+                      local_cache_path
+                    else
+                      new_resource.source
+                    end
+
+  cache_file_path = win_friendly_path(cache_file_path)
+
   converge_by("unzip #{new_resource.source}") do
-    Zip::File.open(cached_file(new_resource.source, new_resource.checksum)) do |zip|
-      zip.each do |entry|
-        path = ::File.join(new_resource.path, entry.name)
-        FileUtils.mkdir_p(::File.dirname(path))
-        if new_resource.overwrite && ::File.exist?(path) && !::File.directory?(path)
-          FileUtils.rm(path)
+    ruby_block 'Unzipping' do
+      block do
+        Zip::File.open(cache_file_path) do |zip|
+          zip.each do |entry|
+            path = ::File.join(new_resource.path, entry.name)
+            FileUtils.mkdir_p(::File.dirname(path))
+            if new_resource.overwrite && ::File.exist?(path) && !::File.directory?(path)
+              FileUtils.rm(path)
+            end
+            zip.extract(entry, path) unless ::File.exist?(path)
+          end
         end
-        zip.extract(entry, path)
       end
+      action :run
     end
   end
 end
