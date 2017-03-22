@@ -74,7 +74,7 @@ action_class do
 end
 
 action :install do
-  Chef::Log.warn("Requested feature #{new_resource.feature} is not available on this system.") unless available?
+  Chef::Log.warn("Requested feature #{new_resource.feature_name} is not available on this system.") unless available?
   unless !available? || installed?
     converge_by("install Windows feature #{new_resource.feature_name}") do
       addsource = new_resource.source ? "/LimitAccess /Source:\"#{new_resource.source}\"" : ''
