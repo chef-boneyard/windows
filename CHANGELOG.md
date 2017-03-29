@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.0.4 (2017-03-29)
+
+- restoring the `cached_file` helper as downstream cookbooks use it.
+
 ## 3.0.3 (2017-03-28)
 
 - Correct a typo in a Log message
