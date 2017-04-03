@@ -25,6 +25,7 @@ require 'chef/mixin/shell_out'
 require 'rexml/document'
 
 include Chef::Mixin::ShellOut
+include Chef::Mixin::PowershellOut
 
 property :task_name, String, name_property: true, regex: [/\A[^\/\:\*\?\<\>\|]+\z/]
 property :command, String
@@ -56,8 +57,12 @@ property :enabled, [true, false], desired_state: true
 def load_task_hash(task_name)
   Chef::Log.debug 'Looking for existing tasks'
 
-  # we use shell_out here instead of shell_out! because a failure implies that the task does not exist
-  output = shell_out("schtasks /Query /FO LIST /V /TN \"#{task_name}\"").stdout
+  # we use powershell_out here instead of powershell_out! because a failure implies that the task does not exist
+  task_script = <<-EOH
+    [Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8
+    schtasks /Query /FO LIST /V /TN \"#{task_name}\"
+  EOH
+  output = powershell_out(task_script).stdout.force_encoding('UTF-8')
   if output.empty?
     task = false
   else
