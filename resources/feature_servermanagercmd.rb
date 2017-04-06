@@ -25,9 +25,29 @@ property :all, [true, false], default: false
 include Chef::Mixin::ShellOut
 include Windows::Helper
 
+action :install do
+  unless installed?
+    converge_by("install Windows feature #{new_resource.feature_name}") do
+      check_reboot(shell_out("#{servermanagercmd} -install #{to_array(new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), new_resource.feature_name)
+    end
+  end
+end
+
+action :remove do
+  if installed?
+    converge_by("removing Windows feature #{new_resource.feature_name}") do
+      check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), new_resource.feature_name)
+    end
+  end
+end
+
+action :delete do
+  Chef::Log.warn('servermanagercmd does not support removing a feature from the image.')
+end
+
 # Exit codes are listed at http://technet.microsoft.com/en-us/library/cc749128(v=ws.10).aspx
 
-action_class do
+action_class.class_eval do
   def check_reboot(result, feature)
     if result.exitstatus == 3010 # successful, but needs reboot
       node.run_state['reboot_requested'] = true
@@ -53,24 +73,4 @@ action_class do
       locate_sysnative_cmd('servermanagercmd.exe')
     end
   end
-end
-
-action :install do
-  unless installed?
-    converge_by("install Windows feature #{new_resource.feature_name}") do
-      check_reboot(shell_out("#{servermanagercmd} -install #{to_array(new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), new_resource.feature_name)
-    end
-  end
-end
-
-action :remove do
-  if installed?
-    converge_by("removing Windows feature #{new_resource.feature_name}") do
-      check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), new_resource.feature_name)
-    end
-  end
-end
-
-action :delete do
-  Chef::Log.warn('servermanagercmd does not support removing a feature from the image.')
 end
