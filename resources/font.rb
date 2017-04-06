@@ -34,7 +34,7 @@ action :install do
   end
 end
 
-action_class do
+action_class.class_eval do
   def retrieve_cookbook_font
     font_file = new_resource.name
     if new_resource.source

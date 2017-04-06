@@ -100,7 +100,7 @@ EOH
   end
 end
 
-action_class do
+action_class.class_eval do
   def cert_location
     @location ||= new_resource.user_store ? 'CurrentUser' : 'LocalMachine'
   end
