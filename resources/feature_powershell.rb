@@ -29,7 +29,7 @@ action :delete do
   end
 end
 
-action_class.class_eval do
+action_class do
   def install_feature_cmdlet
     node['os_version'].to_f < 6.2 ? 'Import-Module ServerManager; Add-WindowsFeature' : 'Install-WindowsFeature'
   end

@@ -81,7 +81,7 @@ action :delete do
   end
 end
 
-action_class.class_eval do
+action_class do
   def netsh_command
     locate_sysnative_cmd('netsh.exe')
   end

@@ -221,7 +221,7 @@ action :disable do
   end
 end
 
-action_class.class_eval do
+action_class do
   # rubocop:disable Style/StringLiteralsInInterpolation
   def run_schtasks(task_action, options = {})
     cmd = "schtasks /#{task_action} /TN \"#{new_resource.task_name}\" "

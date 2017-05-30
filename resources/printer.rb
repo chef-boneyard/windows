@@ -66,7 +66,7 @@ action :delete do
   end
 end
 
-action_class.class_eval do
+action_class do
   def create_printer
     # Create the printer port first
     windows_printer_port new_resource.ipv4_address do

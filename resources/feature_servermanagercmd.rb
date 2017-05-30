@@ -47,7 +47,7 @@ end
 
 # Exit codes are listed at http://technet.microsoft.com/en-us/library/cc749128(v=ws.10).aspx
 
-action_class.class_eval do
+action_class do
   def check_reboot(result, feature)
     if result.exitstatus == 3010 # successful, but needs reboot
       node.run_state['reboot_requested'] = true
