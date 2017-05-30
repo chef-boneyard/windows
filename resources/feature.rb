@@ -25,6 +25,10 @@ property :install_method, Symbol, equal_to: [:windows_feature_dism, :windows_fea
 
 include Windows::Helper
 
+def whyrun_supported?
+  true
+end
+
 action :install do
   run_default_provider :install
 end
