@@ -62,7 +62,7 @@ action :delete do
   delete(pagefile) if exists?(pagefile)
 end
 
-action_class.class_eval do
+action_class do
   def validate_name
     return if /^.:.*.sys/ =~ new_resource.name
     raise "#{new_resource.name} does not match the format DRIVE:\\path\\file.sys for pagefiles. Example: C:\\pagefile.sys"

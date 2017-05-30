@@ -128,7 +128,7 @@ def share_permissions(name)
   }
 end
 
-action_class.class_eval do
+action_class do
   def description_exists?(resource)
     !resource.description.nil?
   end
