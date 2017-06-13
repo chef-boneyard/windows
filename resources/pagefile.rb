@@ -70,7 +70,7 @@ action_class do
 
   def exists?(pagefile)
     @exists ||= begin
-      Chef::Log.debug("Checking if #{pagefile} exists")
+      Chef::Log.debug("Checking if #{pagefile} exists by runing: #{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list")
       cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" list /format:list", returns: [0])
       cmd.stderr.empty? && (cmd.stdout =~ /SettingID=#{get_setting_id(pagefile)}/i)
     end
@@ -86,6 +86,7 @@ action_class do
 
   def create(pagefile)
     converge_by("create pagefile #{pagefile}") do
+      Chef::Log.debug("Running #{wmic} pagefileset create name=\"#{win_friendly_path(pagefile)}\"")
       cmd = shell_out("#{wmic} pagefileset create name=\"#{win_friendly_path(pagefile)}\"")
       check_for_errors(cmd.stderr)
     end
@@ -93,6 +94,7 @@ action_class do
 
   def delete(pagefile)
     converge_by("remove pagefile #{pagefile}") do
+      Chef::Log.debug("Running #{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" delete")
       cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" delete")
       check_for_errors(cmd.stderr)
     end
