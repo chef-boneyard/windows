@@ -16,12 +16,12 @@ verifier:
   name: pester
 
 platforms:
-  - name: windows-7
-    driver_config:
-      box: chef/windows-7-professional
   - name: windows-8.1
     driver_config:
       box: chef/windows-8.1-professional
+  - name: windows-10
+    driver_config:
+      box: chef/windows-10-enterprise
   - name: windows-2008r2
     driver_config:
       box: chef/windows-server-2008r2-standard
