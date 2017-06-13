@@ -149,8 +149,6 @@ action_class do
   end
 
   def wmic
-    @wmic ||= begin
-      locate_sysnative_cmd('wmic.exe')
-    end
+    @wmic ||= locate_sysnative_cmd('wmic.exe')
   end
 end
