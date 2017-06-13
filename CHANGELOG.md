@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.1.1 (2017-06-13)
+
+- Replace Windows 7 testing with Windows 10 testing
+- Expand debug logging in the pagefile resource
+- Require path in the share resource instead of raising if it's missing
+- Make pagefile properly fail the run if the command fails to run
+
 ## 3.1.0 (2017-05-30)
 
 - Updated resource documentation for windows_pagefile
