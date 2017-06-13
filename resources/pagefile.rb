@@ -147,7 +147,7 @@ action_class do
   end
 
   def check_for_errors(stderr)
-    Chef::Log.fatal(stderr) unless stderr.empty?
+    raise stderr.chomp unless stderr.empty?
   end
 
   def wmic
