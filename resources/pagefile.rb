@@ -108,6 +108,7 @@ action_class do
 
   def set_automatic_managed
     converge_by('set pagefile to Automatic Managed') do
+      Chef::Log.debug("Running #{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=True")
       cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=True")
       check_for_errors(cmd.stderr)
     end
@@ -115,6 +116,7 @@ action_class do
 
   def unset_automatic_managed
     converge_by('set pagefile to User Managed') do
+      Chef::Log.debug("Running #{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=False")
       cmd = shell_out("#{wmic} computersystem where name=\"%computername%\" set AutomaticManagedPagefile=False")
       check_for_errors(cmd.stderr)
     end
@@ -122,6 +124,7 @@ action_class do
 
   def set_custom_size(pagefile, min, max)
     converge_by("set #{pagefile} to InitialSize=#{min} & MaximumSize=#{max}") do
+      Chef::Log.debug("Running #{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=#{min},MaximumSize=#{max}")
       cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=#{min},MaximumSize=#{max}", returns: [0])
       check_for_errors(cmd.stderr)
     end
@@ -129,6 +132,7 @@ action_class do
 
   def set_system_managed(pagefile) # rubocop: disable Style/AccessorMethodName
     converge_by("set #{pagefile} to System Managed") do
+      Chef::Log.debug("Running #{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0")
       cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0", returns: [0])
       check_for_errors(cmd.stderr)
     end
