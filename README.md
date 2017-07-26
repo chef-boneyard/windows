@@ -441,16 +441,16 @@ Creates and modifies Windows shortcuts.
 
 #### Examples
 
-Add a shortcut all users desktop:
+Add a shortcut to all users desktop:
 
 ```ruby
 require 'win32ole'
 all_users_desktop = WIN32OLE.new("WScript.Shell").SpecialFolders("AllUsersDesktop")
 
 windows_shortcut "#{all_users_desktop}/Notepad.lnk" do
-  target "C:\\WINDOWS\\notepad.exe"
+  target "C:\\Windows\\notepad.exe"
   description "Launch Notepad"
-  iconlocation "C:\\windows\\notepad.exe, 0"
+  iconlocation "C:\\Windows\\notepad.exe,0"
 end
 ```
 
