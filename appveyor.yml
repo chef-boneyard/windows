@@ -13,6 +13,9 @@ skip_tags: true
 #faster cloning
 clone_depth: 1
 
+init:
+  - git config --global core.autocrlf true
+
 # Install the latest nightly of ChefDK
 install:
   - ps: iex (irm https://omnitruck.chef.io/install.ps1); Install-Project -Project chefdk -channel current
