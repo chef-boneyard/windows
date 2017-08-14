@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.1.2 (2017-08-14)
+
+- Revert "Require path in the share resource instead of raising if it's missing" which was causing failures due to a bug in the chef-client
+
 ## 3.1.1 (2017-06-13)
 
 - Replace Windows 7 testing with Windows 10 testing
