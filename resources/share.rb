@@ -20,7 +20,7 @@
 #
 
 property :share_name, String, name_property: true
-property :path, String, required: true
+property :path, String
 property :description, String, default: ''
 property :full_users, Array, default: []
 property :change_users, Array, default: []
@@ -36,6 +36,8 @@ ACCESS_CHANGE = 1_245_631
 ACCESS_READ = 1_179_817
 
 action :create do
+  raise 'No path property set' unless new_resource.path
+
   if different_path?
     unless current_resource.path.nil? || current_resource.path.empty?
       converge_by('Removing previous share') do
