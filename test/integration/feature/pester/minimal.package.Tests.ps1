@@ -18,5 +18,9 @@ describe 'test::feature' {
     it "feature Web-Asp-Net45 and Web-Net-Ext45 installed using powershell" {
       (Get-WindowsFeature Web-Asp-Net45,Web-Net-Ext45 | ?{$_.InstallState -eq "Installed"}).count | Should Be 2
     }
+
+    it "feature NPAS and management tools installed using powershell" {
+      (Get-WindowsFeature NPAS,NPAS-Policy-Server,RSAT-NPAS | ?{$_.InstallState -eq "Installed"}).count | Should Be 3
+    }
   }
 }

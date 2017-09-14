@@ -27,3 +27,9 @@ windows_feature ['Web-Asp-Net45', 'Web-Net-Ext45'] do
   action :install
   install_method :windows_feature_powershell
 end
+
+windows_feature ['NPAS'] do
+  action :install
+  management_tools true
+  install_method :windows_feature_powershell
+end

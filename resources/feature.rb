@@ -21,6 +21,7 @@
 property :feature_name, [Array, String], name_property: true
 property :source, String
 property :all, [true, false], default: false
+property :management_tools, [true, false], default: false
 property :install_method, Symbol, equal_to: [:windows_feature_dism, :windows_feature_powershell, :windows_feature_servermanagercmd]
 
 include Windows::Helper
@@ -76,6 +77,7 @@ action_class do
         feature_name new_resource.feature_name
         source new_resource.source if new_resource.source
         all new_resource.all
+        management_tools new_resource.management_tools
       end
     end
   end

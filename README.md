@@ -168,6 +168,7 @@ get-windowsfeature
 
 - `feature_name` - name of the feature/role(s) to install. The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
 - `all` - Boolean. Optional. Default: false. DISM and PowerShell providers only. For DISM this is the equivalent of specifying the /All switch to dism.exe, forcing all parent dependencies to be installed. With the PowerShell install method, the `-InstallAllSubFeatures` switch is applied. Note that these two methods may not produce identical results.
+- `management_tools` - Boolean. Optional. Default: false. PowerShell provider only. Includes the `-IncludeManagementTools` switch. Installs all applicable management tools of the roles, role services, or features specified by the feature name.
 - `source` - String. Optional. DISM provider only. Uses local repository for feature install.
 - `install_method` - Symbol. Optional. If not supplied, Chef will determine which method to use (in the order of `:windows_feature_dism`, `:windows_feature_servercmd`, `:windows_feature_powershell`)
 
@@ -214,6 +215,16 @@ Install multiple features using one resource with the PowerShell provider
 ```ruby
 windows_feature ['Web-Asp-Net45', 'Web-Net-Ext45'] do
   action :install
+  install_method :windows_feature_powershell
+end
+```
+
+Install the Network Policy and Access Service feature, including the management tools. Which, for this example, will automatically install `RSAT-NPAS` as well.
+
+```ruby
+windows_feature 'NPAS' do
+  action :install
+  management_tools true
   install_method :windows_feature_powershell
 end
 ```
