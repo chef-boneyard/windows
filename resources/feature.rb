@@ -70,7 +70,6 @@ action_class do
       windows_feature_servermanagercmd new_resource.name do
         action desired_action
         feature_name new_resource.feature_name
-        source new_resource.source if new_resource.source
         all new_resource.all
         timout new_resource.timeout
       end
@@ -81,7 +80,7 @@ action_class do
         source new_resource.source if new_resource.source
         all new_resource.all
         timout new_resource.timeout
-	management_tools new_resource.management_tools
+        management_tools new_resource.management_tools
       end
     end
   end

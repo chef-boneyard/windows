@@ -19,7 +19,6 @@
 #
 
 property :feature_name, [Array, String], name_attribute: true
-property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 
