@@ -195,6 +195,7 @@ get-windowsfeature
 - `all` - Boolean. Optional. Default: false. DISM and PowerShell providers only. For DISM this is the equivalent of specifying the /All switch to dism.exe, forcing all parent dependencies to be installed. With the PowerShell install method, the `-InstallAllSubFeatures` switch is applied. Note that these two methods may not produce identical results.
 - `management_tools` - Boolean. Optional. Default: false. PowerShell provider only. Includes the `-IncludeManagementTools` switch. Installs all applicable management tools of the roles, role services, or features specified by the feature name.
 - `source` - String. Optional. DISM provider only. Uses local repository for feature install.
+- `timeout` - Integer. Optional. Default: 600. Specifies a timeout (in seconds) for feature install.
 - `install_method` - Symbol. Optional. If not supplied, Chef will determine which method to use (in the order of `:windows_feature_dism`, `:windows_feature_servercmd`, `:windows_feature_powershell`)
 
 #### Examples
@@ -207,13 +208,14 @@ windows_feature 'DHCPServer' do
 end
 ```
 
-Install the .Net 3.5.1 feature on Server 2012 using repository files on DVD and install all dependencies
+Install the .Net 3.5.1 feature on Server 2012 using repository files on DVD and install all dependencies with a timeout of 900 seconds
 
 ```ruby
 windows_feature "NetFx3" do
   action :install
   all true
   source "d:\sources\sxs"
+  timeout 900
 end
 ```
 

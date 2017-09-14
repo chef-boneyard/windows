@@ -7,6 +7,7 @@
 property :feature_name, [Array, String], name_attribute: true
 property :source, String
 property :all, [true, false], default: false
+property :timeout, Integer, default: 600
 property :management_tools, [true, false], default: false
 
 include Chef::Mixin::PowershellOut
@@ -15,7 +16,7 @@ include Windows::Helper
 action :remove do
   if installed?
     converge_by("remove Windows feature #{new_resource.feature_name}") do
-      cmd = powershell_out!("#{remove_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')}")
+      cmd = powershell_out!("#{remove_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')}", timeout: new_resource.timeout)
       Chef::Log.info(cmd.stdout)
     end
   end
@@ -24,7 +25,7 @@ end
 action :delete do
   if available?
     converge_by("delete Windows feature #{new_resource.feature_name} from the image") do
-      cmd = powershell_out!("Uninstall-WindowsFeature #{to_array(new_resource.feature_name).join(',')} -Remove")
+      cmd = powershell_out!("Uninstall-WindowsFeature #{to_array(new_resource.feature_name).join(',')} -Remove", timeout: new_resource.timeout)
       Chef::Log.info(cmd.stdout)
     end
   end
@@ -41,14 +42,14 @@ action_class do
 
   def installed?
     @installed ||= begin
-      cmd = powershell_out("(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Installed\'}).count")
+      cmd = powershell_out("(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Installed\'}).count", timeout: new_resource.timeout)
       cmd.stderr.empty? && cmd.stdout.chomp.to_i == 0
     end
   end
 
   def available?
     @available ||= begin
-      cmd = powershell_out("(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Removed\'}).count")
+      cmd = powershell_out("(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Removed\'}).count", timeout: new_resource.timeout)
       cmd.stderr.empty? && cmd.stdout.chomp.to_i > 0
     end
   end
@@ -62,9 +63,9 @@ action :install do
       addall = new_resource.all ? '-IncludeAllSubFeature' : ''
       addmanagementtools = new_resource.management_tools ? '-IncludeManagementTools' : ''
       cmd = if node['os_version'].to_f < 6.2
-              powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addall}")
+              powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addall}", timeout: new_resource.timeout)
             else
-              powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addsource} #{addall} #{addmanagementtools}")
+              powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addsource} #{addall} #{addmanagementtools}, timeout: new_resource.timeout")
             end
       Chef::Log.info(cmd.stdout)
     end

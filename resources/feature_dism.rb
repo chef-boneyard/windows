@@ -21,6 +21,7 @@
 property :feature_name, [Array, String], name_property: true
 property :source, String
 property :all, [true, false], default: false
+property :timeout, Integer, default: 600
 
 include Chef::Mixin::ShellOut
 include Windows::Helper
@@ -31,7 +32,7 @@ action :install do
     converge_by("install Windows feature #{new_resource.feature_name}") do
       addsource = new_resource.source ? "/LimitAccess /Source:\"#{new_resource.source}\"" : ''
       addall = new_resource.all ? '/All' : ''
-      shell_out!("#{dism} /online /enable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010])
+      shell_out!("#{dism} /online /enable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       # Reload ohai data
       reload_ohai_features_plugin(new_resource.action, new_resource.feature_name)
     end
@@ -41,7 +42,7 @@ end
 action :remove do
   if installed?
     converge_by("removing Windows feature #{new_resource.feature_name}") do
-      shell_out!("#{dism} /online /disable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart", returns: [0, 42, 127, 3010])
+      shell_out!("#{dism} /online /disable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       # Reload ohai data
       reload_ohai_features_plugin(new_resource.action, new_resource.feature_name)
     end
@@ -52,7 +53,7 @@ action :delete do
   raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on #{win_version.sku}" unless supports_feature_delete?
   if available?
     converge_by("deleting Windows feature #{new_resource.feature_name} from the image") do
-      shell_out!("#{dism} /online /disable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /Remove /norestart", returns: [0, 42, 127, 3010])
+      shell_out!("#{dism} /online /disable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /Remove /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       # Reload ohai data
       reload_ohai_features_plugin(new_resource.action, new_resource.feature_name)
     end
