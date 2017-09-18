@@ -15,9 +15,13 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Chef
 
-- Chef 12.6+
+- Chef 12.7+
 
 ## Resources
+
+### Deprecated Resources Note
+
+As of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major of this cookbook that removes windows_task and windows_path from this cookbook.
 
 ### windows_auto_run
 
@@ -275,7 +279,6 @@ end
 
 Configures the file that provides virtual memory for applications requiring more memory than available RAM or that are paged out to free up memory in use.
 
-
 #### Actions
 
 - `:set` - configures the default pagefile, creating if it doesn't exist.
@@ -283,7 +286,7 @@ Configures the file that provides virtual memory for applications requiring more
 
 #### Properties
 
-- `name` - the path to the pagefile,  String, name_property: true
+- `name` - the path to the pagefile, String, name_property: true
 - `system_managed` - configures whether the system manages the pagefile size. [true, false]
 - `automatic_managed` - all of the settings are managed by the system. If this is set to true, other settings will be ignored. [true, false], default: false
 - `initial_size` - initial size of the pagefile in bytes. Integer
