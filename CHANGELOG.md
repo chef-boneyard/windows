@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.1.3 (2017-09-18)
+
+### windows_task and windows_path deprecation
+
+s of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
+
+
 ## 3.1.2 (2017-08-14)
 
 - Revert "Require path in the share resource instead of raising if it's missing" which was causing failures due to a bug in the chef-client
