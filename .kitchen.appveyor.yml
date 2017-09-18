@@ -18,12 +18,6 @@ verifier:
   name: pester
 
 suites:
-  - name: tasks
-    run_list:
-      - recipe[test::tasks]
-  - name: path
-    run_list:
-      - recipe[test::path]
   - name: certificate
     run_list:
       - recipe[test::certificate]
