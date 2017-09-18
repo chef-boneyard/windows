@@ -28,11 +28,11 @@ platforms:
   - name: windows-2012r2
     driver_config:
       box: chef/windows-server-2012r2-standard
-  - name: windows-2012r2-chef-12.6
+  - name: windows-2016-chef-12.6
     driver_config:
-      box: chef/windows-server-2012r2-standard
+      box: chef/windows-server-2016-standard
     provisioner:
-      require_chef_omnibus: 12.6.0
+      require_chef_omnibus: 12.7.2
 
 suites:
   - name: autorun
