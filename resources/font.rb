@@ -19,6 +19,8 @@
 # limitations under the License.
 #
 
+require 'uri'
+
 property :name, String, name_property: true
 property :source, String, required: false
 
@@ -40,7 +42,7 @@ action_class do
     if new_resource.source
       remote_file font_file do
         action  :nothing
-        source  "file://#{new_resource.source}"
+        source source_uri
         path    win_friendly_path(::File.join(ENV['TEMP'], font_file))
       end.run_action(:create)
     else
@@ -76,5 +78,12 @@ action_class do
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
     ::File.exist?(win_friendly_path(::File.join(fonts_dir, new_resource.name)))
+  end
+
+  def source_uri
+    if new_resource.source
+      uri = URI.parse(new_resource.source)
+      uri.scheme ? new_resource.source : "file://#{new_resource.source}"
+    end
   end
 end
