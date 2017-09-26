@@ -41,9 +41,9 @@ action_class do
     font_file = new_resource.name
     if new_resource.source
       remote_file font_file do
-        action  :nothing
+        action :nothing
         source source_uri
-        path    win_friendly_path(::File.join(ENV['TEMP'], font_file))
+        path win_friendly_path(::File.join(ENV['TEMP'], font_file))
       end.run_action(:create)
     else
       cookbook_file font_file do
@@ -81,9 +81,8 @@ action_class do
   end
 
   def source_uri
-    if new_resource.source
-      uri = URI.parse(new_resource.source)
-      uri.scheme ? new_resource.source : "file://#{new_resource.source}"
-    end
+    return unless new_resource.source
+    uri = URI.parse(new_resource.source)
+    uri.scheme ? new_resource.source : "file://#{new_resource.source}"
   end
 end
