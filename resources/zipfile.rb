@@ -1,7 +1,7 @@
 #
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Author:: Wade Peacock (<wade.peacock@visioncritical.com>) 
+# Author:: Wade Peacock (<wade.peacock@visioncritical.com>)
 # Cookbook:: windows
 # Resource:: zipfile
 #
