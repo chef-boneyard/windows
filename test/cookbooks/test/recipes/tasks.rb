@@ -13,12 +13,6 @@ windows_task 'create chef\nested task' do
   command 'dir'
 end
 
-windows_task 'disable chef\nested task' do
-  name 'chef\nested task'
-  command 'dir /s'
-  action :change
-end
-
 windows_task 'create long running task loop' do
   task_name '\chef\longtask'
   action :create
