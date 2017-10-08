@@ -27,7 +27,7 @@ property :name_kind, Symbol, equal_to: [:hash, :subject], default: :subject
 property :address, String, default: '0.0.0.0'
 property :port, Integer, default: 443
 property :app_id, String, default: '{4dc3e181-e14b-4a21-b022-59fc669b0914}'
-property :store_name, String, default: 'MY', regex: /^(?:MY|CA|ROOT)$/
+property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'CLIENTAUTHISSUER', 'REMOTE DESKTOP', 'ROOT', 'TRUSTEDDEVICES', 'WEBHOSTING', 'CA', 'AUTHROOT', 'TRUSTEDPEOPLE', 'MY', 'SMARTCARDROOT', 'TRUST']
 property :exists, [true, false], desired_state: true
 
 load_current_value do |desired|
