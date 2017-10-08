@@ -71,3 +71,6 @@ suites:
   - name: zipfile
     run_list:
       - recipe[test::zipfile]
+  - name: all
+    run_list:
+      - recipe[test::all]
