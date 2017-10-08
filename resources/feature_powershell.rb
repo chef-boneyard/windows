@@ -7,6 +7,7 @@
 property :feature_name, [Array, String], name_attribute: true
 property :source, String
 property :all, [true, false], default: false
+property :management_tools, [true, false], default: false
 
 include Chef::Mixin::PowershellOut
 include Windows::Helper
@@ -59,10 +60,11 @@ action :install do
     converge_by("install Windows feature #{new_resource.feature_name}") do
       addsource = new_resource.source ? "-Source \"#{new_resource.source}\"" : ''
       addall = new_resource.all ? '-IncludeAllSubFeature' : ''
+      addmanagementtools = new_resource.management_tools ? '-IncludeManagementTools' : ''
       cmd = if node['os_version'].to_f < 6.2
               powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addall}")
             else
-              powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addsource} #{addall}")
+              powershell_out!("#{install_feature_cmdlet} #{to_array(new_resource.feature_name).join(',')} #{addsource} #{addall} #{addmanagementtools}")
             end
       Chef::Log.info(cmd.stdout)
     end
