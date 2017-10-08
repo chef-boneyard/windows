@@ -19,8 +19,6 @@
 # limitations under the License.
 #
 
-require 'uri'
-
 property :name, String, name_property: true
 property :source, String, required: false
 
@@ -80,9 +78,21 @@ action_class do
     ::File.exist?(win_friendly_path(::File.join(fonts_dir, new_resource.name)))
   end
 
+  # is the parsed schema one supported by remote file.
+  # URI will parse C:/foo as schema 'c' so we need to detect that
+  def remote_file_schema?(schema)
+    return true if %w(http https ftp).include?(schema)
+  end
+
+  # return new_resource.source if we have a proper URI specified
+  # if it's a local file listed as a source return it in file:// format
   def source_uri
-    return unless new_resource.source
-    uri = URI.parse(new_resource.source)
-    uri.scheme ? new_resource.source : "file://#{new_resource.source}"
+    begin
+      require 'uri'
+      return new_resource.source if remote_file_schema?(URI.parse(new_resource.source).scheme)
+    rescue URI::InvalidURIError # C:/foo parses but C:\foo does not
+      Chef::Log.debug("source could not be processed as a URI. Most likely it's a local file with backslashes not forward slashes")
+    end
+    "file://#{new_resource.source}"
   end
 end
