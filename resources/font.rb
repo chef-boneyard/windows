@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-property :name, String, name_property: true
+property :font_name, String, name_property: true
 property :source, String, required: false
 
 include Windows::Helper

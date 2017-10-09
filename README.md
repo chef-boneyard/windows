@@ -266,7 +266,7 @@ Font files should be included in the cookbooks
 
 #### Properties
 
-- `name` - The file name of the font file name to install. The path defaults to the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
+- `font_name` - The file name of the font file name to install. The path defaults to the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
 - `source` - Set an alternate path/URI to the font file.
 
 #### Examples
