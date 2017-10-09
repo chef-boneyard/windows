@@ -13,6 +13,12 @@ windows_certificate '2796bae63f1801e277261ba0d77770028f20eee4' do
   action :delete
 end
 
+# this resource should always be "up to date"
+windows_certificate 'duplicate delete' do
+  source '2796bae63f1801e277261ba0d77770028f20eee4'
+  action :delete
+end
+
 # Generate using:
 # makecert -r -n "CN=ChefDummyCertForTest" -pe -ss My -sv test-cert.pvk test-cert.cer
 # pvk2pfx -pvk test-cert.pvk -spc test-cert.cer -pfx test-cert.pfx -po chef123
