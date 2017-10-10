@@ -19,8 +19,8 @@
 #
 
 property :feature_name, [Array, String], name_attribute: true
-property :source, String
 property :all, [true, false], default: false
+property :timeout, Integer, default: 600
 
 include Chef::Mixin::ShellOut
 include Windows::Helper
@@ -28,7 +28,7 @@ include Windows::Helper
 action :install do
   unless installed?
     converge_by("install Windows feature #{new_resource.feature_name}") do
-      check_reboot(shell_out("#{servermanagercmd} -install #{to_array(new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), new_resource.feature_name)
+      check_reboot(shell_out("#{servermanagercmd} -install #{to_array(new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010], timeout: new_resource.timeout), new_resource.feature_name)
     end
   end
 end
@@ -36,7 +36,7 @@ end
 action :remove do
   if installed?
     converge_by("removing Windows feature #{new_resource.feature_name}") do
-      check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010]), new_resource.feature_name)
+      check_reboot(shell_out("#{servermanagercmd} -remove #{to_array(new_resource.feature_name).join(' ')}", returns: [0, 42, 127, 1003, 3010], timeout: new_resource.timeout), new_resource.feature_name)
     end
   end
 end
@@ -61,7 +61,7 @@ action_class do
 
   def installed?
     @installed ||= begin
-      cmd = shell_out("#{servermanagercmd} -query", returns: [0, 42, 127, 1003])
+      cmd = shell_out("#{servermanagercmd} -query", returns: [0, 42, 127, 1003], timeout: new_resource.timeout)
       cmd.stderr.empty? && (cmd.stdout =~ /^\s*?\[X\]\s.+?\s\[#{new_resource.feature_name}\]\s*$/i)
     end
   end
