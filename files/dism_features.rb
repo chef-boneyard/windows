@@ -30,7 +30,7 @@ Ohai.plugin(:DismFeatures) do
              cmd
            end
     # Grab raw feature information from dism command line
-    raw_list_of_features = shell_out("#{dism} /Get-Features /Online /Format:Table").stdout
+    raw_list_of_features = shell_out("#{dism} /Get-Features /Online /Format:Table /English").stdout
     # Split stdout into an array by windows line ending
     features_list = raw_list_of_features.split("\r\n")
     features_list.each do |feature_details_raw|
