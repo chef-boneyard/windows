@@ -54,6 +54,21 @@ windows_task 'delete task delete_me' do
   action :delete
 end
 
+windows_task 'create task run_as_group' do
+  name 'run_as_group'
+  user 'BUILTIN\Users'
+  run_level :highest
+  password 'ignored'
+  action :create
+  command 'dir'
+  notifies :create, 'file[c:/notifytest.txt]', :immediately
+end
+
+windows_task 'delete task run_as_group' do
+  name 'run_as_group'
+  action :delete
+end
+
 # not everyone tests in vagrant
 if ENV['USERNAME'] == 'vagrant' || ENV['machine_user'] == 'vagrant'
   windows_task 'task_for_system' do
