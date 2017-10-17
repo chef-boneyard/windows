@@ -2,6 +2,23 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.2.0 (2017-10-17)
+
+- Add management_tools property to windows_feature powershell provider which installs the various management tools
+- Fix deprecations_namespace_collisions
+- Add additional certificate store names
+- Add the ability to define a timeout on windows_feature
+- Multiple improvements to the font resource
+  - Improved logging, particularly debug logging
+  - Allow pulling the font from a remote location using remote_file
+  - Fix some failures in fetching local fonts
+  - Added a font_name property that allows you specify the local name of the font, which can be different from the name of the chef resource. This allows you to create more friendly resource names for your converge.
+  - Handle font resources with backslashes in their source
+- Remove source property from servermanagercmd provider as it does not support it.
+- Remove converge_by around inner powershell_script resource to stop it always reporting as changed
+- Change install feature guards to work on Windows 2008r2
+- Allow dism feature installs to work on non-English systems
+
 ## 3.1.3 (2017-09-18)
 
 ### windows_task and windows_path deprecation
