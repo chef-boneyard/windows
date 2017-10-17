@@ -42,14 +42,22 @@ action_class do
 
   def installed?
     @installed ||= begin
-      cmd = powershell_out("(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Installed\'}).count", timeout: new_resource.timeout)
+      cmd = if node['os_version'].to_f < 6.2
+              powershell_out("Import-Module ServerManager; @(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.Installed -ne $TRUE}).count", timeout: new_resource.timeout)
+            else
+              powershell_out("@(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Installed\'}).count", timeout: new_resource.timeout)
+            end
       cmd.stderr.empty? && cmd.stdout.chomp.to_i == 0
     end
   end
 
   def available?
     @available ||= begin
-      cmd = powershell_out("(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Removed\'}).count", timeout: new_resource.timeout)
+      cmd = if node['os_version'].to_f < 6.2
+              powershell_out("Import-Module ServerManager; @(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')}).count", timeout: new_resource.timeout)
+            else
+              powershell_out("@(Get-WindowsFeature #{to_array(new_resource.feature_name).join(',')} | ?{$_.InstallState -ne \'Removed\'}).count", timeout: new_resource.timeout)
+            end
       cmd.stderr.empty? && cmd.stdout.chomp.to_i > 0
     end
   end
