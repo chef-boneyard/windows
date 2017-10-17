@@ -21,10 +21,10 @@
 actions :create, :delete
 default_action :create
 
-attribute :host_name, :kind_of => String, :name_attribute => true, :required => true
-attribute :record_type, :kind_of => String, :default => 'A', :regex => /^(?:A|CNAME)$/
-attribute :dns_server, :kind_of => String, :default => '.'
-attribute :target, :kind_of => [Array, String], :required => true
-attribute :ttl, :kind_of => Integer, :required => false, :default => 0
+attribute :host_name, kind_of: String, name_attribute: true, required: true
+attribute :record_type, kind_of: String, default: 'A', regex: /^(?:A|CNAME)$/
+attribute :dns_server, kind_of: String, default: '.'
+attribute :target, kind_of: [Array, String], required: true
+attribute :ttl, kind_of: Integer, required: false, default: 0
 
 attr_accessor :exists
