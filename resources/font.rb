@@ -26,7 +26,7 @@ include Windows::Helper
 
 action :install do
   if font_exists?
-    Chef::Log.debug("Not installing font: #{new_resource.name}, font already installed.")
+    Chef::Log.debug("Not installing font: #{new_resource.name} as font already installed.")
   else
     retrieve_cookbook_font
     install_font
@@ -62,7 +62,7 @@ action_class do
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
     folder = WIN32OLE.new('Shell.Application').Namespace(fonts_dir)
-    converge_by("install font #{new_resource.name}") do
+    converge_by("install font #{new_resource.name} to #{fonts_dir}") do
       folder.CopyHere(win_friendly_path(::File.join(ENV['TEMP'], new_resource.name)))
     end
   end
@@ -75,6 +75,7 @@ action_class do
   def font_exists?
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
+    Chef::Log.debug("Seeing if the font at #{win_friendly_path(::File.join(fonts_dir, new_resource.name))} exists")
     ::File.exist?(win_friendly_path(::File.join(fonts_dir, new_resource.name)))
   end
 
@@ -89,10 +90,14 @@ action_class do
   def source_uri
     begin
       require 'uri'
-      return new_resource.source if remote_file_schema?(URI.parse(new_resource.source).scheme)
-    rescue URI::InvalidURIError # C:/foo parses but C:\foo does not
-      Chef::Log.debug("source could not be processed as a URI. Most likely it's a local file with backslashes not forward slashes")
+      if remote_file_schema?(URI.parse(new_resource.source).scheme)
+        Chef::Log.debug('source property starts with ftp/http. Using source property unmodified')
+        return new_resource.source
+      end
+    rescue URI::InvalidURIError
+      Chef::Log.warn("source property of #{new_resource.source} could not be processed as a URI. Check the format you provided.")
     end
+    Chef::Log.debug('source property does not start with ftp/http. Prepending with file:// as it appears to be a local file.')
     "file://#{new_resource.source}"
   end
 end
