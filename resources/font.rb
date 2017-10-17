@@ -26,7 +26,7 @@ include Windows::Helper
 
 action :install do
   if font_exists?
-    Chef::Log.debug("Not installing font: #{new_resource.name} as font already installed.")
+    Chef::Log.debug("Not installing font: #{new_resource.font_name} as font already installed.")
   else
     retrieve_cookbook_font
     install_font
@@ -36,7 +36,7 @@ end
 
 action_class do
   def retrieve_cookbook_font
-    font_file = new_resource.name
+    font_file = new_resource.font_name
     if new_resource.source
       remote_file font_file do
         action :nothing
@@ -53,7 +53,7 @@ action_class do
   end
 
   def del_cookbook_font
-    file ::File.join(ENV['TEMP'], new_resource.name) do
+    file ::File.join(ENV['TEMP'], new_resource.font_name) do
       action :delete
     end
   end
@@ -62,12 +62,12 @@ action_class do
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
     folder = WIN32OLE.new('Shell.Application').Namespace(fonts_dir)
-    converge_by("install font #{new_resource.name} to #{fonts_dir}") do
-      folder.CopyHere(win_friendly_path(::File.join(ENV['TEMP'], new_resource.name)))
+    converge_by("install font #{new_resource.font_name} to #{fonts_dir}") do
+      folder.CopyHere(win_friendly_path(::File.join(ENV['TEMP'], new_resource.font_name)))
     end
   end
 
-  # Check to see if the font is installed
+  # Check to see if the font is installed in the fonts dir
   #
   # === Returns
   # <true>:: If the font is installed
@@ -75,8 +75,8 @@ action_class do
   def font_exists?
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
-    Chef::Log.debug("Seeing if the font at #{win_friendly_path(::File.join(fonts_dir, new_resource.name))} exists")
-    ::File.exist?(win_friendly_path(::File.join(fonts_dir, new_resource.name)))
+    Chef::Log.debug("Seeing if the font at #{win_friendly_path(::File.join(fonts_dir, new_resource.font_name))} exists")
+    ::File.exist?(win_friendly_path(::File.join(fonts_dir, new_resource.font_name)))
   end
 
   # is the parsed schema one supported by remote file.
