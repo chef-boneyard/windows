@@ -20,7 +20,7 @@
 #
 
 property :font_name, String, name_property: true
-property :source, String, required: false
+property :source, String, required: false, coerce: proc { |x| x.tr('\\', '/').gsub('//', '/') }
 
 include Windows::Helper
 
