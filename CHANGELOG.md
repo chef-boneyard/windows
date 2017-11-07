@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.3.0 (2017-11-06)
+
+- Add new dns resource. See readme for examples
+- Add BUILTIN\Users to SYSTEM_USERS for windows_task
+
 ## 3.2.0 (2017-10-17)
 
 - Add management_tools property to windows_feature powershell provider which installs the various management tools
