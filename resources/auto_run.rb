@@ -22,9 +22,14 @@
 property :program, String
 property :name, String, name_property: true
 property :args, String
+property :root,
+         Symbol,
+         equal_to: %i(machine user),
+         coerce: proc { |x| x.to_sym },
+         default: :machine
 
 action :create do
-  registry_key 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
+  registry_key registry_path do
     values [{
       name: new_resource.name,
       type: :string,
@@ -35,12 +40,19 @@ action :create do
 end
 
 action :remove do
-  registry_key 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
+  registry_key registry_path do
     values [{
       name: new_resource.name,
       type: :string,
       data: '',
     }]
     action :delete
+  end
+end
+
+action_class do
+  def registry_path
+    { machine: 'HKLM', user: 'HKCU' }[new_resource.root] + \
+      '\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run'
   end
 end
