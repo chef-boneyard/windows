@@ -22,7 +22,7 @@
 
 require 'resolv'
 
-property :ipv4_address, String, name_attribute: true, required: true, regex: Resolv::IPv4::Regex
+property :ipv4_address, String, name_property: true, required: true, regex: Resolv::IPv4::Regex
 property :port_name, String
 property :port_number, Integer, default: 9100
 property :port_description, String
