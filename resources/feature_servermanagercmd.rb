@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], name_attribute: true
+property :feature_name, [Array, String], name_property: true
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 
