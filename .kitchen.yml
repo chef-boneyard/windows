@@ -18,7 +18,7 @@ verifier:
 platforms:
   - name: windows-8.1
     driver_config:
-      box: chef/windows-8.1-professional
+      box: chef/windows-8.1-enterprise
   - name: windows-10
     driver_config:
       box: chef/windows-10-enterprise
