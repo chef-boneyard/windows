@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.4.0 (2017-11-14)
+
+- Add a root key property for the auto_run resource
+- Fix a resource typo where a name_property was still written name_attribute
+- Resolve FC108 warnings
+
 ## 3.3.0 (2017-11-06)
 
 - Add new dns resource. See readme for examples
