@@ -20,7 +20,6 @@
 #
 
 property :program, String
-property :name, String, name_property: true
 property :args, String
 property :root,
          Symbol,
