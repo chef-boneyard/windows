@@ -136,7 +136,6 @@ action :run do
     else
       converge_by("running scheduled task #{new_resource.task_name}") do
         run_schtasks 'RUN'
-        new_resource.updated_by_last_action true
       end
     end
   else
