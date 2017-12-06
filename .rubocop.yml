@@ -1,5 +1,12 @@
 # rubocop todo
 
+# These were backported from chef/chef and since we'll probably backport another fix later
+# I want to be able to diff the code easily
+AllCops:
+  Exclude:
+    - 'libraries/backported_task_provider.rb'
+    - 'libraries/backported_task_resource.rb'
+
 Lint/HandleExceptions:
   Exclude:
     - 'libraries/registry_helper.rb'
