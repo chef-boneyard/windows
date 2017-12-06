@@ -16,10 +16,14 @@
 # limitations under the License.
 #
 
-require "chef/mixin/shell_out"
-require "rexml/document"
-require "iso8601"
-require "chef/mixin/powershell_out"
+begin
+  require "chef/mixin/shell_out"
+  require "rexml/document"
+  require "iso8601"
+  require "chef/mixin/powershell_out"
+rescue LoadError
+  # On Chef 12 where iso8601 doesn't exist in Ruby 2.0
+end
 
 class Chef
   class Provider
