@@ -147,7 +147,7 @@ action_class do
   end
 
   def different_members?(permission_type)
-    !(current_resource.send(permission_type.to_sym) - new_resource.send(permission_type.to_sym).map(&:downcase)).empty? &&
+    !(current_resource.send(permission_type.to_sym) - new_resource.send(permission_type.to_sym).map(&:downcase)).empty? ||
       !(new_resource.send(permission_type.to_sym).map(&:downcase) - current_resource.send(permission_type.to_sym)).empty?
   end
 
@@ -230,7 +230,7 @@ action_class do
         )
         #Create the Trusteee Object
         $Trustee = ([WMIClass] "\\\\$env:computername\\root\\cimv2:Win32_Trustee").CreateInstance()
-        $account = get-wmiobject Win32_Account -filter "Name like '$Name' and Domain like '$Domain'"
+        $account = get-wmiobject Win32_Account -filter "Name = '$Name' and Domain = '$Domain'"
         $accountSID = [WMI] "\\\\$env:ComputerName\\root\\cimv2:Win32_SID.SID='$($account.sid)'"
 
         $Trustee.Domain = $Domain
