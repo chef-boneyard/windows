@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.4.1 (2017-12-06)
+
+- Fix long-running filtering by replace LIKE with equality sign in the share resource
+- Use logical OR instead of AND when trying to detect share permissions changing in the share resource
+- Remove extra new_resource.updated_by_last_action in the windows_task resource that resulted in a Foodcritic warning
+
 ## 3.4.0 (2017-11-14)
 
 - Add a root key property for the auto_run resource
