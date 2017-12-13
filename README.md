@@ -436,7 +436,7 @@ end
 
 Create Windows printer. Note that this doesn't currently install a printer driver. You must already have the driver installed on the system.
 
-The Windows Printer LWRP will automatically create a TCP/IP printer port for you using the `ipv4_address` property. If you want more granular control over the printer port, just create it using the `windows_printer_port` LWRP before creating the printer.
+The Windows Printer resource will automatically create a TCP/IP printer port for you using the `ipv4_address` property. If you want more granular control over the printer port, just create it using the `windows_printer_port` resource before creating the printer.
 
 #### Actions
 
@@ -804,7 +804,7 @@ end
 
 ## Windows ChefSpec Matchers
 
-The Windows cookbook includes custom [ChefSpec](https://github.com/sethvargo/chefspec) matchers you can use to test your own cookbooks that consume Windows cookbook LWRPs.
+The Windows cookbook includes custom [ChefSpec](https://github.com/sethvargo/chefspec) matchers you can use to test your own cookbooks that consume Windows cookbook resources.
 
 ### Example Matcher Usage
 
