@@ -303,9 +303,7 @@ end
 
 ### windows_font
 
-Installs a font.
-
-Font files should be included in the cookbooks
+Installs font files. Sources the font by default from the cookbook, but a URI source can be specified as well.
 
 #### Actions
 
