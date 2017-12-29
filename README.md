@@ -663,6 +663,79 @@ windows_task '\Microsoft\Windows\Application Experience\ProgramDataUpdater' do
 end
 ```
 
+### windows_user_privilege
+
+Adds the `principal` (User/Group) to the specified privileges (such as `Logon as a batch job` or `Logon as a Service`).
+
+#### Actions
+
+- `:add` - add the specified privileges to the `principal`
+
+#### Properties
+
+- `principal` - Name attribute, Required, String. The user or group to be granted privileges.
+- `privilege` - Required, String/Array. The privilege(s) to be granted.
+
+#### Examples
+
+Grant the Administrator user the `Logon as a batch job` and `Logon as a service` privilege.
+
+```ruby
+windows_user_privilege 'Administrator' do
+  privilege %w(SeBatchLogonRight SeServiceLogonRight)
+end
+```
+
+#### Available Privileges
+
+```
+SeTrustedCredManAccessPrivilege      Access Credential Manager as a trusted caller
+SeNetworkLogonRight                  Access this computer from the network
+SeTcbPrivilege                       Act as part of the operating system
+SeMachineAccountPrivilege            Add workstations to domain
+SeIncreaseQuotaPrivilege             Adjust memory quotas for a process
+SeInteractiveLogonRight              Allow log on locally
+SeRemoteInteractiveLogonRight        Allow log on through Remote Desktop Services
+SeBackupPrivilege                    Back up files and directories
+SeChangeNotifyPrivilege              Bypass traverse checking
+SeSystemtimePrivilege                Change the system time
+SeTimeZonePrivilege                  Change the time zone
+SeCreatePagefilePrivilege            Create a pagefile
+SeCreateTokenPrivilege               Create a token object
+SeCreateGlobalPrivilege              Create global objects
+SeCreatePermanentPrivilege           Create permanent shared objects
+SeCreateSymbolicLinkPrivilege        Create symbolic links
+SeDebugPrivilege                     Debug programs
+SeDenyNetworkLogonRight              Deny access this computer from the network
+SeDenyBatchLogonRight                Deny log on as a batch job
+SeDenyServiceLogonRight              Deny log on as a service
+SeDenyInteractiveLogonRight          Deny log on locally
+SeDenyRemoteInteractiveLogonRight    Deny log on through Remote Desktop Services
+SeEnableDelegationPrivilege          Enable computer and user accounts to be trusted for delegation
+SeRemoteShutdownPrivilege            Force shutdown from a remote system
+SeAuditPrivilege                     Generate security audits
+SeImpersonatePrivilege               Impersonate a client after authentication
+SeIncreaseWorkingSetPrivilege        Increase a process working set
+SeIncreaseBasePriorityPrivilege      Increase scheduling priority
+SeLoadDriverPrivilege                Load and unload device drivers
+SeLockMemoryPrivilege                Lock pages in memory
+SeBatchLogonRight                    Log on as a batch job
+SeServiceLogonRight                  Log on as a service
+SeSecurityPrivilege                  Manage auditing and security log
+SeRelabelPrivilege                   Modify an object label
+SeSystemEnvironmentPrivilege         Modify firmware environment values
+SeManageVolumePrivilege              Perform volume maintenance tasks
+SeProfileSingleProcessPrivilege      Profile single process
+SeSystemProfilePrivilege             Profile system performance
+SeUnsolicitedInputPrivilege          "Read unsolicited input from a terminal device"
+SeUndockPrivilege                    Remove computer from docking station
+SeAssignPrimaryTokenPrivilege        Replace a process level token
+SeRestorePrivilege                   Restore files and directories
+SeShutdownPrivilege                  Shut down the system
+SeSyncAgentPrivilege                 Synchronize directory service data
+SeTakeOwnershipPrivilege             Take ownership of files or other objects
+```
+
 ### windows_zipfile
 
 Most version of Windows do not ship with native cli utility for managing compressed files. This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
