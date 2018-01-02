@@ -97,6 +97,8 @@ load_current_value do |desired|
 end
 
 action :create do
+  Chef::Log.warn('The windows_task resource has been moved into the chef-client itself as of chef-client 13. This resource will be removed from the windows cookbook Sept 2018 (18 months after the Chef 13 release).')
+
   if current_resource.exists && !(task_need_update? || new_resource.force)
     Chef::Log.info "#{new_resource} task already exists - nothing to do"
   else
@@ -130,6 +132,8 @@ action :create do
 end
 
 action :run do
+  Chef::Log.warn('The windows_task resource has been moved into the chef-client itself as of chef-client 13. This resource will be removed from the windows cookbook Sept 2018 (18 months after the Chef 13 release).')
+
   if current_resource.exists
     if current_resource.status == :running
       Chef::Log.info "#{new_resource} task is currently running, skipping run"
@@ -144,6 +148,8 @@ action :run do
 end
 
 action :change do
+  Chef::Log.warn('The windows_task resource has been moved into the chef-client itself as of chef-client 13. This resource will be removed from the windows cookbook Sept 2018 (18 months after the Chef 13 release).')
+
   if current_resource.exists
     converge_by("changing scheduled task #{new_resource.task_name}") do
       validate_user_and_password
@@ -166,6 +172,8 @@ action :change do
 end
 
 action :delete do
+  Chef::Log.warn('The windows_task resource has been moved into the chef-client itself as of chef-client 13. This resource will be removed from the windows cookbook Sept 2018 (18 months after the Chef 13 release).')
+
   if current_resource.exists
     converge_by("deleting scheduled task #{new_resource.task_name}") do
       # always need to force deletion
@@ -177,6 +185,8 @@ action :delete do
 end
 
 action :end do
+  Chef::Log.warn('The windows_task resource has been moved into the chef-client itself as of chef-client 13. This resource will be removed from the windows cookbook Sept 2018 (18 months after the Chef 13 release).')
+
   if current_resource.exists
     if current_resource.status != :running
       Chef::Log.debug "#{new_resource} is not running - nothing to do"
@@ -192,6 +202,8 @@ action :end do
 end
 
 action :enable do
+  Chef::Log.warn('The windows_task resource has been moved into the chef-client itself as of chef-client 13. This resource will be removed from the windows cookbook Sept 2018 (18 months after the Chef 13 release).')
+
   if current_resource.exists
     if current_resource.enabled
       Chef::Log.debug "#{new_resource} already enabled - nothing to do"
@@ -207,6 +219,8 @@ action :enable do
 end
 
 action :disable do
+  Chef::Log.warn('The windows_task resource has been moved into the chef-client itself as of chef-client 13. This resource will be removed from the windows cookbook Sept 2018 (18 months after the Chef 13 release).')
+
   if current_resource.exists
     if current_resource.enabled
       converge_by("disabling scheduled task #{new_resource.task_name}") do
