@@ -28,7 +28,7 @@ platforms:
   - name: windows-2012r2
     driver_config:
       box: chef/windows-server-2012r2-standard
-  - name: windows-2016-chef-12.6
+  - name: windows-2016-chef-12.7
     driver_config:
       box: chef/windows-server-2016-standard
     provisioner:
