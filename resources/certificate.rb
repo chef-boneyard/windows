@@ -106,7 +106,7 @@ action_class do
     if ::File.extname(file.downcase) == '.pfx'
       cert_script << ", \"#{new_resource.pfx_password}\""
       if persist && new_resource.user_store
-        cert_script << ', [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet'
+        cert_script << ', ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet)'
       elsif persist
         cert_script << ', ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet -bor [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::MachineKeyset)'
       end
