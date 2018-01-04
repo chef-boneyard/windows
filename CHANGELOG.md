@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.4.3 (2018-01-04)
+
+- Added missing parentheses around PersistKeySet flag that was preventing PowerShell from creating X509Certificate2 object
+
 ## 3.4.2 (2018-01-02)
 
 - Add deprecation warnings for windows_path and windows_task which are now included in Chef 13. These will be removed from this cookbook in Sept 2018.
