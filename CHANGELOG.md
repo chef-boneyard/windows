@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.4.4 (2018-01-19)
+
+- Fix undefined method for 'ipv4_address' in windows_printer_port
+
 ## 3.4.3 (2018-01-04)
 
 - Added missing parentheses around PersistKeySet flag that was preventing PowerShell from creating X509Certificate2 object
