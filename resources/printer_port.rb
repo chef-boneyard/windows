@@ -42,8 +42,8 @@ end
 load_current_value do |desired|
   name desired.name
   ipv4_address desired.ipv4_address
-  port_name desired.port_name || "IP_#{@new_resource.ipv4_address}"
-  exists port_exists?(desired.port_name)
+  port_name desired.port_name || "IP_#{desired.ipv4_address}"
+  exists port_exists?(desired.port_name || "IP_#{desired.ipv4_address}")
   # TODO: Set @current_resource port properties from registry
 end
 
