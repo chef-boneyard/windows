@@ -803,60 +803,6 @@ case ::Windows::VersionHelper.nt_version node
 end
 ```
 
-## Windows ChefSpec Matchers
-
-The Windows cookbook includes custom [ChefSpec](https://github.com/sethvargo/chefspec) matchers you can use to test your own cookbooks that consume Windows cookbook resources.
-
-### Example Matcher Usage
-
-```ruby
-expect(chef_run).to install_windows_package('Node.js').with(
-  source: 'http://nodejs.org/dist/v0.10.26/x64/node-v0.10.26-x64.msi')
-```
-
-### Windows Cookbook Matchers
-
-- create_windows_auto_run
-- remove_windows_auto_run
-- create_windows_certificate
-- delete_windows_certificate
-- add_acl_to_windows_certificate
-- create_windows_certificate_binding
-- delete_windows_certificate_binding
-- install_windows_feature
-- install_windows_feature_dism
-- install_windows_feature_servermanagercmd
-- install_windows_feature_powershell
-- remove_windows_feature
-- remove_windows_feature_dism
-- remove_windows_feature_servermanagercmd
-- remove_windows_feature_powershell
-- delete_windows_feature
-- delete_windows_feature_dism
-- delete_windows_feature_powershell
-- install_windows_font
-- create_windows_http_acl
-- delete_windows_http_acl
-- install_windows_package
-- remove_windows_package
-- set_windows_pagefile
-- add_windows_path
-- remove_windows_path
-- create_windows_printer
-- delete_windows_printer
-- create_windows_printer_port
-- delete_windows_printer_port
-- create_windows_shortcut
-- create_windows_shortcut
-- create_windows_task
-- disable_windows_task
-- enable_windows_task
-- delete_windows_task
-- run_windows_task
-- change_windows_task
-- unzip_windows_zipfile_to
-- zip_windows_zipfile_to
-
 ## Usage
 
 Place an explicit dependency on this cookbook (using depends in the cookbook's metadata.rb) from any cookbook where you would like to use the Windows-specific resources/providers that ship with this cookbook.
