@@ -31,7 +31,8 @@ property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'CLI
 property :exists, [true, false], desired_state: true
 
 load_current_value do |desired|
-  cmd = shell_out("#{locate_sysnative_cmd('netsh.exe')} http show sslcert ipport=#{desired.address}:#{desired.port}")
+  mode = desired.address.match(/(\d+\.){3}\d+|\[.+\]/).nil? ? 'hostnameport' : 'ipport'
+  cmd = shell_out("#{locate_sysnative_cmd('netsh.exe')} http show sslcert #{mode}=#{desired.address}:#{desired.port}")
   Chef::Log.debug "netsh reports: #{cmd.stdout}"
 
   address desired.address
@@ -88,7 +89,8 @@ action_class do
 
   def add_binding(hash)
     cmd = "#{netsh_command} http add sslcert"
-    cmd << " ipport=#{current_resource.address}:#{current_resource.port}"
+    mode = address_mode(current_resource.address)
+    cmd << " #{mode}=#{current_resource.address}:#{current_resource.port}"
     cmd << " certhash=#{hash}"
     cmd << " appid=#{current_resource.app_id}"
     cmd << " certstorename=#{current_resource.store_name}"
@@ -98,7 +100,8 @@ action_class do
   end
 
   def delete_binding
-    shell_out!("#{netsh_command} http delete sslcert ipport=#{current_resource.address}:#{current_resource.port}")
+    mode = address_mode(current_resource.address)
+    shell_out!("#{netsh_command} http delete sslcert #{mode}=#{current_resource.address}:#{current_resource.port}")
   end
 
   def check_hash(hash)
@@ -124,5 +127,9 @@ action_class do
     # seem to get a UTF-8 string with BOM returned sometimes! Strip any such BOM
     hash = p.stdout.strip
     hash[0].ord == 239 ? hash.force_encoding('UTF-8').delete!("\xEF\xBB\xBF".force_encoding('UTF-8')) : hash
+  end
+
+  def address_mode(address)
+    address.match(/(\d+\.){3}\d+|\[.+\]/).nil? ? 'hostnameport' : 'ipport'
   end
 end
