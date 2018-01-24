@@ -34,5 +34,11 @@ describe 'test::certificate' {
       $binding[5] | Should Match ' : 5081f667f1ef005d0ec39fa3e30aa71b4fd84eb6$'
       $binding[6] | Should Match ' : {00000000-0000-0000-0000-000000000000}\s*$'
     }
+
+    it "binds test-cert to port 443 with host www.chef.io" {
+      $binding = netsh http show sslcert hostnameport=www.chef.io:443
+      $binding[4] | Should Match ' : www.chef.io:443\s*$'
+      $binding[5] | Should Match ' : 5081f667f1ef005d0ec39fa3e30aa71b4fd84eb6$'
+    }
   }
 }
