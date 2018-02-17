@@ -3,10 +3,6 @@ $global:progressPreference = 'SilentlyContinue'
 describe 'test::feature' {
   context 'minimal_feature' {
 
-    it "feature TelnetClient installed using dism"  {
-      Get-Command Telnet -ErrorAction SilentlyContinue | Should Not Be $Null
-    }
-
     it "feature TFTP Client installed using powershell"  {
       Get-Command tftp -ErrorAction SilentlyContinue | Should Not Be $Null
     }

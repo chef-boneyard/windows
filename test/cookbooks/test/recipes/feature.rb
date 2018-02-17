@@ -1,10 +1,5 @@
-windows_feature 'TelnetClient' do
-  action :install
-end
-
 windows_feature 'TFTP-Client' do
   action :install
-  install_method :windows_feature_powershell
 end
 
 # This is for appveyor, which already seems to have FTP installed

@@ -44,6 +44,8 @@ suites:
   - name: feature
     run_list:
       - recipe[test::feature]
+    verifier:
+      name: inspec      
   - name: font
     run_list:
       - recipe[test::font]
