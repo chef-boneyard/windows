@@ -39,3 +39,9 @@ windows_certificate_binding '444-appid' do
   port 444
   app_id '{00000000-0000-0000-0000-000000000000}'
 end
+
+windows_certificate_binding '443-hostname' do
+  cert_name 'ChefDummyCertForTest'
+  store_name 'CA'
+  address 'www.chef.io'
+end

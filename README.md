@@ -118,7 +118,10 @@ Binds a certificate to an HTTP port in order to enable TLS communication.
 
 - `cert_name` - name attribute. The thumbprint(hash) or subject that identifies the certificate to be bound.
 - `name_kind` - indicates the type of cert_name. One of :subject (default) or :hash.
-- `address` - the address to bind against. Default is 0.0.0.0 (all IP addresses).
+- `address` - the address to bind against. Default is 0.0.0.0 (all IP addresses). One of:
+  - IP v4 address `1.2.3.4`
+  - IP v6 address `[::1]`
+  - Host name `www.foo.com`
 - `port` - the port to bind against. Default is 443.
 - `app_id` - the GUID that defines the application that owns the binding. Default is the values used by IIS.
 - `store_name` - the store to locate the certificate in. One of:
