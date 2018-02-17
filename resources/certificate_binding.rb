@@ -22,7 +22,7 @@ include Chef::Mixin::ShellOut
 include Chef::Mixin::PowershellOut
 include Windows::Helper
 
-property :cert_name, String, name_property: true, required: true
+property :cert_name, String, name_property: true
 property :name_kind, Symbol, equal_to: [:hash, :subject], default: :subject
 property :address, String, default: '0.0.0.0'
 property :port, Integer, default: 443
