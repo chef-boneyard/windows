@@ -49,6 +49,8 @@ suites:
   - name: font
     run_list:
       - recipe[test::font]
+    verifier:
+      name: inspec
   - name: http_acl
     run_list:
       - recipe[test::http_acl]
