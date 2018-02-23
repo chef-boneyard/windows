@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-property :filename, String, name_property: true
+property :filename, String, coerce: proc { |x| x.tr('\\', '/').gsub('//', '/') }, name_property: true
 property :system_managed, [true, false]
 property :automatic_managed, [true, false], default: false
 property :initial_size, Integer
