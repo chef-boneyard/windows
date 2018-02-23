@@ -19,6 +19,7 @@
 # limitations under the License.
 #
 
+property :filename, String, name_property: true
 property :system_managed, [true, false]
 property :automatic_managed, [true, false], default: false
 property :initial_size, Integer
@@ -28,7 +29,7 @@ include Chef::Mixin::ShellOut
 include Windows::Helper
 
 action :set do
-  pagefile = new_resource.name
+  pagefile = new_resource.filename
   initial_size = new_resource.initial_size
   maximum_size = new_resource.maximum_size
   system_managed = new_resource.system_managed
@@ -57,14 +58,14 @@ end
 
 action :delete do
   validate_name
-  pagefile = new_resource.name
+  pagefile = new_resource.filename
   delete(pagefile) if exists?(pagefile)
 end
 
 action_class do
   def validate_name
-    return if /^.:.*.sys/ =~ new_resource.name
-    raise "#{new_resource.name} does not match the format DRIVE:\\path\\file.sys for pagefiles. Example: C:\\pagefile.sys"
+    return if /^.:.*.sys/ =~ new_resource.filename
+    raise "#{new_resource.filename} does not match the format DRIVE:\\path\\file.sys for pagefiles. Example: C:\\pagefile.sys"
   end
 
   def exists?(pagefile)
