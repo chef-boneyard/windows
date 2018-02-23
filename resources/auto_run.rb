@@ -44,7 +44,6 @@ action :remove do
       type: :string,
       data: '',
     }]
-    action :delete
   end
 end
 
