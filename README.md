@@ -316,7 +316,7 @@ Installs font files. Sources the font by default from the cookbook, but a URI so
 #### Properties
 
 - `font_name` - The file name of the font file name to install. The path defaults to the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
-- `source` - Set an alternate path/URI to the font file.
+- `source` - A local filesystem path or URI to source the font file from..
 
 #### Examples
 
