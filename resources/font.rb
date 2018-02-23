@@ -3,8 +3,8 @@
 # Cookbook:: windows
 # Resource:: font
 #
-# Copyright:: 2014-2017, Schuberg Philis BV.
-# Copyright:: 2017, Chef Software, Inc.
+# Copyright:: 2014-2018, Schuberg Philis BV.
+# Copyright:: 2017-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@
 # limitations under the License.
 #
 
+require 'chef/util/path_helper'
+
 property :font_name, String, name_property: true
 property :source, String, required: false, coerce: proc { |x| x.tr('\\', '/').gsub('//', '/') }
-
-include Windows::Helper
 
 action :install do
   if font_exists?
@@ -41,19 +41,19 @@ action_class do
       remote_file font_file do
         action :nothing
         source source_uri
-        path win_friendly_path(::File.join(ENV['TEMP'], font_file))
+        path Chef::Util::PathHelper.join(ENV['TEMP'], font_file)
       end.run_action(:create)
     else
       cookbook_file font_file do
         action    :nothing
         cookbook  cookbook_name.to_s unless cookbook_name.nil?
-        path      win_friendly_path(::File.join(ENV['TEMP'], font_file))
+        path      Chef::Util::PathHelper.join(ENV['TEMP'], font_file)
       end.run_action(:create)
     end
   end
 
   def del_cookbook_font
-    file ::File.join(ENV['TEMP'], new_resource.font_name) do
+    file Chef::Util::PathHelper.join(ENV['TEMP'], new_resource.font_name) do
       action :delete
     end
   end
@@ -63,20 +63,19 @@ action_class do
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
     folder = WIN32OLE.new('Shell.Application').Namespace(fonts_dir)
     converge_by("install font #{new_resource.font_name} to #{fonts_dir}") do
-      folder.CopyHere(win_friendly_path(::File.join(ENV['TEMP'], new_resource.font_name)))
+      folder.CopyHere(Chef::Util::PathHelper.join(ENV['TEMP'], new_resource.font_name))
     end
   end
 
   # Check to see if the font is installed in the fonts dir
   #
-  # === Returns
-  # <true>:: If the font is installed
-  # <false>:: If the font is not instaled
+  # @return [true] If the font is installed
+  # @return [false] If the font is not instaled
   def font_exists?
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
-    Chef::Log.debug("Seeing if the font at #{win_friendly_path(::File.join(fonts_dir, new_resource.font_name))} exists")
-    ::File.exist?(win_friendly_path(::File.join(fonts_dir, new_resource.font_name)))
+    Chef::Log.debug("Seeing if the font at #{Chef::Util::PathHelper.join(fonts_dir, new_resource.font_name)} exists")
+    ::File.exist?(Chef::Util::PathHelper.join(fonts_dir, new_resource.font_name))
   end
 
   # is the parsed schema one supported by remote file.
