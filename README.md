@@ -375,7 +375,7 @@ Configures the file that provides virtual memory for applications requiring more
 
 #### Properties
 
-- `name` - the path to the pagefile, String, name_property: true
+- `path` - the path to the pagefile, String, name_property: true
 - `system_managed` - configures whether the system manages the pagefile size. [true, false]
 - `automatic_managed` - all of the settings are managed by the system. If this is set to true, other settings will be ignored. [true, false], default: false
 - `initial_size` - initial size of the pagefile in bytes. Integer
