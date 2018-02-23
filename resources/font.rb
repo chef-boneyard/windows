@@ -35,6 +35,7 @@ action :install do
 end
 
 action_class do
+  # if a source is specified fetch using remote_file. If not use cookbook_file
   def retrieve_cookbook_font
     font_file = new_resource.font_name
     if new_resource.source
@@ -52,12 +53,14 @@ action_class do
     end
   end
 
+  # delete the temp cookbook file
   def del_cookbook_font
     file Chef::Util::PathHelper.join(ENV['TEMP'], new_resource.font_name) do
       action :delete
     end
   end
 
+  # install the font into the appropriate fonts directory
   def install_font
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
@@ -69,8 +72,7 @@ action_class do
 
   # Check to see if the font is installed in the fonts dir
   #
-  # @return [true] If the font is installed
-  # @return [false] If the font is not instaled
+  # @return [Boolean] Is the font is installed?
   def font_exists?
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
     fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
@@ -78,14 +80,18 @@ action_class do
     ::File.exist?(Chef::Util::PathHelper.join(fonts_dir, new_resource.font_name))
   end
 
-  # is the parsed schema one supported by remote file.
-  # URI will parse C:/foo as schema 'c' so we need to detect that
+  # Parse out the schema provided to us to see if it's one we support via remote_file.
+  # We do this because URI will parse C:/foo as schema 'c', which won't work with remote_file
+  #
+  # @return [Boolean]
   def remote_file_schema?(schema)
     return true if %w(http https ftp).include?(schema)
   end
 
   # return new_resource.source if we have a proper URI specified
   # if it's a local file listed as a source return it in file:// format
+  #
+  # @return [String] path to the font  def source_uri
   def source_uri
     begin
       require 'uri'
