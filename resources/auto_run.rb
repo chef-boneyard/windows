@@ -3,8 +3,8 @@
 # Cookbook:: windows
 # Resource:: auto_run
 #
-# Copyright:: 2011-2017, Business Intelligence Associates, Inc.
-# Copyright:: 2017, Chef Software, Inc.
+# Copyright:: 2011-2018, Business Intelligence Associates, Inc.
+# Copyright:: 2017-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ property :args, String
 property :root,
          Symbol,
          equal_to: %i(machine user),
-         coerce: proc { |x| x.to_sym },
          default: :machine
 
 action :create do
