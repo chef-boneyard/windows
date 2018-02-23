@@ -19,19 +19,20 @@
 # limitations under the License.
 #
 
-property :program, String
+property :program_name, String, name_property: true
+property :path, String, coerce: proc { |x| x.tr('/', '\\').tr('\\\\', '\\') }
 property :args, String
-property :root,
-         Symbol,
+property :root, Symbol,
          equal_to: %i(machine user),
          default: :machine
 
+alias_method :program, :path
 action :create do
   registry_key registry_path do
     values [{
-      name: new_resource.name,
+      name: new_resource.program_name,
       type: :string,
-      data: "\"#{new_resource.program}\" #{new_resource.args}",
+      data: "\"#{new_resource.path}\" #{new_resource.args}",
     }]
     action :create
   end
@@ -40,7 +41,7 @@ end
 action :remove do
   registry_key registry_path do
     values [{
-      name: new_resource.name,
+      name: new_resource.program_name,
       type: :string,
       data: '',
     }]

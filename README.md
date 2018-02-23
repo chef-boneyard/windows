@@ -33,8 +33,8 @@ As of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included
 
 #### Properties
 
-- `name` - Name attribute. The name of the value to be stored in the registry
-- `program` - The program to be run at login
+- `program_name` - Name attribute. The name of the value to be stored in the registry
+- `path` - The program to be run at login. This property was previous named `program`. Cookbooks using the `program` property will continue to function, but should be updated.
 - `args` - The arguments for the program
 - `root` - The registry root key to put the entry under--`:machine` (default) or `:user`
 
