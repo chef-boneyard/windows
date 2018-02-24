@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.5.1 (2018-02-23)
+
+- Add a new `shortcut_name` property to `windows_shortcut`
+- Use Chef's built in registry_key_exists helper in `windows_printer_port`
+- Fix the `source` coerce in `windows_font`
+
 ## 3.5.0 (2018-02-23)
 
 - Add Windows 2016 to the supported releases in the readme
