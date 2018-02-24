@@ -38,6 +38,8 @@ suites:
   - name: autorun
     run_list:
       - recipe[test::autorun]
+    verifier:
+      name: inspec
   - name: certificate
     run_list:
       - recipe[test::certificate]
@@ -45,7 +47,7 @@ suites:
     run_list:
       - recipe[test::feature]
     verifier:
-      name: inspec      
+      name: inspec
   - name: font
     run_list:
       - recipe[test::font]
