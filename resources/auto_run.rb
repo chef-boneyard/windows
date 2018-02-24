@@ -27,12 +27,16 @@ property :root, Symbol,
          default: :machine
 
 alias_method :program, :path
+
 action :create do
+  data = "\"#{new_resource.path}\""
+  data << " #{new_resource.args}" if new_resource.args
+
   registry_key registry_path do
     values [{
       name: new_resource.program_name,
       type: :string,
-      data: "\"#{new_resource.path}\" #{new_resource.args}",
+      data: data,
     }]
     action :create
   end
