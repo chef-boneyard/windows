@@ -20,7 +20,7 @@
 #
 
 property :program_name, String, name_property: true
-property :path, String, coerce: proc { |x| x.tr('/', '\\').tr('\\\\', '\\') }
+property :path, String, coerce: proc { |x| x.tr('/', '\\') }
 property :args, String
 property :root, Symbol,
          equal_to: %i(machine user),
