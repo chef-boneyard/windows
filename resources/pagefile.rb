@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-property :filename, String, coerce: proc { |x| x.tr('\\', '/').gsub('//', '/') }, name_property: true
+property :path, String, coerce: proc { |x| x.tr('//', '/').tr('/','\\') }, name_property: true
 property :system_managed, [true, false]
 property :automatic_managed, [true, false], default: false
 property :initial_size, Integer
@@ -28,7 +28,7 @@ property :maximum_size, Integer
 include Windows::Helper
 
 action :set do
-  pagefile = new_resource.filename
+  pagefile = new_resource.path
   initial_size = new_resource.initial_size
   maximum_size = new_resource.maximum_size
   system_managed = new_resource.system_managed
@@ -57,15 +57,15 @@ end
 
 action :delete do
   validate_name
-  pagefile = new_resource.filename
+  pagefile = new_resource.path
   delete(pagefile) if exists?(pagefile)
 end
 
 action_class do
   # make sure the provided name property matches the appropriate format
   def validate_name
-    return if /^.:.*.sys/ =~ new_resource.filename
-    raise "#{new_resource.filename} does not match the format DRIVE:\\path\\file.sys for pagefiles. Example: C:\\pagefile.sys"
+    return if /^.:.*.sys/ =~ new_resource.path
+    raise "#{new_resource.path} does not match the format DRIVE:\\path\\file.sys for pagefiles. Example: C:\\pagefile.sys"
   end
 
   # See if the pagefile exists
