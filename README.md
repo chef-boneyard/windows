@@ -445,18 +445,18 @@ The Windows Printer resource will automatically create a TCP/IP printer port for
 #### Actions
 
 - `:create` - Create a new printer
-- `:delete` - Delete a new printer
+- `:delete` - Delete an existing printer
 
 #### Properties
 
-- `device_id` - Name attribute. Required. Printer queue name, e.g. 'HP LJ 5200 in fifth floor copy room'
+- `device_id` - Printer queue name, e.g. 'HP LJ 5200 in fifth floor copy room'. Name property.
 - `comment` - Optional string describing the printer queue.
 - `default` - Boolean. Optional. Defaults to false. Note that Windows sets the first printer defined to the default printer regardless of this setting.
 - `driver_name` - String. Required. Exact name of printer driver. Note that the printer driver must already be installed on the node.
 - `location` - Printer location, e.g. 'Fifth floor copy room', or 'US/NYC/Floor42/Room4207'
 - `shared` - Boolean. Defaults to false.
 - `share_name` - Printer share name.
-- `ipv4_address` - Printer IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP address to set it. Required.
+- `ipv4_address` - Printer's IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP address to set it. Required.
 
 An error of "Set-WmiInstance : Generic failure" is most likely due to the printer driver name not matching or not being installed.
 
@@ -524,8 +524,8 @@ Creates and modifies Windows shortcuts.
 
 #### Properties
 
-- `name` - name attribute. The shortcut to create/modify.
-- `target` - what the shortcut links to
+- `shortcut_name` - The name for the shortcut if it differs from the resource name. Name property
+- `target` - Where the shortcut links to.
 - `arguments` - arguments to pass to the target when the shortcut is executed
 - `description` - description of the shortcut
 - `cwd` - Working directory to use when the target is executed
@@ -544,14 +544,6 @@ windows_shortcut "#{all_users_desktop}/Notepad.lnk" do
   description "Launch Notepad"
   iconlocation "C:\\Windows\\notepad.exe,0"
 end
-```
-
-#### Library Methods
-
-```ruby
-Registry.value_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run','BGINFO')
-Registry.key_exists?('HKLM\SOFTWARE\Microsoft')
-BgInfo = Registry.get_value('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run','BGINFO')
 ```
 
 ### windows_path
@@ -822,7 +814,7 @@ depends 'windows'
 - Author:: Doug Ireton ([doug.ireton@nordstrom.com](mailto:doug.ireton@nordstrom.com))
 
 ```text
-Copyright 2011-2016, Chef Software, Inc.
+Copyright 2011-2018, Chef Software, Inc.
 Copyright 2010, VMware, Inc.
 Copyright 2011, Business Intelligence Associates, Inc
 Copyright 2012, Nordstrom, Inc.
