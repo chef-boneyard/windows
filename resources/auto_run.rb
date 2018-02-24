@@ -54,6 +54,8 @@ action :remove do
 end
 
 action_class do
+  # determine the full registry path based on the root property
+  # @return [String]
   def registry_path
     { machine: 'HKLM', user: 'HKCU' }[new_resource.root] + \
       '\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run'
