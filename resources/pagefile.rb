@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-property :path, String, coerce: proc { |x| x.tr('//', '/').tr('/', '\\') }, name_property: true
+property :path, String, coerce: proc { |x| x.tr('/', '\\') }, name_property: true
 property :system_managed, [true, false]
 property :automatic_managed, [true, false], default: false
 property :initial_size, Integer
