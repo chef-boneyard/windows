@@ -22,7 +22,7 @@
 require 'chef/util/path_helper'
 
 property :font_name, String, name_property: true
-property :source, String, required: false, coerce: proc { |x| x.tr('\\', '/').gsub('//', '/') if /^.:.*.sys/ }
+property :source, String, required: false, coerce: proc { |x| x =~ /^.:.*/ ? x.tr('\\', '/').gsub('//', '/') : x }
 
 action :install do
   if font_exists?
@@ -91,7 +91,7 @@ action_class do
   # return new_resource.source if we have a proper URI specified
   # if it's a local file listed as a source return it in file:// format
   #
-  # @return [String] path to the font  def source_uri
+  # @return [String] path to the font
   def source_uri
     begin
       require 'uri'
