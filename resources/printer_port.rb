@@ -3,7 +3,7 @@
 # Cookbook:: windows
 # Resource:: printer_port
 #
-# Copyright:: 2012-2017, Nordstrom, Inc.
+# Copyright:: 2012-2018, Nordstrom, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,15 +36,15 @@ def port_exists?(name)
   port_reg_key = PORTS_REG_KEY + name
 
   Chef::Log.debug "Checking to see if this reg key exists: '#{port_reg_key}'"
-  Registry.key_exists?(port_reg_key)
+  registry_key_exists?(port_reg_key)
 end
 
+# @todo Set @current_resource port properties from registry
 load_current_value do |desired|
   name desired.name
   ipv4_address desired.ipv4_address
   port_name desired.port_name || "IP_#{desired.ipv4_address}"
   exists port_exists?(desired.port_name || "IP_#{desired.ipv4_address}")
-  # TODO: Set @current_resource port properties from registry
 end
 
 action :create do
