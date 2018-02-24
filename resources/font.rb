@@ -22,7 +22,7 @@
 require 'chef/util/path_helper'
 
 property :font_name, String, name_property: true
-property :source, String, required: false, coerce: proc { |x| x.tr('\\', '/').gsub('//', '/') }
+property :source, String, required: false, coerce: proc { |x| x.tr('\\', '/').gsub('//', '/') if /^.:.*.sys/ }
 
 action :install do
   if font_exists?
