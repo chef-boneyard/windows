@@ -75,7 +75,7 @@ action_class do
   # @return [Boolean] Is the font is installed?
   def font_exists?
     require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-    fonts_dir = WIN32OLE.new('WScript.Shell').SpecialFolders('Fonts')
+    fonts_dir = Chef::Util::PathHelper.join(ENV['windir'], 'fonts')
     Chef::Log.debug("Seeing if the font at #{Chef::Util::PathHelper.join(fonts_dir, new_resource.font_name)} exists")
     ::File.exist?(Chef::Util::PathHelper.join(fonts_dir, new_resource.font_name))
   end
