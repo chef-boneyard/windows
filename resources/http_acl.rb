@@ -18,7 +18,6 @@
 # limitations under the License.
 #
 
-include Chef::Mixin::ShellOut
 include Windows::Helper
 
 property :url, String, name_property: true

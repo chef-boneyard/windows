@@ -18,7 +18,6 @@
 # limitations under the License.
 #
 
-include Chef::Mixin::ShellOut
 include Chef::Mixin::PowershellOut
 include Windows::Helper
 
