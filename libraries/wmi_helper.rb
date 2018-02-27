@@ -1,5 +1,7 @@
 #
 # Author:: Adam Edwards (<adamed@chef.io>)
+# Cookbook:: windows
+# Library:: wmi_helper
 #
 # Copyright:: 2014-2018, Chef Software, Inc.
 #

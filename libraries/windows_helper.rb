@@ -1,7 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Cookbook:: windows
-# Library:: helper
+# Library:: windows_helper
 #
 # Copyright:: 2011-2018, Chef Software, Inc.
 #

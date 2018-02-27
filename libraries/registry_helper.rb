@@ -3,7 +3,7 @@
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
 # Cookbook:: windows
-# Provider:: registry
+# Library:: registry_helper
 #
 # Copyright:: 2010-2017, VMware, Inc.
 # Copyright:: 2011-2018, Chef Software, Inc.
