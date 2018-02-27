@@ -22,7 +22,6 @@ property :feature_name, [Array, String], coerce: proc { |x| to_array(x) }, name_
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 
-include Chef::Mixin::ShellOut
 include Windows::Helper
 
 action :install do

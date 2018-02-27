@@ -24,7 +24,6 @@
 require 'chef/mixin/shell_out'
 require 'rexml/document'
 
-include Chef::Mixin::ShellOut
 include Chef::Mixin::PowershellOut
 
 property :task_name, String, name_property: true, regex: [/\A[^\/\:\*\?\<\>\|]+\z/]

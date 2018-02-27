@@ -21,7 +21,6 @@
 # See this for info on DNSCMD
 # https://technet.microsoft.com/en-gb/library/cc772069.aspx#BKMK_10
 
-include Chef::Mixin::ShellOut
 include Windows::Helper
 
 # Support whyrun
