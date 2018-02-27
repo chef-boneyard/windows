@@ -27,10 +27,6 @@ property :timeout, Integer, default: 600
 
 include Windows::Helper
 
-def whyrun_supported?
-  true
-end
-
 action :install do
   run_default_provider :install
 end
