@@ -1,7 +1,7 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Cookbook:: windows
-# Provider:: feature_dism
+# Resource:: feature_dism
 #
 # Copyright:: 2011-2018, Chef Software, Inc.
 #
@@ -26,20 +26,22 @@ property :timeout, Integer, default: 600
 include Windows::Helper
 
 action :install do
-  Chef::Log.warn("Requested feature #{new_resource.feature_name.join(',')} is not available on this system.") unless available?
-  unless !available? || installed?
-    converge_by("install Windows feature #{new_resource.feature_name.join(',')}") do
+  # fail if we can't install the specified feature(s)
+  fail_if_unavailable
+
+  unless features_needing_install.empty?
+    converge_by("install Windows feature#{'s' if features_needing_install.count > 1} #{features_needing_install.join(',')}") do
       addsource = new_resource.source ? "/LimitAccess /Source:\"#{new_resource.source}\"" : ''
       addall = new_resource.all ? '/All' : ''
-      shell_out!("#{dism} /online /enable-feature #{features_needing_installation.map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
+      shell_out!("#{dism} /online /enable-feature #{features_needing_install.map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       reload_cached_dism_data # Reload cached dism feature state
     end
   end
 end
 
 action :remove do
-  if installed?
-    converge_by("remove Windows feature#{'s' if features_needing_installation.count > 1} #{new_resource.feature_name.join(',')}") do
+  unless features_needing_uninstall.empty?
+    converge_by("remove Windows feature#{'s' if features_needing_install.count > 1} #{new_resource.feature_name.join(',')}") do
       shell_out!("#{dism} /online /disable-feature #{new_resource.feature_name.map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       reload_cached_dism_data # Reload cached dism feature state
     end
@@ -47,9 +49,9 @@ action :remove do
 end
 
 action :delete do
-  raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on #{win_version.sku}" unless supports_feature_delete?
+  raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" unless supports_feature_delete?
   if available?
-    converge_by("delete Windows feature#{'s' if features_needing_installation.count > 1} #{new_resource.feature_name} from the image") do
+    converge_by("delete Windows feature#{'s' if features_needing_install.count > 1} #{new_resource.feature_name} from the image") do
       shell_out!("#{dism} /online /disable-feature #{new_resource.feature_name.map { |feature| "/featurename:#{feature}" }.join(' ')} /Remove /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       reload_cached_dism_data # Reload cached dism feature state
     end
@@ -57,24 +59,51 @@ action :delete do
 end
 
 action_class do
-  def installed?
-    @installed ||= begin
+  def features_needing_uninstall
+    @to_uninstall ||= begin
       reload_cached_dism_data unless node['dism_features_cache']
 
-      # Compare against cached feature data instead of costly dism run
-      node['dism_features_cache'].key?(new_resource.feature_name) && node['dism_features_cache'][new_resource.feature_name] =~ /Enable/
+      to_uninstall = []
+      new_resource.feature_name.each do |f|
+        to_uninstall << f if node['dism_features_cache'][new_resource.feature_name] =~ /Enable/
+      end
+      to_uninstall
     end
   end
 
-  def available?
-    @available ||= begin
+  def features_needing_install
+    @to_install ||= begin
       reload_cached_dism_data unless node['dism_features_cache']
 
-      # Compare against cached feature data instead of costly dism run
-      node['dism_features_cache'].key?(new_resource.feature_name) && node['dism_features_cache'][new_resource.feature_name] !~ /with payload removed/
+      to_install = []
+      new_resource.feature_name.each do |f|
+        to_install << f unless node['dism_features_cache'][new_resource.feature_name] =~ /Enable/
+      end
+      to_install
     end
   end
 
+  # if any features are not supported on this release of Windows or
+  # have been deleted raise with a friendly message. At one point in time
+  # we just warned, but this goes against the behavior of ever other package
+  # provider in Chef and it isn't clear what you'd want if you passed an array
+  # and some features were available and others were not.
+  # @return [void]
+  def fail_if_unavailable
+    reload_cached_dism_data unless node['dism_features_cache']
+
+    new_resource.feature_name.each do |f|
+      raise "The Windows feature #{f} is not available on this release of Windows. Run 'dism /online /Get-Features' to see the list of available feature names." unless node['dism_features_cache'].key?(f)
+      raise "The Windows feature #{f} cannot be installed as it has been removed from the system. Cannot continue!" if node['dism_features_cache'][f] !~ /with payload removed/
+    end
+  end
+
+  # run dism.exe to get a list of all available features and their state
+  # and save that to the node at node.normal (same as ohai) level.
+  # We do this because getting a list of features in dism takes at least a second
+  # and this data will be persisted across multiple resource runs which gives us
+  # a much faster run when no features actually need to be installed / removed.
+  # @return [void]
   def reload_cached_dism_data
     Chef::Log.debug('Caching Windows features available via dism.exe.')
     node.normal['dism_features_cache'] = Mash.new
