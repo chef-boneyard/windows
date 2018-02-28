@@ -94,11 +94,13 @@ action_class do
     end
   end
 
+  # Are we on windows 8+ / 2012+ where deleting a feature is supported
+  # @return [boolean]
   def supports_feature_delete?
-    win_version.major_version >= 6 && win_version.minor_version >= 2
+    node['platform_version'].to_f >= 6.2
   end
 
-  # account for File System Redirector
+  # find dism accounting for File System Redirector
   # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
   def dism
     @dism ||= begin
