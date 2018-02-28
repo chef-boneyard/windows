@@ -31,7 +31,7 @@ action :install do
     converge_by("install Windows feature #{new_resource.feature_name.join(',')}") do
       addsource = new_resource.source ? "/LimitAccess /Source:\"#{new_resource.source}\"" : ''
       addall = new_resource.all ? '/All' : ''
-      shell_out!("#{dism} /online /enable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
+      shell_out!("#{dism} /online /enable-feature #{features_needing_installation.map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       reload_cached_dism_data # Reload cached dism feature state
     end
   end
@@ -39,8 +39,8 @@ end
 
 action :remove do
   if installed?
-    converge_by("remove Windows feature #{new_resource.feature_name.join(',')}") do
-      shell_out!("#{dism} /online /disable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
+    converge_by("remove Windows feature#{'s' if features_needing_installation.count > 1} #{new_resource.feature_name.join(',')}") do
+      shell_out!("#{dism} /online /disable-feature #{new_resource.feature_name.map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       reload_cached_dism_data # Reload cached dism feature state
     end
   end
@@ -49,8 +49,8 @@ end
 action :delete do
   raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on #{win_version.sku}" unless supports_feature_delete?
   if available?
-    converge_by("delete Windows feature #{new_resource.feature_name} from the image") do
-      shell_out!("#{dism} /online /disable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /Remove /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
+    converge_by("delete Windows feature#{'s' if features_needing_installation.count > 1} #{new_resource.feature_name} from the image") do
+      shell_out!("#{dism} /online /disable-feature #{new_resource.feature_name.map { |feature| "/featurename:#{feature}" }.join(' ')} /Remove /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
       reload_cached_dism_data # Reload cached dism feature state
     end
   end
