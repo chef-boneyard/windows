@@ -230,7 +230,7 @@ get-windowsfeature
 
 - `:install` - install a Windows role/feature
 - `:remove` - remove a Windows role/feature
-- `:delete` - remove a Windows role/feature from the image (not supported by ServerManagerCmd)
+- `:delete` - remove a Windows role/feature from the image
 
 #### Properties
 
