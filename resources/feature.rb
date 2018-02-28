@@ -45,8 +45,6 @@ action_class do
       new_resource.install_method
     elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
       :windows_feature_dism
-    elsif ::File.exist?(locate_sysnative_cmd('servermanagercmd.exe'))
-      :windows_feature_servermanagercmd
     else
       :windows_feature_powershell
     end
@@ -63,12 +61,7 @@ action_class do
         timeout new_resource.timeout
       end
     when :windows_feature_servermanagercmd
-      windows_feature_servermanagercmd new_resource.name do
-        action desired_action
-        feature_name new_resource.feature_name
-        all new_resource.all
-        timeout new_resource.timeout
-      end
+      raise 'Support for Windows feature installation via servermanagercmd.exe has been removed as this support is no longer needed in Windows 2008 R2 and above. You will need to update your cookbook to install either via dism or powershell (preferred).'
     when :windows_feature_powershell
       windows_feature_powershell new_resource.name do
         action desired_action
