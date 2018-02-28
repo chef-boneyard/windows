@@ -7,11 +7,11 @@ windows_http_acl 'http://google.com:80/' do
 end
 
 windows_http_acl 'http://+:50051/' do
-  user 'pc\\fred'
+  user "#{ENV['COMPUTERNAME']}\\space user"
 end
 
 windows_http_acl 'http://+:5986/' do
-  user 'NT SERVICE\Winrm'
+  user "#{ENV['COMPUTERNAME']}\\space user"
 end
 
 # Grant access to users "NT SERVICE\WinRM" and "NT SERVICE\Wecsvc" via sddl
