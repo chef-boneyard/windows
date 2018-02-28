@@ -27,7 +27,7 @@ include Windows::Helper
 
 action :remove do
   if installed?
-    converge_by("remove Windows feature #{new_resource.feature_name.join(',')}") do
+    converge_by("remove Windows feature#{'s' if new_resource.feature_name.count > 1} #{new_resource.feature_name.join(',')}") do
       cmd = powershell_out!("#{remove_feature_cmdlet} #{new_resource.feature_name.join(',')}", timeout: new_resource.timeout)
       Chef::Log.info(cmd.stdout)
     end
@@ -36,7 +36,7 @@ end
 
 action :delete do
   if available?
-    converge_by("delete Windows feature #{new_resource.feature_name.join(',')} from the image") do
+    converge_by("delete Windows feature#{'s' if new_resource.feature_name.count > 1} #{new_resource.feature_name.join(',')} from the image") do
       cmd = powershell_out!("Uninstall-WindowsFeature #{new_resource.feature_name.join(',')} -Remove", timeout: new_resource.timeout)
       Chef::Log.info(cmd.stdout)
     end
@@ -78,7 +78,7 @@ end
 action :install do
   Chef::Log.warn("Requested feature #{new_resource.feature_name.join(',')} is not available on this system.") unless available?
   unless !available? || installed?
-    converge_by("install Windows feature #{new_resource.feature_name}") do
+    converge_by("install Windows feature#{'s' if new_resource.feature_name.count > 1} #{new_resource.feature_name.join(',')}") do
       addsource = new_resource.source ? "-Source \"#{new_resource.source}\"" : ''
       addall = new_resource.all ? '-IncludeAllSubFeature' : ''
       addmanagementtools = new_resource.management_tools ? '-IncludeManagementTools' : ''
