@@ -76,23 +76,21 @@ action_class do
   end
 
   def reload_cached_dism_data
-    converge_by('updated cached dism data') do
-      Chef::Log.debug('Caching Windows features available via dism.exe.')
-      node.normal['dism_features_cache'] = Mash.new
+    Chef::Log.debug('Caching Windows features available via dism.exe.')
+    node.normal['dism_features_cache'] = Mash.new
 
-      # Grab raw feature information from dism command line
-      raw_list_of_features = shell_out("#{dism} /Get-Features /Online /Format:Table /English").stdout
+    # Grab raw feature information from dism command line
+    raw_list_of_features = shell_out("#{dism} /Get-Features /Online /Format:Table /English").stdout
 
-      # Split stdout into an array by windows line ending
-      features_list = raw_list_of_features.split("\r\n")
-      features_list.each do |feature_details_raw|
-        # Skip lines that do not match Enable / Disable
-        next unless feature_details_raw =~ /(En|Dis)able/
-        # Strip trailing whitespace characters then split on n number of spaces + | +  n number of spaces
-        feature_details = feature_details_raw.strip.split(/\s+[|]\s+/)
-        # Add to Mash
-        node.normal['dism_features_cache'][feature_details.first] = feature_details.last
-      end
+    # Split stdout into an array by windows line ending
+    features_list = raw_list_of_features.split("\r\n")
+    features_list.each do |feature_details_raw|
+      # Skip lines that do not match Enable / Disable
+      next unless feature_details_raw =~ /(En|Dis)able/
+      # Strip trailing whitespace characters then split on n number of spaces + | +  n number of spaces
+      feature_details = feature_details_raw.strip.split(/\s+[|]\s+/)
+      # Add to Mash
+      node.normal['dism_features_cache'][feature_details.first] = feature_details.last
     end
   end
 
