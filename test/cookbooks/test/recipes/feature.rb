@@ -1,4 +1,15 @@
-windows_feature 'TFTP-Client' do
+windows_feature 'install SNMP' do
+  feature_name 'SNMP'
+  action :install
+end
+
+windows_feature 'remove SNMP' do
+  feature_name ['SNMP']
+  action :remove
+end
+
+windows_feature 'Install SNMP again' do
+  feature_name ['SNMP']
   action :install
 end
 

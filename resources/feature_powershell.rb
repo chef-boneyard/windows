@@ -1,7 +1,7 @@
 #
 # Author:: Greg Zapp (<greg.zapp@gmail.com>)
 # Cookbook:: windows
-# Provider:: feature_powershell
+# Resource:: feature_powershell
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], coerce: proc { |x| to_array(x) }, name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| Array(x) }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
