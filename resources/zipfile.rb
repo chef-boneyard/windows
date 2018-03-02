@@ -117,7 +117,6 @@ action_class do
   rescue LoadError
     Chef::Log.info("Missing gem 'rubyzip'...installing now.")
     chef_gem 'rubyzip' do
-      version node['windows']['rubyzipversion']
       action :install
       compile_time true
     end
