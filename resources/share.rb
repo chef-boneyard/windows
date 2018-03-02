@@ -20,18 +20,10 @@
 #
 
 property :share_name, String, name_property: true
-property :path, String, required: true
-
-# Specifies an optional description of the SMB share. A description of the share is displayed by running the Get-SmbShare cmdlet. The description may not contain more than 256 characters.
+property :path, String
 property :description, String, default: ''
-
-# Specifies which accounts are granted full permission to access the share. Use a comma-separated list to specify multiple accounts. An account may not be specified more than once in the FullAccess, ChangeAccess, or ReadAccess parameter lists, but may be specified once in the FullAccess, ChangeAccess, or ReadAccess parameter list and once in the NoAccess parameter list.
 property :full_users, Array, default: []
-
-# Specifies which users are granted modify permission to access the share
 property :change_users, Array, default: []
-
-# Specifies which users are granted read permission to access the share. Multiple users can be specified by supplying a comma-separated list.
 property :read_users, Array, default: []
 
 include Windows::Helper
@@ -44,6 +36,8 @@ ACCESS_CHANGE = 1_245_631
 ACCESS_READ = 1_179_817
 
 action :create do
+  raise 'No path property set' unless new_resource.path
+
   if different_path?
     unless current_resource.path.nil? || current_resource.path.empty?
       converge_by('Removing previous share') do
