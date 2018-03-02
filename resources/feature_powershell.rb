@@ -1,7 +1,10 @@
 #
 # Author:: Greg Zapp (<greg.zapp@gmail.com>)
+#
 # Cookbook:: windows
 # Resource:: feature_powershell
+#
+# Copyright:: 2015-2018, Chef Software, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +26,6 @@ property :timeout, Integer, default: 600
 property :management_tools, [true, false], default: false
 
 include Chef::Mixin::PowershellOut
-include Windows::Helper
 
 action :install do
   Chef::Log.warn("Requested feature #{new_resource.feature_name.join(',')} is not available on this system.") unless available?
