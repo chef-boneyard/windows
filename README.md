@@ -210,7 +210,7 @@ Windows Roles and Features can be thought of as built-in operating system packag
 
 This resource allows you to manage these 'features' in an unattended, idempotent way.
 
-There are three methods for the `windows_feature` which map into Microsoft's three major tools for managing roles/features: [Deployment Image Servicing and Management (DISM)](http://msdn.microsoft.com/en-us/library/dd371719%28v=vs.85%29.aspx), [Servermanagercmd](http://technet.microsoft.com/en-us/library/ee344834%28WS.10%29.aspx) (The CLI for Server Manager), and [PowerShell](https://technet.microsoft.com/en-us/library/cc731774(v=ws.11).aspx). As Servermanagercmd is deprecated, Chef will set the default method to `:windows_feature_dism` if `dism.exe` is present on the system being configured. The default method will fall back to `:windows_feature_servermanagercmd`, and then `:windows_feature_powershell`.
+There are two underlying resources that power `windows_feature` which map to the available installation systems on supported releases of Windows: [Deployment Image Servicing and Management (DISM)](http://msdn.microsoft.com/en-us/library/dd371719%28v=vs.85%29.aspx) and [PowerShell](https://technet.microsoft.com/en-us/library/cc731774(v=ws.11).aspx). Chef will set the default method to `:windows_feature_dism` if `dism.exe` is present on the system being configured and otherwise use `:windows_feature_powershell`.
 
 For more information on Roles, Role Services and Features see the [Microsoft TechNet article on the topic](http://technet.microsoft.com/en-us/library/cc754923.aspx). For a complete list of all features that are available on a node type either of the following commands at a command prompt:
 
@@ -218,12 +218,6 @@ For Dism:
 
 ```text
 dism /online /Get-Features
-```
-
-For ServerManagerCmd:
-
-```text
-servermanagercmd -query
 ```
 
 For PowerShell:
@@ -236,7 +230,7 @@ get-windowsfeature
 
 - `:install` - install a Windows role/feature
 - `:remove` - remove a Windows role/feature
-- `:delete` - remove a Windows role/feature from the image (not supported by ServerManagerCmd)
+- `:delete` - remove a Windows role/feature from the image
 
 #### Properties
 

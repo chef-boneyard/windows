@@ -1,7 +1,7 @@
 #
 # Author:: Greg Zapp (<greg.zapp@gmail.com>)
 # Cookbook:: windows
-# Provider:: feature_powershell
+# Resource:: feature_powershell
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], coerce: proc { |x| to_array(x) }, name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| Array(x) }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
@@ -24,6 +24,23 @@ property :management_tools, [true, false], default: false
 
 include Chef::Mixin::PowershellOut
 include Windows::Helper
+
+action :install do
+  Chef::Log.warn("Requested feature #{new_resource.feature_name.join(',')} is not available on this system.") unless available?
+  unless !available? || installed?
+    converge_by("install Windows feature#{'s' if new_resource.feature_name.count > 1} #{new_resource.feature_name.join(',')}") do
+      addsource = new_resource.source ? "-Source \"#{new_resource.source}\"" : ''
+      addall = new_resource.all ? '-IncludeAllSubFeature' : ''
+      addmanagementtools = new_resource.management_tools ? '-IncludeManagementTools' : ''
+      cmd = if node['os_version'].to_f < 6.2
+              powershell_out!("#{install_feature_cmdlet} #{new_resource.feature_name.join(',')} #{addall}", timeout: new_resource.timeout)
+            else
+              powershell_out!("#{install_feature_cmdlet} #{new_resource.feature_name.join(',')} #{addsource} #{addall} #{addmanagementtools}", timeout: new_resource.timeout)
+            end
+      Chef::Log.info(cmd.stdout)
+    end
+  end
+end
 
 action :remove do
   if installed?
@@ -71,23 +88,6 @@ action_class do
               powershell_out("@(Get-WindowsFeature #{new_resource.feature_name.join(',')} | ?{$_.InstallState -ne \'Removed\'}).count", timeout: new_resource.timeout)
             end
       cmd.stderr.empty? && cmd.stdout.chomp.to_i > 0
-    end
-  end
-end
-
-action :install do
-  Chef::Log.warn("Requested feature #{new_resource.feature_name.join(',')} is not available on this system.") unless available?
-  unless !available? || installed?
-    converge_by("install Windows feature#{'s' if new_resource.feature_name.count > 1} #{new_resource.feature_name.join(',')}") do
-      addsource = new_resource.source ? "-Source \"#{new_resource.source}\"" : ''
-      addall = new_resource.all ? '-IncludeAllSubFeature' : ''
-      addmanagementtools = new_resource.management_tools ? '-IncludeManagementTools' : ''
-      cmd = if node['os_version'].to_f < 6.2
-              powershell_out!("#{install_feature_cmdlet} #{new_resource.feature_name.join(',')} #{addall}", timeout: new_resource.timeout)
-            else
-              powershell_out!("#{install_feature_cmdlet} #{new_resource.feature_name.join(',')} #{addsource} #{addall} #{addmanagementtools}", timeout: new_resource.timeout)
-            end
-      Chef::Log.info(cmd.stdout)
     end
   end
 end

@@ -10,10 +10,6 @@ windows_http_acl 'http://+:50051/' do
   user "#{ENV['COMPUTERNAME']}\\space user"
 end
 
-windows_http_acl 'http://+:5986/' do
-  user "#{ENV['COMPUTERNAME']}\\space user"
-end
-
 # Grant access to users "NT SERVICE\WinRM" and "NT SERVICE\Wecsvc" via sddl
 windows_http_acl 'http://+:5985/' do
   sddl 'D:(A;;GX;;;S-1-5-80-569256582-2953403351-2909559716-1301513147-412116970)' \
