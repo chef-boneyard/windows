@@ -23,6 +23,8 @@ property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 
+include Windows::Helper
+
 action :install do
   reload_cached_dism_data unless node['dism_features_cache']
   fail_if_unavailable # fail if the features don't exist
