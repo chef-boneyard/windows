@@ -2,6 +2,16 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 3.5.2 (2018-03-01)
+
+- Remove value_for_feature_provider helper which wasn't being used and was using deprecated methods
+- Add all the Windows Core editions to the version helper
+- Simplify / speedup how we find the font directory
+- Don't bother enabling why-run mode in the resources since it's enabled by default
+- Don't include mixlib-shellout in the resources since it's included by default
+- Fix installation messaging for windows_feature_powershell
+- Use powershell for the share creation / deletion in windows_share. This speeds up the runs and fixes some of the failures.
+
 ## 3.5.1 (2018-02-23)
 
 - Add a new `shortcut_name` property to `windows_shortcut`
