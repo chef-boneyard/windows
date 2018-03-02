@@ -1,4 +1,4 @@
-describe windows_feature('TFTP-Client') do
+describe windows_feature('SNMP Service') do
   it { should be_installed }
 end
 

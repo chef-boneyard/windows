@@ -38,6 +38,7 @@ action :delete do
 end
 
 action_class do
+  # @return [Symbol] :windows_feature_dism or the provider specified in install_method property
   def locate_default_provider
     if new_resource.install_method
       new_resource.install_method
@@ -46,6 +47,8 @@ action_class do
     end
   end
 
+  # call the appropriate windows_feature resource based on the specified provider
+  # @return [void]
   def run_default_provider(desired_action)
     case locate_default_provider
     when :windows_feature_dism
