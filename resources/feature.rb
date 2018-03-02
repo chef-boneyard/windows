@@ -25,8 +25,6 @@ property :management_tools, [true, false], default: false
 property :install_method, Symbol, equal_to: [:windows_feature_dism, :windows_feature_powershell, :windows_feature_servermanagercmd]
 property :timeout, Integer, default: 600
 
-include Windows::Helper
-
 action :install do
   run_default_provider :install
 end
@@ -43,10 +41,8 @@ action_class do
   def locate_default_provider
     if new_resource.install_method
       new_resource.install_method
-    elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
-      :windows_feature_dism
     else
-      :windows_feature_powershell
+      :windows_feature_dism
     end
   end
 
