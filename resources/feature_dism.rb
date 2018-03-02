@@ -158,6 +158,7 @@ action_class do
   # Fail if any of the packages are in a removed state
   # @return [void]
   def fail_if_removed
+    return if new_resource.source # if someone provides a source then all is well
     removed = new_resource.feature_name & node['dism_features_cache']['removed']
     raise "The Windows feature#{'s' if removed.count > 1} #{removed.join(',')} #{removed.count > 1 ? 'are' : 'is'} have been removed from the host and cannot be installed." unless removed.empty?
   end
