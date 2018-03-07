@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.0.1 (2018-03-07)
+
+Fix the previous update to windows_feature_dism to use 'override' level of attributes not the normal level which persists to the node. Thanks to @Annih for pointing out the mistake here.
+
 ## 4.0.0 (2018-03-05)
 
 ### WARNING
