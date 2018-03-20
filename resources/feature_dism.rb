@@ -160,6 +160,7 @@ action_class do
   # in the
   # strips trailing whitespace characters then split on n number of spaces
   # + | +  n number of spaces
+  # @return [void]
   def add_to_feature_mash(feature_type, feature_string)
     feature_details = feature_string.strip.split(/\s+[|]\s+/)
     node.override['dism_features_cache'][feature_type] << feature_details.first
@@ -174,6 +175,7 @@ action_class do
   end
 
   # Fail unless we're on windows 8+ / 2012+ where deleting a feature is supported
+  # @return [void]
   def fail_if_delete_unsupported
     raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" unless node['platform_version'].to_f >= 6.2
   end
