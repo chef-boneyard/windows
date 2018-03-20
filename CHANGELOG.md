@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.0.2 (2018-03-20)
+
+- Enable FC016 testing
+- Enable FC059 testing
+- Properly calculate available packages if source is passed in windows_feature_dism resource
+
 ## 4.0.1 (2018-03-07)
 
 Fix the previous update to windows_feature_dism to use 'override' level of attributes not the normal level which persists to the node. Thanks to @Annih for pointing out the mistake here.
