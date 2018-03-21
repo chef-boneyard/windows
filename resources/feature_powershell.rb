@@ -146,9 +146,9 @@ action_class do
 
     # Grab raw feature information from dism command line
     raw_list_of_features = if node['os_version'].to_f < 6.2
-                             powershell_out('Import-Module ServerManager; Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
+                             powershell_out!('Import-Module ServerManager; Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
                            else
-                             powershell_out('Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
+                             powershell_out!('Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
                            end
 
     # Split stdout into an array by windows line ending
