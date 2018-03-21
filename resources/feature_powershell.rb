@@ -35,14 +35,17 @@ action :install do
   Chef::Log.debug("Windows features needing installation: #{features_to_install.empty? ? 'none' : features_to_install.join(',')}")
   unless features_to_install.empty?
     converge_by("install Windows feature#{'s' if features_to_install.count > 1} #{features_to_install.join(',')}") do
-      addsource = new_resource.source ? "-Source \"#{new_resource.source}\"" : ''
-      addall = new_resource.all ? '-IncludeAllSubFeature' : ''
-      addmanagementtools = new_resource.management_tools ? '-IncludeManagementTools' : ''
-      cmd = if node['os_version'].to_f < 6.2
-              powershell_out!("#{install_feature_cmdlet} #{features_to_install.join(',')} #{addall}", timeout: new_resource.timeout)
-            else
-              powershell_out!("#{install_feature_cmdlet} #{features_to_install.join(',')} #{addsource} #{addall} #{addmanagementtools}", timeout: new_resource.timeout)
-            end
+
+      install_command = "#{install_feature_cmdlet} #{features_to_install.join(',')}"
+      install_command << ' -IncludeAllSubFeature'  if new_resource.all
+      if node['os_version'].to_f < 6.2 && (new_resource.source || new_resource.management_tools)
+        Chef::Log.warn("The 'source' and 'management_tools' properties are not available on Windows 2012R2 or great. Skipping these properties!")
+      else
+        install_command << " -Source \"#{new_resource.source}\"" if new_resource.source
+        install_command << ' -IncludeManagementTools' if new_resource.management_tools
+      end
+
+      cmd = powershell_out!(install_command, timeout: new_resource.timeout)
       Chef::Log.info(cmd.stdout)
 
       reload_cached_powershell_data # Reload cached powershell feature state
