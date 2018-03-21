@@ -46,6 +46,7 @@ suites:
   - name: feature
     run_list:
       - recipe[test::feature]
+    excludes: ["windows-10", "windows-8.1"]
     verifier:
       name: inspec
   - name: font
