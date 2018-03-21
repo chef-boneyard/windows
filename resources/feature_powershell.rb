@@ -31,9 +31,7 @@ action :install do
   reload_cached_powershell_data unless node['powershell_features_cache']
   fail_if_unavailable # fail if the features don't exist
   fail_if_removed # fail if the features are in removed state
-
-  reload_cached_powershell_data unless node['powershell_features_cache']
-
+  
   Chef::Log.debug("Windows features needing installation: #{features_to_install.empty? ? 'none' : features_to_install.join(',')}")
   unless features_to_install.empty?
     converge_by("install Windows feature#{'s' if features_to_install.count > 1} #{features_to_install.join(',')}") do
