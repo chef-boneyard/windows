@@ -1,6 +1,5 @@
 #
 # Author:: Greg Zapp (<greg.zapp@gmail.com>)
-#
 # Cookbook:: windows
 # Resource:: feature_powershell
 #
@@ -18,6 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+require "chef/json_compat"
 
 property :feature_name, [Array, String], coerce: proc { |x| Array(x) }, name_property: true
 property :source, String
@@ -152,7 +153,7 @@ action_class do
                            end
 
     # Split stdout into an array by windows line ending
-    features_list = JSON.parse(raw_list_of_features)
+    features_list = Chef::JSONCompat.from_json(raw_list_of_features)
 
     features_list.each do |feature_details_raw|
       case feature_details_raw['InstallState']
