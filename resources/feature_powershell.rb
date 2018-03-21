@@ -148,9 +148,9 @@ action_class do
       case feature_details_raw['InstallState']
       when 5 # matches 'Removed' InstallState
         add_to_feature_mash('removed', feature_details_raw['Name'])
-      when 1,3 # matches 'Installed' or 'InstallPending' states
+      when 1, 3 # matches 'Installed' or 'InstallPending' states
         add_to_feature_mash('enabled', feature_details_raw['Name'])
-      when 0,2 # matches 'Available' or 'UninstallPending' states
+      when 0, 2 # matches 'Available' or 'UninstallPending' states
         add_to_feature_mash('disabled', feature_details_raw['Name'])
       end
     end
