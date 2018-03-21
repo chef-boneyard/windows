@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], coerce: proc { |x| Array(x) }, name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| x.is_a?(String) ? x.split(/\s*,\s*/) : x }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
@@ -153,7 +153,7 @@ action_class do
         add_to_feature_mash('disabled', feature_details_raw)
       end
     end
-    Chef::Log.debug("The cache contains\n#{node['dism_features_cache']}")
+    Chef::Log.debug("The dism cache contains\n#{node['dism_features_cache']}")
   end
 
   # parse the feature string and add the values to the appropriate array
@@ -170,6 +170,9 @@ action_class do
   # @return [void]
   def fail_if_removed
     return if new_resource.source # if someone provides a source then all is well
+    if node['os_version'].to_f > 6.2
+      return if registry_key_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing') && registry_value_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing', name: 'LocalSourcePath') # if source is defined in the registry, still fine
+    end
     removed = new_resource.feature_name & node['dism_features_cache']['removed']
     raise "The Windows feature#{'s' if removed.count > 1} #{removed.join(',')} #{removed.count > 1 ? 'are' : 'is'} have been removed from the host and cannot be installed." unless removed.empty?
   end
