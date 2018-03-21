@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-require "chef/json_compat"
+require 'chef/json_compat'
 
 property :feature_name, [Array, String], coerce: proc { |x| Array(x) }, name_property: true
 property :source, String
@@ -36,7 +36,6 @@ action :install do
   Chef::Log.debug("Windows features needing installation: #{features_to_install.empty? ? 'none' : features_to_install.join(',')}")
   unless features_to_install.empty?
     converge_by("install Windows feature#{'s' if features_to_install.count > 1} #{features_to_install.join(',')}") do
-
       install_command = "#{install_feature_cmdlet} #{features_to_install.join(',')}"
       install_command << ' -IncludeAllSubFeature'  if new_resource.all
       if node['os_version'].to_f < 6.2 && (new_resource.source || new_resource.management_tools)
@@ -145,17 +144,7 @@ action_class do
     node.override['powershell_features_cache']['disabled'] = []
     node.override['powershell_features_cache']['removed'] = []
 
-    # Grab raw feature information from dism command line
-    raw_list_of_features = if node['os_version'].to_f < 6.2
-                             powershell_out!('Import-Module ServerManager; Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
-                           else
-                             powershell_out!('Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
-                           end
-
-    # Split stdout into an array by windows line ending
-    features_list = Chef::JSONCompat.from_json(raw_list_of_features)
-
-    features_list.each do |feature_details_raw|
+    parsed_feature_list.each do |feature_details_raw|
       case feature_details_raw['InstallState']
       when 5 # matches 'Removed' InstallState
         add_to_feature_mash('removed', feature_details_raw['Name'])
@@ -168,7 +157,20 @@ action_class do
     Chef::Log.debug("The powershell cache contains\n#{node['powershell_features_cache']}")
   end
 
+  # fetch the list of available feature names and state in JSON and parse the JSON
+  def parsed_feature_list
+    # Grab raw feature information from dism command line
+    raw_list_of_features = if node['os_version'].to_f < 6.2
+                             powershell_out!('Import-Module ServerManager; Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
+                           else
+                             powershell_out!('Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
+                           end
+
+    Chef::JSONCompat.from_json(raw_list_of_features)
+  end
+
   # add the features values to the appropriate array
+  # @return [void]
   def add_to_feature_mash(feature_type, feature_details)
     node.override['powershell_features_cache'][feature_type] << feature_details
   end
