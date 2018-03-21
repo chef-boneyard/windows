@@ -17,3 +17,11 @@ end
 describe windows_feature('NPAS') do
   it { should be_installed }
 end
+
+describe windows_feature('TelnetClient') do
+  it { should be_installed }
+end
+
+describe windows_feature('TFTP') do
+  it { should be_installed }
+end

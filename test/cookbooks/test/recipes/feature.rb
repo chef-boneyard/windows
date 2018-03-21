@@ -26,6 +26,8 @@ windows_feature 'Web-Ftp-Server' do
   install_method :windows_feature_powershell
 end
 
+windows_feature_dism ['TelnetClient', 'TFTP']
+
 windows_feature_powershell ['Web-Asp-Net45', 'Web-Net-Ext45']
 
 windows_feature ['NPAS'] do
