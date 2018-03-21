@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], coerce: proc { |x| Array(x) }, name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| x.is_a?(String) ? x.split(/\s*,\s*/) : x }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
