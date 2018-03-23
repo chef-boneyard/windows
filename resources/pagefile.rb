@@ -100,8 +100,8 @@ action_class do
   # @param [String] pagefile path to the pagefile
   def create(pagefile)
     converge_by("create pagefile #{pagefile}") do
-      Chef::Log.debug("Running #{wmic} pagefileset create name=\"#{win_friendly_path(pagefile)}\"")
-      cmd = shell_out("#{wmic} pagefileset create name=\"#{win_friendly_path(pagefile)}\"")
+      Chef::Log.debug("Running #{wmic} pagefileset create name=\"#{pagefile}\"")
+      cmd = shell_out("#{wmic} pagefileset create name=\"#{pagefile}\"")
       check_for_errors(cmd.stderr)
     end
   end
@@ -171,9 +171,8 @@ action_class do
   end
 
   def get_setting_id(pagefile)
-    pagefile = win_friendly_path(pagefile)
-    pagefile = pagefile.split('\\')
-    "#{pagefile[1]} @ #{pagefile[0]}"
+    split_path = pagefile.split('\\')
+    "#{split_path[1]} @ #{split_path[0]}"
   end
 
   # raise if there's an error on stderr on a shellout

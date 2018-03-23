@@ -8,7 +8,7 @@ windows_pagefile 'delete the pagefile' do
 end
 
 windows_pagefile 'create the pagefile' do
-  path 'C:\pagefile.sys'
+  path 'C:/pagefile.sys'
   initial_size 100
   maximum_size 200
 end
