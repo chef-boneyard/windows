@@ -57,8 +57,7 @@ end
 
 action :delete do
   validate_name
-  pagefile = new_resource.path
-  delete(pagefile) if exists?(pagefile)
+  delete(new_resource.path) if exists?(new_resource.path)
 end
 
 action_class do
