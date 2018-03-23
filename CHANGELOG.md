@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.1.1 (2018-03-23)
+
+- Simplify delete action slightly in windows_pagefile
+- Don't use win_friendly_path helper in windows_pagefile since we already coerce the path value
+
 ## 4.1.0 (2018-03-21)
 
 - Adds Caching for WIndows Feature Powershell resource using the same sort of logic we use on windows_feature_dism. This gives us a 3.5X speedup when no features need to be changed (subsequent runs after the change)
