@@ -44,13 +44,13 @@ property :temporary, [true, false], default: false
 property :security_descriptor, String
 
 # Specifies the scope name of the share.
-property :scope_name, String
+property :scope_name, String, default: '*'
 
 # Specifies the continuous availability time-out for the share.
-property :ca_timeout, Integer
+property :ca_timeout, Integer, default: 0
 
 # Indicates that the share is continuously available.
-property :continuously_available
+property :continuously_available, [true, false], default: false
 
 # Specifies the caching mode of the offline files for the SMB share.
 property :caching_mode, String, equal_to: %w(None Manual Documents Programs BranchCache)
