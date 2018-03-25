@@ -73,10 +73,6 @@ property :throttle_limit, Integer
 include Windows::Helper
 include Chef::Mixin::PowershellOut
 
-ACCESS_FULL = 2_032_127
-ACCESS_CHANGE = 1_245_631
-ACCESS_READ = 1_179_817
-
 load_current_value do |desired|
   # this command selects individual objects because EncryptData & CachingMode have underlying
   # types that get converted to their Integer values by ConvertTo-Json & we need to make sure
