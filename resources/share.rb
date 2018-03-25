@@ -51,11 +51,11 @@ action :create do
 
   if different_path?
     unless current_resource.path.nil? || current_resource.path.empty?
-      converge_by('Removing previous share') do
+      converge_by("Removing previous share #{new_resource.share_name}") do
         delete_share
       end
     end
-    converge_by("Creating share #{current_resource.share_name}") do
+    converge_by("Creating share #{new_resource.share_name}") do
       create_share
     end
   end
