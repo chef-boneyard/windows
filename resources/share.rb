@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 #
 # Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>), Richard Lavey (richard.lavey@calastone.com)
@@ -18,6 +19,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+require 'chef/json_compat'
 
 # Specifies a name for the SMB share. The name may be composed of any valid file name characters, but must be less than 80 characters long. The names pipe and mailslot are reserved for use by the computer.
 property :share_name, String, name_property: true
@@ -69,22 +73,71 @@ property :throttle_limit, Integer
 include Windows::Helper
 include Chef::Mixin::PowershellOut
 
-require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-
 ACCESS_FULL = 2_032_127
 ACCESS_CHANGE = 1_245_631
 ACCESS_READ = 1_179_817
+
+load_current_value do |desired|
+  # this command selects individual objects because EncryptData & CachingMode have underlying
+  # types that get converted to their Integer values by ConvertTo-Json & we need to make sure
+  # those get written out as strings
+  share_cmd = %(Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, SecurityDescriptor, ScopeName, CATimeout, ContinuouslyAvailable, @{Name='CachingMode';Expression={"$($_.CachingMode)"}},ConcurrentUserLimit,EncryptData, @{Name='FolderEnumerationMode';Expression={"$($_.FolderEnumerationMode)"}},ThrottleLimit | ConvertTo-Json)
+
+  Chef::Log.debug("Running #{share_cmd}")
+  ps_results = powershell_out(share_cmd)
+  puts ps_results.stdout
+  current_value_does_not_exist! if ps_results.error?
+
+  results = Chef::JSONCompat.from_json(ps_results.stdout)
+  path results['Path']
+  description results['Description']
+  temporary results['Temporary']
+  security_descriptor results['SecurityDescriptor']
+  scope_name results['ScopeName']
+  ca_timeout results['CATimeout']
+  continuously_available results['ContinuouslyAvailable']
+  caching_mode results['CachingMode']
+  concurrent_user_limit results['ConcurrentUserLimit']
+  encrypt_data results['EncryptData']
+  folder_enumeration_mode results['FolderEnumerationMode']
+  throttle_limit results['ThrottleLimit']
+
+  perm_cmd = %(Get-SmbShareAccess -Name "#{desired.share_name}" | Select-Object AccountName,AccessControlType,AccessRight | ConvertTo-Json)
+
+  Chef::Log.debug("Running '#{perm_cmd}' to determine share permissions state'")
+  ps_results = powershell_out(perm_cmd)
+
+  raise "Could not determine #{desired.share_name} share permissions by running '#{perm_cmd}'" if ps_results.error?
+  results = Chef::JSONCompat.from_json(ps_results.stdout)
+
+  f_users = []
+  c_users = []
+  r_users = []
+
+  results.each do |perm|
+    next unless perm['AccessControlType'] == 0 # allow
+    case perm['AccessRight']
+    when 0 then f_users << perm['AccountName'] # 0 full control
+    when 1 then c_users << perm['AccountName'] # 1 == change
+    when 2 then r_users << perm['AccountName'] # 2 == read
+    end
+  end
+
+  full_users f_users
+  change_users c_users
+  read_users r_users
+end
 
 action :create do
   raise 'No path property set' unless new_resource.path
 
   if different_path?
-    unless current_resource.path.nil? || current_resource.path.empty?
-      converge_by("Removing previous share #{new_resource.share_name}") do
+    unless current_resource.nil?
+      converge_by("remove previous share #{new_resource.share_name}") do
         delete_share
       end
     end
-    converge_by("Creating share #{new_resource.share_name}") do
+    converge_by("create share #{new_resource.share_name}") do
       create_share
     end
   end
@@ -100,72 +153,13 @@ action :create do
 end
 
 action :delete do
-  if !current_resource.path.nil? && !current_resource.path.empty?
-    converge_by("Deleting #{current_resource.share_name}") do
+  if !current_resource.nil?
+    converge_by("delete #{new_resource.share_name}") do
       delete_share
     end
   else
-    Chef::Log.debug("#{current_resource.share_name} does not exist - nothing to do")
+    Chef::Log.debug("#{new_resource.share_name} does not exist - nothing to do")
   end
-end
-
-load_current_value do |desired|
-  wmi = WIN32OLE.connect('winmgmts://')
-  shares = wmi.ExecQuery("SELECT * FROM Win32_Share WHERE name = '#{desired.share_name}'")
-  existing_share = shares.Count == 0 ? nil : shares.ItemIndex(0)
-
-  description ''
-  unless existing_share.nil?
-    path existing_share.Path
-    description existing_share.Description
-  end
-
-  perms = share_permissions name
-  unless perms.nil?
-    full_users perms[:full_users]
-    change_users perms[:change_users]
-    read_users perms[:read_users]
-  end
-end
-
-def share_permissions(name)
-  wmi = WIN32OLE.connect('winmgmts://')
-  shares = wmi.ExecQuery("SELECT * FROM Win32_LogicalShareSecuritySetting WHERE name = '#{name}'")
-
-  # The security descriptor is an output parameter
-  sd = nil
-  begin
-    shares.ItemIndex(0).GetSecurityDescriptor(sd)
-    sd = WIN32OLE::ARGV[0]
-  rescue WIN32OLERuntimeError
-    Chef::Log.warn('Failed to retrieve any security information about the share.')
-  end
-
-  read = []
-  change = []
-  full = []
-
-  unless sd.nil?
-    sd.DACL.each do |dacl|
-      trustee = "#{dacl.Trustee.Domain}\\#{dacl.Trustee.Name}".downcase
-      case dacl.AccessMask
-      when ACCESS_FULL
-        full.push(trustee)
-      when ACCESS_CHANGE
-        change.push(trustee)
-      when ACCESS_READ
-        read.push(trustee)
-      else
-        Chef::Log.warn "Unknown access mask #{dacl.AccessMask} for user #{trustee}. This will be lost if permissions are updated"
-      end
-    end
-  end
-
-  {
-    full_users: full,
-    change_users: change,
-    read_users: read,
-  }
 end
 
 action_class do
@@ -182,7 +176,7 @@ action_class do
   end
 
   def different_path?
-    return true if current_resource.path.nil?
+    return true if current_resource.nil?
     win_friendly_path(new_resource.path).casecmp(win_friendly_path(current_resource.path)) != 0
   end
 
