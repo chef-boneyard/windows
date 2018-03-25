@@ -37,6 +37,35 @@ property :change_users, Array, default: []
 # Specifies which users are granted read permission to access the share. Multiple users can be specified by supplying a comma-separated list.
 property :read_users, Array, default: []
 
+# Specifies the lifetime of the new SMB share. A temporary share does not persist beyond the next restart of the computer. By default, new SMB shares are persistent, and non-temporary.
+property :temporary, [true, false], default: false
+
+# Specifies the security descriptor for the SMB share in string format.
+property :security_descriptor, String
+
+# Specifies the scope name of the share.
+property :scope_name, String
+
+# Specifies the continuous availability time-out for the share.
+property :ca_timeout, Integer
+
+# Indicates that the share is continuously available.
+property :continuously_available
+
+# Specifies the caching mode of the offline files for the SMB share.
+property :caching_mode, String, equal_to: %w(None Manual Documents Programs BranchCache)
+
+# Specifies the maximum number of concurrently connected users that the new SMB share may accommodate. If this parameter is set to zero (0), then the number of users is unlimited.
+property :concurrent_user_limit, Integer, default: 0
+
+# Indicates that the share is encrypted.
+property :encrypt_data, [true, false], default: false
+
+# Specifies which files and folders in the SMB share are visible to users. AccessBased: SMB does not the display the files and folders for a share to a user unless that user has rights to access the files and folders. By default, access-based enumeration is disabled for new SMB shares. Unrestricted: SMB displays files and folders to a user even when the user does not have permission to access the items.
+property :folder_enumeration_mode, String, equal_to: %(AccessBased Unrestricted)
+
+property :throttle_limit, Integer
+
 include Windows::Helper
 include Chef::Mixin::PowershellOut
 
