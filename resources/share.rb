@@ -44,9 +44,6 @@ property :read_users, Array, default: []
 # Specifies the lifetime of the new SMB share. A temporary share does not persist beyond the next restart of the computer. By default, new SMB shares are persistent, and non-temporary.
 property :temporary, [true, false], default: false
 
-# Specifies the security descriptor for the SMB share in string format.
-property :security_descriptor, String
-
 # Specifies the scope name of the share.
 property :scope_name, String, default: '*'
 
@@ -57,7 +54,7 @@ property :ca_timeout, Integer, default: 0
 property :continuously_available, [true, false], default: false
 
 # Specifies the caching mode of the offline files for the SMB share.
-property :caching_mode, String, equal_to: %w(None Manual Documents Programs BranchCache)
+# property :caching_mode, String, equal_to: %w(None Manual Documents Programs BranchCache)
 
 # Specifies the maximum number of concurrently connected users that the new SMB share may accommodate. If this parameter is set to zero (0), then the number of users is unlimited.
 property :concurrent_user_limit, Integer, default: 0
@@ -66,9 +63,9 @@ property :concurrent_user_limit, Integer, default: 0
 property :encrypt_data, [true, false], default: false
 
 # Specifies which files and folders in the SMB share are visible to users. AccessBased: SMB does not the display the files and folders for a share to a user unless that user has rights to access the files and folders. By default, access-based enumeration is disabled for new SMB shares. Unrestricted: SMB displays files and folders to a user even when the user does not have permission to access the items.
-property :folder_enumeration_mode, String, equal_to: %(AccessBased Unrestricted)
+# property :folder_enumeration_mode, String, equal_to: %(AccessBased Unrestricted)
 
-property :throttle_limit, Integer, default: 0
+property :throttle_limit, [Integer, nil]
 
 include Windows::Helper
 include Chef::Mixin::PowershellOut
@@ -77,51 +74,73 @@ load_current_value do |desired|
   # this command selects individual objects because EncryptData & CachingMode have underlying
   # types that get converted to their Integer values by ConvertTo-Json & we need to make sure
   # those get written out as strings
-  share_cmd = %(Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, SecurityDescriptor, ScopeName, CATimeout, ContinuouslyAvailable, @{Name='CachingMode';Expression={"$($_.CachingMode)"}},ConcurrentUserLimit,EncryptData, @{Name='FolderEnumerationMode';Expression={"$($_.FolderEnumerationMode)"}},ThrottleLimit | ConvertTo-Json)
 
-  Chef::Log.debug("Running #{share_cmd}")
+  share_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, ScopeName, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit,EncryptData,ThrottleLimit | ConvertTo-Json"
+
+  Chef::Log.debug("Determining share state by running #{share_cmd}")
   ps_results = powershell_out(share_cmd)
-  puts ps_results.stdout
-  current_value_does_not_exist! if ps_results.error?
 
+  # detect a failure without raising and then set current_resource to nil
+  if ps_results.error?
+    Chef::Log.warn("Error fetching share state: #{ps_results.stderr}")
+    current_value_does_not_exist!
+  end
+
+  Chef::Log.debug("The results were #{ps_results.stdout}")
   results = Chef::JSONCompat.from_json(ps_results.stdout)
+  
   path results['Path']
   description results['Description']
   temporary results['Temporary']
-  security_descriptor results['SecurityDescriptor']
   scope_name results['ScopeName']
   ca_timeout results['CATimeout']
   continuously_available results['ContinuouslyAvailable']
-  caching_mode results['CachingMode']
+  # caching_mode results['CachingMode']
   concurrent_user_limit results['ConcurrentUserLimit']
   encrypt_data results['EncryptData']
-  folder_enumeration_mode results['FolderEnumerationMode']
+  # folder_enumeration_mode results['FolderEnumerationMode']
   throttle_limit results['ThrottleLimit']
 
   perm_cmd = %(Get-SmbShareAccess -Name "#{desired.share_name}" | Select-Object AccountName,AccessControlType,AccessRight | ConvertTo-Json)
 
   Chef::Log.debug("Running '#{perm_cmd}' to determine share permissions state'")
-  ps_results = powershell_out(perm_cmd)
+  ps_perm_results = powershell_out(perm_cmd)
 
-  raise "Could not determine #{desired.share_name} share permissions by running '#{perm_cmd}'" if ps_results.error?
-  results = Chef::JSONCompat.from_json(ps_results.stdout)
+  raise "Could not determine #{desired.share_name} share permissions by running '#{perm_cmd}'" if ps_perm_results.error?
+
+  f_users, c_users, r_users = parse_permissions(ps_perm_results.stdout)
+
+  full_users f_users
+  change_users c_users
+  read_users r_users
+end
+
+# given the string output of Get-SmbShareAccess parse out
+# arrays of full access users, change users, and read only users
+def parse_permissions(results_string)
+  json_results = Chef::JSONCompat.from_json(results_string)
+  json_results = [json_results] unless json_results.is_a?(Array) # single result is not an array
 
   f_users = []
   c_users = []
   r_users = []
 
-  results.each do |perm|
+  json_results.each do |perm|
     next unless perm['AccessControlType'] == 0 # allow
     case perm['AccessRight']
-    when 0 then f_users << perm['AccountName'] # 0 full control
-    when 1 then c_users << perm['AccountName'] # 1 == change
-    when 2 then r_users << perm['AccountName'] # 2 == read
+    when 0 then f_users << stripped_account(perm['AccountName']) # 0 full control
+    when 1 then c_users << stripped_account(perm['AccountName']) # 1 == change
+    when 2 then r_users << stripped_account(perm['AccountName']) # 2 == read
     end
   end
+  [f_users, c_users, r_users]
+end
 
-  full_users f_users
-  change_users c_users
-  read_users r_users
+# local names are returned from Get-SmbShareAccess in the full format MACHINE\\NAME
+# but users of this resource would simply say NAME so we need to strip the values for comparison
+def stripped_account(name)
+  name.slice!("#{node['hostname']}\\")
+  name
 end
 
 action :create do
