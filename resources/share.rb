@@ -83,7 +83,7 @@ load_current_value do |desired|
 
   # detect a failure without raising and then set current_resource to nil
   if ps_results.error?
-    Chef::Log.warn("Error fetching share state: #{ps_results.stderr}")
+    Chef::Log.debug("Error fetching share state: #{ps_results.stderr}")
     current_value_does_not_exist!
   end
 
@@ -147,15 +147,9 @@ end
 action :create do
   raise 'No path property set' unless new_resource.path
 
-  if different_path?
-    unless current_resource.nil?
-      converge_by("remove previous share #{new_resource.share_name}") do
-        delete_share
-      end
-    end
-    converge_by("create share #{new_resource.share_name}") do
-      create_share
-    end
+  converge_if_changed :path do
+    delete_share unless current_resource.nil? # you can't actually change the path
+    create_share
   end
 
   if different_members?(:full_users) ||
@@ -169,12 +163,12 @@ action :create do
 end
 
 action :delete do
-  if !current_resource.nil?
+  if current_resource.nil?
+    Chef::Log.debug("#{new_resource.share_name} does not exist - nothing to do")
+  else
     converge_by("delete #{new_resource.share_name}") do
       delete_share
     end
-  else
-    Chef::Log.debug("#{new_resource.share_name} does not exist - nothing to do")
   end
 end
 
