@@ -34,13 +34,13 @@ property :path, String
 property :description, String, default: ''
 
 # Specifies which accounts are granted full permission to access the share. Use a comma-separated list to specify multiple accounts. An account may not be specified more than once in the FullAccess, ChangeAccess, or ReadAccess parameter lists, but may be specified once in the FullAccess, ChangeAccess, or ReadAccess parameter list and once in the NoAccess parameter list.
-property :full_users, Array, default: []
+property :full_users, Array, default: [], coerce: proc { |u| u.sort }
 
 # Specifies which users are granted modify permission to access the share
-property :change_users, Array, default: []
+property :change_users, Array, default: [], coerce: proc { |u| u.sort }
 
 # Specifies which users are granted read permission to access the share. Multiple users can be specified by supplying a comma-separated list.
-property :read_users, Array, default: []
+property :read_users, Array, default: [], coerce: proc { |u| u.sort }
 
 # Specifies the lifetime of the new SMB share. A temporary share does not persist beyond the next restart of the computer. By default, new SMB shares are persistent, and non-temporary.
 property :temporary, [true, false], default: false
