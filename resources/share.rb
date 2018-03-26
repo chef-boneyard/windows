@@ -68,7 +68,6 @@ property :encrypt_data, [true, false], default: false
 
 property :throttle_limit, [Integer, nil]
 
-include Windows::Helper
 include Chef::Mixin::PowershellOut
 
 load_current_value do |desired|
@@ -76,7 +75,7 @@ load_current_value do |desired|
   # types that get converted to their Integer values by ConvertTo-Json & we need to make sure
   # those get written out as strings
 
-  share_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, ScopeName, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit,EncryptData,ThrottleLimit | ConvertTo-Json"
+  share_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit,EncryptData,ThrottleLimit | ConvertTo-Json"
 
   Chef::Log.debug("Determining share state by running #{share_cmd}")
   ps_results = powershell_out(share_cmd)
@@ -93,7 +92,6 @@ load_current_value do |desired|
   path results['Path']
   description results['Description']
   temporary results['Temporary']
-  scope_name results['ScopeName']
   ca_timeout results['CATimeout']
   continuously_available results['ContinuouslyAvailable']
   # caching_mode results['CachingMode']
@@ -147,17 +145,15 @@ end
 action :create do
   raise 'No path property set' unless new_resource.path
 
-  converge_if_changed :path do
-    delete_share unless current_resource.nil? # you can't actually change the path
-    create_share
-  end
+  converge_if_changed do
+    # you can't actually change the path so you have to delete the old share first
+    delete_share if different_path?
 
-  if different_members?(:full_users) ||
-     different_members?(:change_users) ||
-     different_members?(:read_users) ||
-     different_description?
-    converge_by("Setting permissions and description for #{new_resource.share_name}") do
-      set_share_permissions
+    # powershell for create is different than updates
+    if current_resource.nil?
+      create_share
+    else
+      update_share
     end
   end
 end
@@ -173,36 +169,26 @@ action :delete do
 end
 
 action_class do
-  def description_exists?(resource)
-    !resource.description.nil?
-  end
-
-  def different_description?
-    if description_exists?(new_resource) && description_exists?(current_resource)
-      new_resource.description.casecmp(current_resource.description) != 0
-    else
-      description_exists?(new_resource) || description_exists?(current_resource)
-    end
-  end
-
   def different_path?
-    return true if current_resource.nil?
-    win_friendly_path(new_resource.path).casecmp(win_friendly_path(current_resource.path)) != 0
-  end
-
-  def different_members?(permission_type)
-    !(current_resource.send(permission_type.to_sym) - new_resource.send(permission_type.to_sym).map(&:downcase)).empty? ||
-      !(new_resource.send(permission_type.to_sym).map(&:downcase) - current_resource.send(permission_type.to_sym)).empty?
+    return false if current_resource.nil? # going from nil to something isn't different for our concerns
+    return false if current_resource.path == new_resource.path
   end
 
   def delete_share
-    powershell_out("Remove-SmbShare -Name \"#{new_resource.share_name}\" -Description \"#{new_resource.description}\" -Confirm")
+    powershell_out!("Remove-SmbShare -Name \"#{new_resource.share_name}\" -Description \"#{new_resource.description}\" -Confirm")
+  end
+
+  def update_share
+    Chef::Log.warn("Updating #{new_resource.share_name}")
+    powershell_out!("Set-SmbShare -Name '#{new_resource.share_name}' -Description '#{new_resource.description}' -Confirm")
   end
 
   def create_share
+    Chef::Log.warn("Creating #{new_resource.share_name}")
+
     raise "#{new_resource.path} is missing or not a directory" unless ::File.directory? new_resource.path
 
-    powershell_out("New-SmbShare -Name \"#{new_resource.share_name}\" -Path \"#{new_resource.path}\" -Confirm")
+    powershell_out!("New-SmbShare -Name \"#{new_resource.share_name}\" -Path \"#{new_resource.path}\" -Confirm")
   end
 
   # set_share_permissions - Enforce the share permissions as dictated by the resource attributes
