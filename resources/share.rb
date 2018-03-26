@@ -1,11 +1,12 @@
-
-# -*- coding: utf-8 -*-
 #
-# Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>), Richard Lavey (richard.lavey@calastone.com)
+# Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>)
+# Author:: Richard Lavey (richard.lavey@calastone.com)
+# Author:: Tim Smith (tsmith@chef.io)
 # Cookbook:: windows
 # Resource:: share
 #
 # Copyright:: 2014-2017, Sölvi Páll Ásgeirsson.
+# Copyright:: 2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -88,7 +89,7 @@ load_current_value do |desired|
 
   Chef::Log.debug("The results were #{ps_results.stdout}")
   results = Chef::JSONCompat.from_json(ps_results.stdout)
-  
+
   path results['Path']
   description results['Description']
   temporary results['Temporary']
