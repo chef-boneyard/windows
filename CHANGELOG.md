@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.1.2 (2018-03-27)
+
+- Improve creation messaging for shares
+- Allow feature names to be case insensitive in windows_feature
+
 ## 4.1.1 (2018-03-23)
 
 - Simplify delete action slightly in windows_pagefile
