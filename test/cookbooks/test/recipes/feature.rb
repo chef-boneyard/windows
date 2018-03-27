@@ -8,7 +8,7 @@ windows_feature 'remove SNMP' do
 end
 
 windows_feature 'Install SNMP again' do
-  feature_name ['SNMP']
+  feature_name ['snmp'] # lowercase on purpose
 end
 
 # This is for appveyor, which already seems to have FTP installed
@@ -21,7 +21,7 @@ windows_feature 'Remove FTP for Appveyor' do
   install_method :windows_feature_powershell
 end
 
-windows_feature 'Web-Ftp-Server' do
+windows_feature 'web-ftp-server' do # lowercase on purpose
   all true
   install_method :windows_feature_powershell
 end

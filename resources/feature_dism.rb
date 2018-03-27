@@ -18,10 +18,15 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], coerce: proc { |x| x.is_a?(String) ? x.split(/\s*,\s*/) : x }, name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| to_lowercase_array(x) }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
+
+def to_lowercase_array(x)
+  x = x.split(/\s*,\s*/) if x.is_a?(String) # split multiple forms of a comma separated list
+  x.map(&:downcase)
+end
 
 include Windows::Helper
 
@@ -163,7 +168,7 @@ action_class do
   # @return [void]
   def add_to_feature_mash(feature_type, feature_string)
     feature_details = feature_string.strip.split(/\s+[|]\s+/)
-    node.override['dism_features_cache'][feature_type] << feature_details.first
+    node.override['dism_features_cache'][feature_type] << feature_details.first.downcase # lowercase so we can compare properly
   end
 
   # Fail if any of the packages are in a removed state

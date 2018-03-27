@@ -20,11 +20,16 @@
 
 require 'chef/json_compat'
 
-property :feature_name, [Array, String], coerce: proc { |x| x.is_a?(String) ? x.split(/\s*,\s*/) : x }, name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| to_lowercase_array(x) }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 property :management_tools, [true, false], default: false
+
+def to_lowercase_array(x)
+  x = x.split(/\s*,\s*/) if x.is_a?(String) # split multiple forms of a comma separated list
+  x.map(&:downcase)
+end
 
 include Chef::Mixin::PowershellOut
 
@@ -172,7 +177,7 @@ action_class do
   # add the features values to the appropriate array
   # @return [void]
   def add_to_feature_mash(feature_type, feature_details)
-    node.override['powershell_features_cache'][feature_type] << feature_details
+    node.override['powershell_features_cache'][feature_type] << feature_details.downcase # lowercase so we can compare properly
   end
 
   # Fail if any of the packages are in a removed state
