@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.1.3 (2018-03-28)
+
+- Restore support for Windows 2008 R2 in windows_feature_dism
+
 ## 4.1.2 (2018-03-27)
 
 - Improve creation messaging for shares

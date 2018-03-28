@@ -28,11 +28,7 @@ def to_lowercase_array(x)
 
   # dism on windows < 2012 is case sensitive so only downcase when on 2012+
   # @todo when we're really ready to remove support for Windows 2008 R2 this check can go away
-  if node['platform_version'].to_f < 6.2
-    x
-  else
-    x.map(&:downcase)
-  end
+  node['platform_version'].to_f < 6.2 ? x : x.map(&:downcase)
 end
 
 include Windows::Helper
