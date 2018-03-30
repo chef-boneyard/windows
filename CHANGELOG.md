@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.1.4 (2018-03-29)
+
+- Raise in windows_feature_powershell if we're on PS < 3.0
+
 ## 4.1.3 (2018-03-28)
 
 - Restore support for Windows 2008 R2 in windows_feature_dism
