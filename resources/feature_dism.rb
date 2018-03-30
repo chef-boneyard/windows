@@ -69,7 +69,7 @@ action :remove do
 end
 
 action :delete do
-  fail_if_delete_unsupported
+  raise_if_delete_unsupported
 
   reload_cached_dism_data unless node['dism_features_cache']
 
@@ -192,7 +192,7 @@ action_class do
 
   # Fail unless we're on windows 8+ / 2012+ where deleting a feature is supported
   # @return [void]
-  def fail_if_delete_unsupported
+  def raise_if_delete_unsupported
     raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" unless node['platform_version'].to_f >= 6.2
   end
 
