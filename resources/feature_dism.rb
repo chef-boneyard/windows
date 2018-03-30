@@ -1,5 +1,6 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
+# Author:: Tim Smith(<tsmith@chef.io>)
 # Cookbook:: windows
 # Resource:: feature_dism
 #
@@ -35,8 +36,8 @@ end
 include Windows::Helper
 
 action :install do
-  fail_if_unavailable # fail if the features don't exist
-  fail_if_removed # fail if the features are in removed state
+  raise_if_unavailable # raise if the features don't exist
+  raise_if_removed # raise if the features are in removed state
 
   Chef::Log.debug("Windows features needing installation: #{features_to_install.empty? ? 'none' : features_to_install.join(',')}")
   unless features_to_install.empty?
@@ -69,7 +70,7 @@ end
 action :delete do
   raise_if_delete_unsupported
 
-  fail_if_unavailable # fail if the features don't exist
+  raise_if_unavailable # raise if the features don't exist
 
   Chef::Log.debug("Windows features needing deletion: #{features_to_delete.empty? ? 'none' : features_to_delete.join(',')}")
   unless features_to_delete.empty?
@@ -119,7 +120,7 @@ action_class do
   # provider in Chef and it isn't clear what you'd want if you passed an array
   # and some features were available and others were not.
   # @return [void]
-  def fail_if_unavailable
+  def raise_if_unavailable
     all_available = dism_cache['enabled'] +
                     dism_cache['disabled'] +
                     dism_cache['removed']
@@ -129,9 +130,9 @@ action_class do
     raise "The Windows feature#{'s' if unavailable.count > 1} #{unavailable.join(',')} #{unavailable.count > 1 ? 'are' : 'is'} not available on this version of Windows. Run 'dism /online /Get-Features' to see the list of available feature names." unless unavailable.empty?
   end
 
-  # Fail if any of the packages are in a removed state
+  # Raise if any of the packages are in a removed state
   # @return [void]
-  def fail_if_removed
+  def raise_if_removed
     return if new_resource.source # if someone provides a source then all is well
     if node['platform_version'].to_f > 6.2
       return if registry_key_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing') && registry_value_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing', name: 'LocalSourcePath') # if source is defined in the registry, still fine
@@ -140,7 +141,7 @@ action_class do
     raise "The Windows feature#{'s' if removed.count > 1} #{removed.join(',')} #{removed.count > 1 ? 'are' : 'is'} have been removed from the host and cannot be installed." unless removed.empty?
   end
 
-  # Fail unless we're on windows 8+ / 2012+ where deleting a feature is supported
+  # Raise unless we're on windows 8+ / 2012+ where deleting a feature is supported
   # @return [void]
   def raise_if_delete_unsupported
     raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" unless node['platform_version'].to_f >= 6.2
