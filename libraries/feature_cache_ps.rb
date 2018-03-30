@@ -30,9 +30,9 @@ class PSCache
   def parsed_feature_list
     # Grab raw feature information from Get-WindowsFeature cmdlet
     raw_list_of_features = if Chef.node['platform_version'][/^(\d+\.\d+)/, 1].to_f < 6.2
-                             powershell_out!('Import-Module ServerManager; Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
+                             powershell_out!('Import-Module ServerManager; Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress').stdout
                            else
-                             powershell_out!('Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
+                             powershell_out!('Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress').stdout
                            end
 
     Chef::JSONCompat.from_json(raw_list_of_features)
