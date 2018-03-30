@@ -18,13 +18,13 @@
 # limitations under the License.
 #
 
-require 'chef/mixin/shell_out'
+require 'chef/mixin/powershell_out'
 require 'chef/node/attribute_collections'
 require 'chef/json_compat'
 
 class PSCache
   include Singleton
-  include Chef::Mixin::ShellOut
+  include Chef::Mixin::PowershellOut
 
   # fetch the list of available feature names from Get-WindowsFeature cmdlet and parse the JSON
   def parsed_feature_list
