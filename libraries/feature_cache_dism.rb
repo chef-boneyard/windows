@@ -1,7 +1,7 @@
 #
 # Author:: Tim Smith (<tsmith@chef.io>)
 # Cookbook:: windows
-# Library:: feature_cache
+# Library:: feature_cache_dism
 #
 # Copyright:: 2018, Chef Software, Inc.
 #

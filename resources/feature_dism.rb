@@ -146,16 +146,21 @@ action_class do
     raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" unless node['platform_version'].to_f >= 6.2
   end
 
+  # read the cached dism data
+  # @return [Hash] Hash of arrays
   def dism_cache
     DismCache.instance.data
   end
 
+  # reset the cached dism data
+  # @return [void]
   def reset_dism_cache
     DismCache.instance.reset
   end
 
   # find dism accounting for File System Redirector
   # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
+  # @return [String] full path to dism.exe
   def dism
     @dism ||= begin
       locate_sysnative_cmd('dism.exe')
