@@ -34,6 +34,8 @@ end
 include Chef::Mixin::PowershellOut
 
 action :install do
+  raise_on_old_powershell
+
   reload_cached_powershell_data unless node['powershell_features_cache']
   fail_if_unavailable # fail if the features don't exist
   fail_if_removed # fail if the features are in removed state
@@ -59,6 +61,8 @@ action :install do
 end
 
 action :remove do
+  raise_on_old_powershell
+
   reload_cached_powershell_data unless node['powershell_features_cache']
 
   Chef::Log.debug("Windows features needing removal: #{features_to_remove.empty? ? 'none' : features_to_remove.join(',')}")
@@ -74,7 +78,8 @@ action :remove do
 end
 
 action :delete do
-  fail_if_delete_unsupported
+  raise_on_old_powershell
+  raise_if_delete_unsupported
 
   reload_cached_powershell_data unless node['powershell_features_cache']
 
@@ -93,6 +98,28 @@ action :delete do
 end
 
 action_class do
+  # shellout to determine the actively installed version of powershell
+  # we have this same data in ohai, but it doesn't get updated if powershell is installed mid run
+  # @return [Integer] the powershell version or 0 for nothing
+  def powershell_version
+    cmd = powershell_out('$PSVersionTable.psversion.major')
+    return 1 if cmd.stdout.empty? # PowerShell 1.0 doesn't have a $PSVersionTable
+    Regexp.last_match(1).to_i if cmd.stdout =~ /^(\d+)/
+  rescue Errno::ENOENT
+    0 # zero as in nothing is installed
+  end
+
+  # raise if we're running powershell less than 3.0 since we need convertto-json
+  # check the powershell version via ohai data and if we're < 3.0 also shellout to make sure as
+  # a newer version could be installed post ohai run. Yes we're double checking. It's fine.
+  # @todo this can go away when we fully remove support for Windows 2008 R2
+  # @raise [RuntimeError] Raise if powershell is < 3.0
+  def raise_on_old_powershell
+    # be super defensive about the powershell lang plugin not being there
+    return if node['languages'] && node['languages']['powershell'] && node['languages']['powershell']['version'].to_i > 3
+    raise 'The windows_feature_powershell resource requires PowerShell 3.0 or later. Please install PowerShell 3.0+ before running this resource.' if powershell_version < 3
+  end
+
   def install_feature_cmdlet
     node['platform_version'].to_f < 6.2 ? 'Import-Module ServerManager; Add-WindowsFeature' : 'Install-WindowsFeature'
   end
@@ -192,7 +219,7 @@ action_class do
   end
 
   # Fail unless we're on windows 8+ / 2012+ where deleting a feature is supported
-  def fail_if_delete_unsupported
+  def raise_if_delete_unsupported
     raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" unless node['platform_version'].to_f >= 6.2
   end
 end
