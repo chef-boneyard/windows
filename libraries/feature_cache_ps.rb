@@ -58,7 +58,7 @@ class PSCache
         when 1, 3 # matches 'Installed' or 'InstallPending' states
           data['enabled'] << feature_details_raw['Name'].downcase # lowercase so we can compare properly
         when 0, 2 # matches 'Available' or 'UninstallPending' states
-          data['disabled '] << feature_details_raw['Name'].downcase # lowercase so we can compare properly
+          data['disabled'] << feature_details_raw['Name'].downcase # lowercase so we can compare properly
         end
       end
 
