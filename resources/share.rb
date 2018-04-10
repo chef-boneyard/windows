@@ -172,6 +172,7 @@ action_class do
   def different_path?
     return false if current_resource.nil? # going from nil to something isn't different for our concerns
     return false if current_resource.path == new_resource.path
+    true
   end
 
   def delete_share
@@ -180,7 +181,7 @@ action_class do
 
   def update_share
     Chef::Log.warn("Updating #{new_resource.share_name}")
-    powershell_out!("Set-SmbShare -Name '#{new_resource.share_name}' -Description '#{new_resource.description}' -Force")
+    powershell_out!("Set-SmbShare -Name #{new_resource.share_name} -Description #{new_resource.description} -Force")
   end
 
   def create_share
