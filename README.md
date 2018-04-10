@@ -22,9 +22,13 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Deprecated Resources Note
 
-As of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
+As of Chef Client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
+
+As of Chef Client 14+ the auto_run, feature, feature_dism, feature_powershell, font, pagefile, printer_port, printer, and shortcut resources are now included in the Chef Client. If you are running Chef 14+ the resources in Chef client will take precedence over the resources in this cookbook. In April 2019 we will release a new major version of this cookbook that removes these resources.
 
 ### windows_auto_run
+
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
 
 #### Actions
 
@@ -202,6 +206,8 @@ end
 
 ### windows_feature
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 **BREAKING CHANGE - Version 3.0.0**
 
 This resource has been moved from using LWRPs and multiple providers to using Custom Resources. To maintain functionality, you'll need to change `provider` to `install_method`.
@@ -301,6 +307,8 @@ end
 
 ### windows_font
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Installs font files. Sources the font by default from the cookbook, but a URI source can be specified as well.
 
 #### Actions
@@ -360,6 +368,8 @@ end
 
 ### windows_pagefile
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Configures the file that provides virtual memory for applications requiring more memory than available RAM or that are paged out to free up memory in use.
 
 #### Actions
@@ -376,6 +386,8 @@ Configures the file that provides virtual memory for applications requiring more
 - `maximum_size` - maximum size of the pagefile in megbytes. Integer
 
 ### windows_printer_port
+
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Create and delete TCP/IPv4 printer ports.
 
@@ -431,6 +443,8 @@ end
 ```
 
 ### windows_printer
+
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Create Windows printer. Note that this doesn't currently install a printer driver. You must already have the driver installed on the system.
 
@@ -510,6 +524,8 @@ end
 
 ### windows_shortcut
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Creates and modifies Windows shortcuts.
 
 #### Actions
@@ -570,6 +586,8 @@ end
 ```
 
 ### windows_task
+
+`Note`: This resource is now included in Chef 13 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Creates, deletes or runs a Windows scheduled task. Requires Windows Server 2008 due to API usage.
 
