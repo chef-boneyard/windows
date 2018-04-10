@@ -175,12 +175,12 @@ action_class do
   end
 
   def delete_share
-    powershell_out!("Remove-SmbShare -Name \"#{new_resource.share_name}\" -Description \"#{new_resource.description}\" -Confirm")
+    powershell_out!("Remove-SmbShare -Name #{new_resource.share_name} -Force")
   end
 
   def update_share
     Chef::Log.warn("Updating #{new_resource.share_name}")
-    powershell_out!("Set-SmbShare -Name '#{new_resource.share_name}' -Description '#{new_resource.description}' -Confirm")
+    powershell_out!("Set-SmbShare -Name '#{new_resource.share_name}' -Description '#{new_resource.description}' -Force")
   end
 
   def create_share
@@ -188,7 +188,7 @@ action_class do
 
     raise "#{new_resource.path} is missing or not a directory" unless ::File.directory? new_resource.path
 
-    powershell_out!("New-SmbShare -Name \"#{new_resource.share_name}\" -Path \"#{new_resource.path}\" -Confirm")
+    powershell_out!("New-SmbShare -Name #{new_resource.share_name} -Path #{new_resource.path}")
   end
 
   # set_share_permissions - Enforce the share permissions as dictated by the resource attributes
