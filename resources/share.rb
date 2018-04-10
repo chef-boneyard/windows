@@ -181,7 +181,10 @@ action_class do
 
   def update_share
     Chef::Log.warn("Updating #{new_resource.share_name}")
-    powershell_out!("Set-SmbShare -Name #{new_resource.share_name} -Description #{new_resource.description} -Force")
+
+    update_command = "Set-SmbShare -Name #{new_resource.share_name} -Description '#{new_resource.description}' -Force"
+
+    powershell_out!(update_command)
   end
 
   def create_share
@@ -189,7 +192,12 @@ action_class do
 
     raise "#{new_resource.path} is missing or not a directory" unless ::File.directory? new_resource.path
 
-    powershell_out!("New-SmbShare -Name #{new_resource.share_name} -Path #{new_resource.path}")
+    share_cmd = "New-SmbShare -Name #{new_resource.share_name} -Path #{new_resource.path} -Description '#{new_resource.description}' -ConcurrentUserLimit #{new_resource.concurrent_user_limit} -CATimeout #{new_resource.ca_timeout} -EncryptData:#{bool_string(new_resource.encrypt_data)} -ContinuouslyAvailable:#{bool_string(new_resource.continuously_available)}"
+    share_cmd << "-ThrottleLimit #{new_resource.throttle_limit}" if new_resource.throttle_limit # defaults to nil so we need to check before passing nil
+    share_cmd << " -ScopeName #{new_resource.scope_name}" unless new_resource.scope_name == '*' # passing * causes the command to fail
+    share_comd << " -Temporary:#{bool_string(new_resource.temporary)}" if new_resource.temporary # only set true
+
+    powershell_out!(share_cmd)
   end
 
   # set_share_permissions - Enforce the share permissions as dictated by the resource attributes
@@ -278,5 +286,11 @@ action_class do
       raise "Invalid user entry #{fully_qualified_user_name}.  The user names must be specified as 'DOMAIN\\user'"
     end
     "\n$dacl_array += new-ace -Name '#{user}' -domain '#{domain}' -permission '#{access}'"
+  end
+
+  # convert True/False into "$True" & "$False"
+  def bool_string(bool)
+    # bool ? 1 : 0
+    bool ? '$true' : '$false'
   end
 end
