@@ -75,7 +75,7 @@ load_current_value do |desired|
   # types that get converted to their Integer values by ConvertTo-Json & we need to make sure
   # those get written out as strings
 
-  share_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit,EncryptData,ThrottleLimit | ConvertTo-Json"
+  share_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit, EncryptData, ThrottleLimit | ConvertTo-Json"
 
   Chef::Log.debug("Determining share state by running #{share_cmd}")
   ps_results = powershell_out(share_cmd)
