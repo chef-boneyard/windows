@@ -190,7 +190,7 @@ action_class do
   def create_share
     Chef::Log.warn("Creating #{new_resource.share_name}")
 
-    raise "#{new_resource.path} is missing or not a directory" unless ::File.directory? new_resource.path
+    raise "#{new_resource.path} is missing or not a directory. Shares cannot be created if the path doesn't first exist." unless ::File.directory? new_resource.path
 
     share_cmd = "New-SmbShare -Name #{new_resource.share_name} -Path #{new_resource.path} -Description '#{new_resource.description}' -ConcurrentUserLimit #{new_resource.concurrent_user_limit} -CATimeout #{new_resource.ca_timeout} -EncryptData:#{bool_string(new_resource.encrypt_data)} -ContinuouslyAvailable:#{bool_string(new_resource.continuously_available)}"
     share_cmd << "-ThrottleLimit #{new_resource.throttle_limit}" if new_resource.throttle_limit # defaults to nil so we need to check before passing nil
