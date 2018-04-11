@@ -149,12 +149,14 @@ action :create do
     # you can't actually change the path so you have to delete the old share first
     delete_share if different_path?
 
-    # powershell for create is different than updates
+    # powershell cmdlet for create is different than updates
     if current_resource.nil?
       create_share
     else
       update_share
     end
+
+    update_permissions
   end
 end
 
@@ -185,6 +187,7 @@ action_class do
 
     update_command = "Set-SmbShare -Name #{new_resource.share_name} -Description '#{new_resource.description}' -Force"
 
+    Chef::Log.warn("Running '#{update_command}' to update the share")
     powershell_out!(update_command)
   end
 
@@ -202,92 +205,37 @@ action_class do
     powershell_out!(share_cmd)
   end
 
-  # set_share_permissions - Enforce the share permissions as dictated by the resource attributes
-  def set_share_permissions
-    share_permissions_script = <<-EOH
-      Function New-SecurityDescriptor
-      {
-        param (
-          [array]$ACEs
-        )
-        #Create SeCDesc object
-        $SecDesc = ([WMIClass] "\\\\$env:ComputerName\\root\\cimv2:Win32_SecurityDescriptor").CreateInstance()
-
-        foreach ($ACE in $ACEs )
-        {
-          $SecDesc.DACL += $ACE.psobject.baseobject
-        }
-
-        #Return the security Descriptor
-        return $SecDesc
-      }
-
-      Function New-ACE
-      {
-        param  (
-          [string] $Name,
-          [string] $Domain,
-          [string] $Permission = "Read"
-        )
-        #Create the Trusteee Object
-        $Trustee = ([WMIClass] "\\\\$env:computername\\root\\cimv2:Win32_Trustee").CreateInstance()
-        $account = get-wmiobject Win32_Account -filter "Name = '$Name' and Domain = '$Domain'"
-        $accountSID = [WMI] "\\\\$env:ComputerName\\root\\cimv2:Win32_SID.SID='$($account.sid)'"
-
-        $Trustee.Domain = $Domain
-        $Trustee.Name = $Name
-        $Trustee.SID = $accountSID.BinaryRepresentation
-
-        #Create ACE (Access Control List) object.
-        $ACE = ([WMIClass] "\\\\$env:ComputerName\\root\\cimv2:Win32_ACE").CreateInstance()
-        switch ($Permission)
-        {
-          "Read" 		 { $ACE.AccessMask = 1179817 }
-          "Change"  {	$ACE.AccessMask = 1245631 }
-          "Full"		   { $ACE.AccessMask = 2032127 }
-          default { throw "$Permission is not a supported permission value. Possible values are 'Read','Change','Full'" }
-        }
-
-        $ACE.AceFlags = 3
-        $ACE.AceType = 0
-        $ACE.Trustee = $Trustee
-
-        $ACE
-      }
-
-      $dacl_array = @()
-
-    EOH
-    new_resource.full_users.each do |user|
-      share_permissions_script += user_to_ace(user, 'Full')
+  # determine what users in the current state don't exist in the desired state
+  # users/groups will have their permissions updated with the same command that
+  # sets it, but removes must be performed with Revoke-SmbShareAccess
+  def users_to_revoke
+    @users_to_revoke ||= begin
+      # if the resource doesn't exist then nothing needs to be revoked
+      if current_resource.nil?
+        []
+      else # if it exists then calculate the current to new resource diffs
+        (current_resource.full_users + current_resource.change_users + current_resource.read_users) - (new_resource.full_users + new_resource.change_users + new_resource.read_users)
+      end
     end
-
-    new_resource.change_users.each do |user|
-      share_permissions_script += user_to_ace(user, 'Change')
-    end
-
-    new_resource.read_users.each do |user|
-      share_permissions_script += user_to_ace(user, 'Read')
-    end
-
-    share_permissions_script += <<-EOH
-
-      $dacl = New-SecurityDescriptor -Aces $dacl_array
-
-      $share = get-wmiobject win32_share -filter 'Name like "#{new_resource.share_name}"'
-      $return = $share.SetShareInfo($null, '#{new_resource.description}', $dacl)
-      exit $return.returnValue
-    EOH
-    r = powershell_out(share_permissions_script)
-    raise "Could not set share permissions.  Win32_Share.SedtShareInfo returned #{r.exitstatus}" if r.error?
   end
 
-  def user_to_ace(fully_qualified_user_name, access)
-    domain, user = fully_qualified_user_name.split('\\')
-    unless domain && user
-      raise "Invalid user entry #{fully_qualified_user_name}.  The user names must be specified as 'DOMAIN\\user'"
+  def update_permissions
+    # revoke any users that had something, but now have absolutely nothing
+    revoke_user_permissions(users_to_revoke) unless users_to_revoke.empty?
+
+    %w(Full Read Change).each do |perm_type|
+      property_name = "#{perm_type.downcase}_users"
+
+      # update permissions for a brand new share OR
+      # update permissions if the current state and desired state differs
+      if current_resource.nil? || !(current_resource.send(property_name) - new_resource.send(property_name)).empty?
+        Chef::Log.warn("would set user permission type #{perm_type}")
+      end
     end
-    "\n$dacl_array += new-ace -Name '#{user}' -domain '#{domain}' -permission '#{access}'"
+  end
+
+  def revoke_user_permissions(users)
+    Chef::Log.warn("would revoke #{users}")
   end
 
   # convert True/False into "$True" & "$False"
