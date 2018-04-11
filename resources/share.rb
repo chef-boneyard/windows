@@ -176,6 +176,7 @@ action_class do
   end
 
   def delete_share
+    Chef::Log.warn("Running 'Remove-SmbShare -Name #{new_resource.share_name} -Force' to remove the share")
     powershell_out!("Remove-SmbShare -Name #{new_resource.share_name} -Force")
   end
 
@@ -195,8 +196,9 @@ action_class do
     share_cmd = "New-SmbShare -Name #{new_resource.share_name} -Path #{new_resource.path} -Description '#{new_resource.description}' -ConcurrentUserLimit #{new_resource.concurrent_user_limit} -CATimeout #{new_resource.ca_timeout} -EncryptData:#{bool_string(new_resource.encrypt_data)} -ContinuouslyAvailable:#{bool_string(new_resource.continuously_available)}"
     share_cmd << "-ThrottleLimit #{new_resource.throttle_limit}" if new_resource.throttle_limit # defaults to nil so we need to check before passing nil
     share_cmd << " -ScopeName #{new_resource.scope_name}" unless new_resource.scope_name == '*' # passing * causes the command to fail
-    share_comd << " -Temporary:#{bool_string(new_resource.temporary)}" if new_resource.temporary # only set true
+    share_cmd << " -Temporary:#{bool_string(new_resource.temporary)}" if new_resource.temporary # only set true
 
+    Chef::Log.warn("Running '#{share_cmd}' to create the share")
     powershell_out!(share_cmd)
   end
 
