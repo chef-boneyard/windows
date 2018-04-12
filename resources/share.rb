@@ -256,7 +256,7 @@ action_class do
     return true if current_resource.nil? && !new_resource.send(property_name).empty?
 
     # there's a difference between the current and desired state
-    return true unless (current_resource.send(property_name) - new_resource.send(property_name)).empty?
+    return true unless (new_resource.send(property_name) - current_resource.send(property_name)).empty?
 
     # anything else
     false
