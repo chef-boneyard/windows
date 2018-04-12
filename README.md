@@ -479,17 +479,25 @@ Creates, modifies and removes Windows shares. All properties are idempotent.
 
 #### Actions
 
-- :create: creates/modifies a share
-- :delete: deletes a share
+- `:create`: creates/modifies a share
+- `:delete`: deletes a share
 
 #### Properties
 
-- share_name: name attribute, the share name.
-- path: path to the directory to be shared. Required when creating. If the share already exists on a different path then it is deleted and re-created.
-- description: description to be applied to the share
-- full_users: array of users which should have "Full control" permissions
-- change_users: array of users which should have "Change" permissions
-- read_users: array of users which should have "Read" permissions
+property                 | type       | default       | description
+------------------------ | ---------- | ------------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------
+`share_name`             | String     | resource name | the share to assign to the share
+`path`                   | String     |               | The path of the location of the folder to share. Required when creating. If the share already exists on a different path then it is deleted and re-created.
+`description`            | String     |               | description to be applied to the share
+`full_users`             | Array      | []            | users which should have "Full control" permissions
+`change_users`           | Array      | []            | Users are granted modify permission to access the share.
+`read_users`             | Array      | []            | users which should have "Read" permissions
+`temporary`              | True/False | false         | The lifetime of the new SMB share. A temporary share does not persist beyond the next restart of the computer
+`scope_name`             | String     | '*'           | The scope name of the share.
+`ca_timeout`             | Integer    | 0             | The continuous availability time-out for the share.
+`continuously_available` | True/False | false         | Indicates that the share is continuously available.
+`concurrent_user_limit`  | Integer    | 0 (unlimited) | The maximum number of concurrently connected users the share can accommodate
+`encrypt_data`           | True/False | false         | Indicates that the share is encrypted.
 
 #### Examples
 
