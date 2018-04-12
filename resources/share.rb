@@ -152,8 +152,10 @@ action :create do
 
     # powershell cmdlet for create is different than updates
     if current_resource.nil?
+      Chef::Log.warn('current resource was nil so we will create')
       create_share
     else
+      Chef::Log.warn('current resource was not nil so we will update')
       update_share
     end
 
@@ -173,6 +175,7 @@ end
 
 action_class do
   def different_path?
+    Chef::Log.warn("Checking if the path of #{new_resource.share_name} differs")
     return false if current_resource.nil? # going from nil to something isn't different for our concerns
     return false if current_resource.path == new_resource.path
     true
@@ -184,7 +187,7 @@ action_class do
   end
 
   def update_share
-    Chef::Log.warn("Updating #{new_resource.share_name}")
+    Chef::Log.warn("Updating the share #{new_resource.share_name}")
 
     update_command = "Set-SmbShare -Name #{new_resource.share_name} -Description '#{new_resource.description}' -Force"
 
@@ -220,23 +223,47 @@ action_class do
     end
   end
 
+  # update existing permissions on a share
   def update_permissions
-    # revoke any users that had something, but now have absolutely nothing
+    # revoke any users that had something, but now has nothing
     revoke_user_permissions(users_to_revoke) unless users_to_revoke.empty?
 
-    %w(Full Read Change).each do |perm_type|
-      property_name = "#{perm_type.downcase}_users"
-
-      # update permissions for a brand new share OR
-      # update permissions if the current state and desired state differs
-      if current_resource.nil? || !(current_resource.send(property_name) - new_resource.send(property_name)).empty?
-        Chef::Log.warn("would set user permission type #{perm_type}")
+    # set permissions for each of the permission types
+    %w(full read change).each do |perm_type|
+      # set permissions for a brand new share OR
+      # update permissions if the current state and desired state differ
+      if permissions_need_update?(perm_type)
+        Chef::Log.warn("Running 'Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}' to update the permissions")
+        powershell_out!("Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}")
       end
     end
   end
 
+  # determine if permissions need to be updated.
+  # Brand new share with no permissions defined: no
+  # Brand new share with permissions defined: yes
+  # Existing share with differing permissions: yes
+  #
+  # @param [String] type the permissions type (Full, Read, or Change)
+  def permissions_need_update?(type)
+    property_name = "#{type}_users"
+
+    # brand new share, but nothing to set
+    return false if current_resource.nil? && new_resource.send(property_name).empty?
+
+    # brand new share with new permissions to set
+    return true if current_resource.nil? && !new_resource.send(property_name).empty?
+
+    # there's a difference between the current and desired state
+    return true unless (current_resource.send(property_name) - new_resource.send(property_name)).empty?
+
+    # anything else
+    false
+  end
+
   def revoke_user_permissions(users)
-    Chef::Log.warn("would revoke #{users}")
+    Chef::Log.warn("Revoking users: #{users.join(',')}")
+    powershell_out!("Revoke-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{users.join(',')}\" -Force")
   end
 
   # convert True/False into "$True" & "$False"
