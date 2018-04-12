@@ -152,10 +152,10 @@ action :create do
 
     # powershell cmdlet for create is different than updates
     if current_resource.nil?
-      Chef::Log.warn('current resource was nil so we will create')
+      Chef::Log.debug('current resource was nil so we will create')
       create_share
     else
-      Chef::Log.warn('current resource was not nil so we will update')
+      Chef::Log.debug('current resource was not nil so we will update')
       update_share
     end
 
@@ -175,28 +175,28 @@ end
 
 action_class do
   def different_path?
-    Chef::Log.warn("Checking if the path of #{new_resource.share_name} differs")
+    Chef::Log.debug("Checking if the path of #{new_resource.share_name} differs")
     return false if current_resource.nil? # going from nil to something isn't different for our concerns
     return false if current_resource.path == new_resource.path
     true
   end
 
   def delete_share
-    Chef::Log.warn("Running 'Remove-SmbShare -Name #{new_resource.share_name} -Force' to remove the share")
+    Chef::Log.debug("Running 'Remove-SmbShare -Name #{new_resource.share_name} -Force' to remove the share")
     powershell_out!("Remove-SmbShare -Name #{new_resource.share_name} -Force")
   end
 
   def update_share
-    Chef::Log.warn("Updating the share #{new_resource.share_name}")
+    Chef::Log.debug("Updating the share #{new_resource.share_name}")
 
     update_command = "Set-SmbShare -Name #{new_resource.share_name} -Description '#{new_resource.description}' -Force"
 
-    Chef::Log.warn("Running '#{update_command}' to update the share")
+    Chef::Log.debug("Running '#{update_command}' to update the share")
     powershell_out!(update_command)
   end
 
   def create_share
-    Chef::Log.warn("Creating #{new_resource.share_name}")
+    Chef::Log.debug("Creating #{new_resource.share_name}")
 
     raise "#{new_resource.path} is missing or not a directory. Shares cannot be created if the path doesn't first exist." unless ::File.directory? new_resource.path
 
@@ -205,7 +205,7 @@ action_class do
     share_cmd << " -ScopeName #{new_resource.scope_name}" unless new_resource.scope_name == '*' # passing * causes the command to fail
     share_cmd << " -Temporary:#{bool_string(new_resource.temporary)}" if new_resource.temporary # only set true
 
-    Chef::Log.warn("Running '#{share_cmd}' to create the share")
+    Chef::Log.debug("Running '#{share_cmd}' to create the share")
     powershell_out!(share_cmd)
   end
 
@@ -233,7 +233,7 @@ action_class do
       # set permissions for a brand new share OR
       # update permissions if the current state and desired state differ
       if permissions_need_update?(perm_type)
-        Chef::Log.warn("Running 'Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}' to update the permissions")
+        Chef::Log.debug("Running 'Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}' to update the permissions")
         powershell_out!("Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}")
       end
     end
@@ -262,7 +262,7 @@ action_class do
   end
 
   def revoke_user_permissions(users)
-    Chef::Log.warn("Revoking users: #{users.join(',')}")
+    Chef::Log.debug("Revoking users: #{users.join(',')}")
     powershell_out!("Revoke-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{users.join(',')}\" -Force")
   end
 
