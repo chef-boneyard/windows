@@ -143,6 +143,7 @@ def stripped_account(name)
 end
 
 action :create do
+  # we do this here instead of requiring the property because :delete doesn't need path set
   raise 'No path property set' unless new_resource.path
 
   converge_if_changed do
@@ -158,6 +159,7 @@ action :create do
       update_share
     end
 
+    # creating the share does not set permissions so we need to update
     update_permissions
   end
 end
@@ -181,13 +183,13 @@ action_class do
   end
 
   def delete_share
-    Chef::Log.debug("Running 'Remove-SmbShare -Name #{new_resource.share_name} -Force' to remove the share")
-    powershell_out!("Remove-SmbShare -Name #{new_resource.share_name} -Force")
+    delete_command = "Remove-SmbShare -Name #{new_resource.share_name} -Force"
+
+    Chef::Log.debug("Running '#{delete_command}' to remove the share")
+    powershell_out!(delete_command)
   end
 
   def update_share
-    Chef::Log.debug("Updating the share #{new_resource.share_name}")
-
     update_command = "Set-SmbShare -Name #{new_resource.share_name} -Description '#{new_resource.description}' -Force"
 
     Chef::Log.debug("Running '#{update_command}' to update the share")
@@ -195,8 +197,6 @@ action_class do
   end
 
   def create_share
-    Chef::Log.debug("Creating #{new_resource.share_name}")
-
     raise "#{new_resource.path} is missing or not a directory. Shares cannot be created if the path doesn't first exist." unless ::File.directory? new_resource.path
 
     share_cmd = "New-SmbShare -Name #{new_resource.share_name} -Path #{new_resource.path} -Description '#{new_resource.description}' -ConcurrentUserLimit #{new_resource.concurrent_user_limit} -CATimeout #{new_resource.ca_timeout} -EncryptData:#{bool_string(new_resource.encrypt_data)} -ContinuouslyAvailable:#{bool_string(new_resource.continuously_available)}"
@@ -232,8 +232,10 @@ action_class do
       # set permissions for a brand new share OR
       # update permissions if the current state and desired state differ
       if permissions_need_update?(perm_type)
-        Chef::Log.debug("Running 'Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}' to update the permissions")
-        powershell_out!("Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}")
+        grant_command = "Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}"
+
+        Chef::Log.debug("Running '#{grant_command}' to update the share permissions")
+        powershell_out!(grant_command)
       end
     end
   end
@@ -261,8 +263,9 @@ action_class do
   end
 
   def revoke_user_permissions(users)
-    Chef::Log.debug("Revoking users: #{users.join(',')}")
-    powershell_out!("Revoke-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{users.join(',')}\" -Force")
+    revoke_command = "Revoke-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{users.join(',')}\" -Force"
+    Chef::Log.debug("Running '#{revoke_command}' to revoke share permissions")
+    powershell_out!(revoke_command)
   end
 
   # convert True/False into "$True" & "$False"
