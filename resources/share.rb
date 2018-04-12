@@ -74,11 +74,10 @@ load_current_value do |desired|
   # this command selects individual objects because EncryptData & CachingMode have underlying
   # types that get converted to their Integer values by ConvertTo-Json & we need to make sure
   # those get written out as strings
+  share_state_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit, EncryptData, ThrottleLimit | ConvertTo-Json"
 
-  share_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit, EncryptData, ThrottleLimit | ConvertTo-Json"
-
-  Chef::Log.debug("Determining share state by running #{share_cmd}")
-  ps_results = powershell_out(share_cmd)
+  Chef::Log.debug("Determining share state by running #{share_state_cmd}")
+  ps_results = powershell_out(share_state_cmd)
 
   # detect a failure without raising and then set current_resource to nil
   if ps_results.error?
@@ -86,7 +85,7 @@ load_current_value do |desired|
     current_value_does_not_exist!
   end
 
-  Chef::Log.debug("The results were #{ps_results.stdout}")
+  Chef::Log.debug("The Get-SmbShare results were #{ps_results.stdout}")
   results = Chef::JSONCompat.from_json(ps_results.stdout)
 
   path results['Path']
@@ -100,11 +99,13 @@ load_current_value do |desired|
   # folder_enumeration_mode results['FolderEnumerationMode']
   throttle_limit results['ThrottleLimit']
 
-  perm_cmd = %(Get-SmbShareAccess -Name "#{desired.share_name}" | Select-Object AccountName,AccessControlType,AccessRight | ConvertTo-Json)
+  perm_state_cmd = %(Get-SmbShareAccess -Name "#{desired.share_name}" | Select-Object AccountName,AccessControlType,AccessRight | ConvertTo-Json)
 
-  Chef::Log.debug("Running '#{perm_cmd}' to determine share permissions state'")
-  ps_perm_results = powershell_out(perm_cmd)
+  Chef::Log.debug("Running '#{perm_state_cmd}' to determine share permissions state'")
+  ps_perm_results = powershell_out(perm_state_cmd)
 
+  # we raise here instead of warning like above because we'd only get here if the above Get-SmbShare
+  # command was successful and that continuing would leave us with 1/2 known state
   raise "Could not determine #{desired.share_name} share permissions by running '#{perm_cmd}'" if ps_perm_results.error?
 
   f_users, c_users, r_users = parse_permissions(ps_perm_results.stdout)
