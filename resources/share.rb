@@ -75,7 +75,7 @@ load_current_value do |desired|
   # those get written out as strings
   share_state_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit, EncryptData, ThrottleLimit | ConvertTo-Json"
 
-  Chef::Log.debug("Determining share state by running #{share_state_cmd}")
+  Chef::Log.debug("Running '#{share_state_cmd}' to determine share state'")
   ps_results = powershell_out(share_state_cmd)
 
   # detect a failure without raising and then set current_resource to nil
@@ -106,6 +106,8 @@ load_current_value do |desired|
   # we raise here instead of warning like above because we'd only get here if the above Get-SmbShare
   # command was successful and that continuing would leave us with 1/2 known state
   raise "Could not determine #{desired.share_name} share permissions by running '#{perm_cmd}'" if ps_perm_results.error?
+
+  Chef::Log.debug("The Get-SmbShareAccess results were #{ps_perm_results.stdout}")
 
   f_users, c_users, r_users = parse_permissions(ps_perm_results.stdout)
 
@@ -152,10 +154,10 @@ action :create do
 
     # powershell cmdlet for create is different than updates
     if current_resource.nil?
-      Chef::Log.debug('current resource was nil so we will create')
+      Chef::Log.debug('The current resource is nil so we will create a new share')
       create_share
     else
-      Chef::Log.debug('current resource was not nil so we will update')
+      Chef::Log.debug('The current resource was not nil so we will update an existing share')
       update_share
     end
 
@@ -176,7 +178,6 @@ end
 
 action_class do
   def different_path?
-    Chef::Log.debug("Checking if the path of #{new_resource.share_name} differs")
     return false if current_resource.nil? # going from nil to something isn't different for our concerns
     return false if current_resource.path == new_resource.path
     true
@@ -231,12 +232,11 @@ action_class do
     %w(full read change).each do |perm_type|
       # set permissions for a brand new share OR
       # update permissions if the current state and desired state differ
-      if permissions_need_update?(perm_type)
-        grant_command = "Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}"
+      next unless permissions_need_update?(perm_type)
+      grant_command = "Grant-SmbShareAccess -Name \"#{new_resource.share_name}\" -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}"
 
-        Chef::Log.debug("Running '#{grant_command}' to update the share permissions")
-        powershell_out!(grant_command)
-      end
+      Chef::Log.debug("Running '#{grant_command}' to update the share permissions")
+      powershell_out!(grant_command)
     end
   end
 
