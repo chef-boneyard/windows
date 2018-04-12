@@ -21,7 +21,6 @@
 # limitations under the License.
 #
 
-require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 require 'chef/json_compat'
 
 # Specifies a name for the SMB share. The name may be composed of any valid file name characters, but must be less than 80 characters long. The names pipe and mailslot are reserved for use by the computer.
