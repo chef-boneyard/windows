@@ -65,15 +65,13 @@ property :encrypt_data, [true, false], default: false
 # Specifies which files and folders in the SMB share are visible to users. AccessBased: SMB does not the display the files and folders for a share to a user unless that user has rights to access the files and folders. By default, access-based enumeration is disabled for new SMB shares. Unrestricted: SMB displays files and folders to a user even when the user does not have permission to access the items.
 # property :folder_enumeration_mode, String, equal_to: %(AccessBased Unrestricted)
 
-property :throttle_limit, [Integer, nil]
-
 include Chef::Mixin::PowershellOut
 
 load_current_value do |desired|
   # this command selects individual objects because EncryptData & CachingMode have underlying
   # types that get converted to their Integer values by ConvertTo-Json & we need to make sure
   # those get written out as strings
-  share_state_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit, EncryptData, ThrottleLimit | ConvertTo-Json"
+  share_state_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit, EncryptData | ConvertTo-Json"
 
   Chef::Log.debug("Running '#{share_state_cmd}' to determine share state'")
   ps_results = powershell_out(share_state_cmd)
@@ -96,7 +94,6 @@ load_current_value do |desired|
   concurrent_user_limit results['ConcurrentUserLimit']
   encrypt_data results['EncryptData']
   # folder_enumeration_mode results['FolderEnumerationMode']
-  throttle_limit results['ThrottleLimit']
 
   perm_state_cmd = %(Get-SmbShareAccess -Name "#{desired.share_name}" | Select-Object AccountName,AccessControlType,AccessRight | ConvertTo-Json)
 
@@ -201,7 +198,6 @@ action_class do
     raise "#{new_resource.path} is missing or not a directory. Shares cannot be created if the path doesn't first exist." unless ::File.directory? new_resource.path
 
     share_cmd = "New-SmbShare -Name #{new_resource.share_name} -Path #{new_resource.path} -Description '#{new_resource.description}' -ConcurrentUserLimit #{new_resource.concurrent_user_limit} -CATimeout #{new_resource.ca_timeout} -EncryptData:#{bool_string(new_resource.encrypt_data)} -ContinuouslyAvailable:#{bool_string(new_resource.continuously_available)}"
-    share_cmd << "-ThrottleLimit #{new_resource.throttle_limit}" if new_resource.throttle_limit # defaults to nil so we need to check before passing nil
     share_cmd << " -ScopeName #{new_resource.scope_name}" unless new_resource.scope_name == '*' # passing * causes the command to fail
     share_cmd << " -Temporary:#{bool_string(new_resource.temporary)}" if new_resource.temporary # only set true
 
