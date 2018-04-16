@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.2.0 (2018-04-16)
+
+- Initial rewrite of windows_share to use PowerShell for share creation. This introduces multiple new properties and resolves a good number of longstanding issues. Please be sure to report any issues you see with this so we can stabilize this resource and include it in Chef 15!
+- Resolve failures in windows_certificate
+
 ## 4.1.4 (2018-03-29)
 
 - Raise in windows_feature_powershell if we're on PS < 3.0
