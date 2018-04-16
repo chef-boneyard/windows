@@ -18,8 +18,6 @@
 # limitations under the License.
 #
 
-include Windows::Helper
-
 property :source, String, name_property: true
 property :pfx_password, String
 property :private_key_acl, Array
@@ -95,6 +93,8 @@ EOH
 end
 
 action_class do
+  include Windows::Helper
+
   def cert_location
     @location ||= new_resource.user_store ? 'CurrentUser' : 'LocalMachine'
   end
