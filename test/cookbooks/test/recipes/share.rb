@@ -25,11 +25,11 @@ end
 
 # create then delete the share
 windows_share 'create no_share' do
-  share_name 'no_share'
+  share_name 'no share'
   path 'C:/test_share'
 end
 
-windows_share 'no_share' do
+windows_share 'no share' do
   action :delete
 end
 
