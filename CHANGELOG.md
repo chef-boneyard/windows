@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.2.1 (2018-04-17)
+
+- Make sure shares can have spaces in the share name
+
 ## 4.2.0 (2018-04-16)
 
 - Initial rewrite of windows_share to use PowerShell for share creation. This introduces multiple new properties and resolves a good number of longstanding issues. Please be sure to report any issues you see with this so we can stabilize this resource and include it in Chef 15!
