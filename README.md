@@ -491,6 +491,8 @@ end
 
 Creates, modifies and removes Windows shares. All properties are idempotent.
 
+`Note`: This resource uses PowerShell cmdlets introduced in Windows 2012/8.
+
 #### Actions
 
 - `:create`: creates/modifies a share
