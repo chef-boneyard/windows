@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.2.2 (2018-04-24)
+
+- Properly fail in windows_share on Windows 2008 R2 since we lack the cmdlets to manipulates shares on those systems.
+
 ## 4.2.1 (2018-04-17)
 
 - Make sure shares can have spaces in the share name
