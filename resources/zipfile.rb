@@ -26,9 +26,6 @@ property :source, String
 property :overwrite, [true, false], default: false
 property :checksum, String
 
-include Windows::Helper
-require 'find'
-
 action :unzip do
   ensure_rubyzip_gem_installed
   Chef::Log.debug("unzip #{new_resource.source} => #{new_resource.path} (overwrite=#{new_resource.overwrite})")
@@ -112,6 +109,9 @@ action :zip do
 end
 
 action_class do
+  include Windows::Helper
+  require 'find'
+
   def ensure_rubyzip_gem_installed
     require 'zip'
   rescue LoadError
