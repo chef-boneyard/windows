@@ -57,7 +57,6 @@ end
 
 action_class do
   include Windows::Helper
-  include ::Win32::Helper
 
   def add_cert_in_certstore
     add_cert(openssl_cert_obj)
