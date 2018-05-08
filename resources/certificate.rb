@@ -57,7 +57,6 @@ end
 
 action_class do
   include Windows::Helper
-  include ::Win32::Helper
 
   def add_cert_in_certstore
     add_cert(openssl_cert_obj)
@@ -69,6 +68,20 @@ action_class do
 
   def cert_location
     @location ||= new_resource.user_store ? 'CurrentUser' : 'LocalMachine'
+  end
+
+  def openssl_cert_obj
+    OpenSSL::X509::Certificate.new(raw_source)
+  end
+
+  def add_cert(cert_obj)
+    store = ::Win32::Certstore.open(store_name)
+    store.add(cert_obj)
+  end
+
+  def delete_cert
+    store = ::Win32::Certstore.open(store_name)
+    store.delete(source)
   end
 
   def cert_script(persist)
