@@ -18,9 +18,6 @@ verifier:
   name: pester
 
 suites:
-  - name: certificate
-    run_list:
-      - recipe[test::certificate]
   - name: feature
     run_list:
       - recipe[test::feature]
