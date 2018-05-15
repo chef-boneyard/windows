@@ -86,7 +86,7 @@ load_current_value do |desired|
   if task_hash.respond_to?(:[]) && task_hash[:TaskName] == pathed_task_name
     exists true
     status :running if task_hash[:Status] == 'Running'
-    enabled task_hash[:ScheduledTaskState] == 'Enabled' ? true : false
+    enabled task_hash[:ScheduledTaskState] == 'Enabled'
     cwd task_hash[:StartIn] unless task_hash[:StartIn] == 'N/A'
     command task_hash[:TaskToRun]
     user task_hash[:RunAsUser]

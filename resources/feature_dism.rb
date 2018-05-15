@@ -23,6 +23,7 @@ property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 
+# @return [Array] lowercase the array unless we're on < Windows 2012
 def to_lowercase_array(x)
   x = x.split(/\s*,\s*/) if x.is_a?(String) # split multiple forms of a comma separated list
 

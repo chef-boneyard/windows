@@ -162,7 +162,7 @@ action_class do
   # set a pagefile size to be system managed
   #
   # @param [String] pagefile path to the pagefile
-  def set_system_managed(pagefile) # rubocop: disable Style/AccessorMethodName
+  def set_system_managed(pagefile) # rubocop: disable Naming/AccessorMethodName
     converge_by("set #{pagefile} to System Managed") do
       Chef::Log.debug("Running #{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0")
       cmd = shell_out("#{wmic} pagefileset where SettingID=\"#{get_setting_id(pagefile)}\" set InitialSize=0,MaximumSize=0", returns: [0])
