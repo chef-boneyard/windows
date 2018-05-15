@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.2.4 (2018-05-14)
+
+- Fix the platform version check in windows_share
+
 ## 4.2.3 (2018-05-07)
 
 - Include the helper in the action class to prevent failures with the zipfile resource
