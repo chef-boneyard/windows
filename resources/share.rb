@@ -114,7 +114,7 @@ load_current_value do |desired|
 end
 
 def after_created
-  raise 'The windows_share resource relies on PowerShell cmdlets not present in Windows releases prior to 8/2012. Cannot continue!' if node['platform_version'].to_f < 8.2
+  raise 'The windows_share resource relies on PowerShell cmdlets not present in Windows releases prior to 8/2012. Cannot continue!' if node['platform_version'].to_f < 6.3
 end
 
 # given the string output of Get-SmbShareAccess parse out
