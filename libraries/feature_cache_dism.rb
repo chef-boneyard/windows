@@ -33,10 +33,7 @@ class DismCache
   # @return [Hash] hash containing 'enabled', 'disabled' and 'removed' arrays
   def data
     @data ||= begin
-      data = Mash.new
-      data['enabled'] = []
-      data['disabled'] = []
-      data['removed'] = []
+      data = VividMash.new
 
       # Grab raw feature information from dism command line
       raw_feature_shellout = shell_out('dism.exe /Get-Features /Online /Format:Table /English').stdout

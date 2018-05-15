@@ -46,10 +46,7 @@ class PSCache
   # @return [Hash] hash containing 'enabled', 'disabled' and 'removed' arrays
   def data
     @data ||= begin
-      data = Mash.new
-      data['enabled'] = []
-      data['disabled'] = []
-      data['removed'] = []
+      data = VividMash.new
 
       parsed_feature_list.each do |feature_details_raw|
         case feature_details_raw['InstallState']
