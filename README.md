@@ -67,6 +67,9 @@ Installs a certificate into the Windows certificate store from a file, and grant
 #### Properties
 
 - `source` - name attribute. The source file (for create and acl_add), thumbprint (for delete and acl_add) or subject (for delete).
+- `pfx_exportable` - if false (default) then do not allow certificate to be exported if it is a pfx file
+- `pfx_prefer_cng_ksp` - if false (default) then do not use CNG KSP if a provider has not been specified by certificate if it is a pfx file
+- `pfx_always_cng_ksp` - if false (default) then do not override provider specified by certificate to use CNG KSP if it is a pfx file
 - `pfx_password` - the password to access the source if it is a pfx file.
 - `private_key_acl` - array of 'domain\account' entries to be granted read-only access to the certificate's private key. This is not idempotent.
 - `store_name` - the certificate store to manipulate. One of:
@@ -84,6 +87,7 @@ Installs a certificate into the Windows certificate store from a file, and grant
   - TRUST (Enterprise Trust)
   - DISALLOWED (Untrusted Certificates)
 - `user_store` - if false (default) then use the local machine store; if true then use the current user's store.
+
 
 #### Examples
 
