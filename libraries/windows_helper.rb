@@ -123,20 +123,6 @@ module Windows
       var.reject(&:nil?)
     end
 
-    def openssl_cert_obj
-      OpenSSL::X509::Certificate.new(raw_source)
-    end
-
-    def add_cert(cert_obj)
-      store = Win32::Certstore.open(store_name)
-      store.add(cert_obj)
-    end
-
-    def delete_cert
-      store = Win32::Certstore.open(store_name)
-      store.delete(source)
-    end
-
     def raw_source
       ext = File.extname(source)
       convert_pem(ext, source)

@@ -107,3 +107,78 @@ windows_certificate 'C:/certs/test-cert.pfx' do
   pfx_password 'chef123'
   store_name 'CA'
 end
+
+# Add (.PEM) format certificate in MY certificate store
+windows_certificate 'C:/certs/GlobalSignRootCA.pem' do
+  action :create
+end
+
+# Validate certificate by thumbprint
+windows_certificate 'b1bc968bd4f49d622aa89a81f2150152a41d829c' do
+  action :verify
+end
+
+# Validate certificate by thumbprint with space
+windows_certificate 'b1bc968bd4f49d622aa89a81f2150152a41d829c' do
+  action :verify
+end
+
+# Validate certificate by thumbprint with colon
+windows_certificate 'validate certificate' do
+  action :verify
+  source 'b1:bc:96:8b:d4:f4:9d:62:2a:a8:9a:81:f2:15:01:52:a4:1d:82:9c'
+end
+
+# Validate certificate by invalid thumbprint
+windows_certificate 'validate certificate' do
+  action :verify
+  source 'b1:bc:96:8b:d4:f4:9d:62:2a:a8:9a:81:f2:15:01:52:a4:1d:82:9c:1'
+end
+
+# Fetch certificate and display on console in PEM format
+windows_certificate 'b1bc968bd4f49d622aa89a81f2150152a41d829c' do
+  action :fetch
+end
+
+# Export certificate in PEM
+windows_certificate 'b1 bc 96 8b d4 f4 9d 62 2a a8 9a 81 f2 15 01 52 a4 1d 82 9c' do
+  action :fetch
+  cert_path 'C:\certs\demo.pem'
+end
+
+# Export certificate in DER
+windows_certificate 'b1:bc:96:8b:d4:f4:9d:62:2a:a8:9a:81:f2:15:01:52:a4:1d:82:9c' do
+  action :fetch
+  cert_path 'C:\certs\demo.der'
+end
+
+# Export certificate in CER
+windows_certificate 'Export certificate in cer' do
+  action :fetch
+  source 'b1 bc 96 8b d4 f4 9d 62 2a a8 9a 81 f2 15 01 52 a4 1d 82 9c'
+  cert_path 'C:\certs\demo.cer'
+end
+
+# Export certificate in CRT
+windows_certificate 'b1 bc 96 8b d4 f4 9d 62 2a a8 9a 81 f2 15 01 52 a4 1d 82 9c' do
+  action :fetch
+  cert_path 'C:\certs\demo.crt'
+end
+
+# Export certificate in PFX with no keys
+windows_certificate 'b1 bc 96 8b d4 f4 9d 62 2a a8 9a 81 f2 15 01 52 a4 1d 82 9c' do
+  action :fetch
+  cert_path 'C:\certs\demo.pfx'
+end
+
+# Export certificate in P7B
+windows_certificate 'b1 bc 96 8b d4 f4 9d 62 2a a8 9a 81 f2 15 01 52 a4 1d 82 9c' do
+  action :fetch
+  cert_path 'C:\certs\demo.p7b'
+end
+
+# Export certificate in invalid format return error
+windows_certificate 'b1 bc 96 8b d4 f4 9d 62 2a a8 9a 81 f2 15 01 52 a4 1d 82 9c' do
+  action :fetch
+  cert_path 'C:\certs\demo.mp3'
+end
