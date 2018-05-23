@@ -25,8 +25,6 @@ require 'mixlib/shellout'
 property :driver_name, String, name_property: true, required: true
 property :inf_path, String
 property :printerenvironment, String, equal_to: ['Windows NT x86', 'Windows x64']
-property :domain_username, String
-property :domain_password, String
 
 # Install the printer environment driver
 def printer_driver_exists?(driver_name)
