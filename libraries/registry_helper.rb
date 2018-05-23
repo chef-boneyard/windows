@@ -3,10 +3,10 @@
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
 # Cookbook:: windows
-# Provider:: registry
+# Library:: registry_helper
 #
 # Copyright:: 2010-2017, VMware, Inc.
-# Copyright:: 2011-2017, Chef Software, Inc.
+# Copyright:: 2011-2018, Chef Software, Inc.
 # Copyright:: 2011-2017, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -257,9 +257,9 @@ module Windows
       end
 
       Chef::Log.debug("Resolved user SID to #{sid}")
-      return sid
+      sid
     rescue
-      return nil
+      nil
     end
 
     def hive_loaded?(path)
@@ -350,7 +350,7 @@ module Windows
 end
 
 module Registry
-  module_function
+  module_function # rubocop: disable Lint/UselessAccessModifier
 
   extend Windows::RegistryHelper
 end

@@ -13,12 +13,6 @@ windows_task 'create chef\nested task' do
   command 'dir'
 end
 
-windows_task 'disable chef\nested task' do
-  name 'chef\nested task'
-  command 'dir /s'
-  action :change
-end
-
 windows_task 'create long running task loop' do
   task_name '\chef\longtask'
   action :create
@@ -57,6 +51,21 @@ end
 
 windows_task 'delete task delete_me' do
   name 'delete_me'
+  action :delete
+end
+
+windows_task 'create task run_as_group' do
+  name 'run_as_group'
+  user 'BUILTIN\Users'
+  run_level :highest
+  password 'ignored'
+  action :create
+  command 'dir'
+  notifies :create, 'file[c:/notifytest.txt]', :immediately
+end
+
+windows_task 'delete task run_as_group' do
+  name 'run_as_group'
   action :delete
 end
 

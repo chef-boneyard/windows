@@ -18,7 +18,6 @@ Metrics/BlockNesting:
 
 Style/AccessorMethodName:
   Exclude:
-    - 'libraries/matchers.rb'
     - 'libraries/version.rb'
 
 Style/ClassVars:
