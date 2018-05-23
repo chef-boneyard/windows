@@ -289,6 +289,39 @@ Configures the file that provides virtual memory for applications requiring more
 - `initial_size` - initial size of the pagefile in bytes. Integer
 - `maximum_size` - maximum size of the pagefile in bytes. Integer
 
+### windows_printer_driver
+
+Create and delete printer drivers.
+
+#### Actions
+
+- `:install` - Install a printer driver. This is the default action.
+- `:delete` - Delete a printer driver.
+ 
+#### Properties 
+
+- `driver_name` - Name attribute. Required. IPv4 address, e.g. '10.0.24.34'
+- `inf_path` - Specifies the path of the printer driver INF file in the driver store. Optional. 
+- `printerenvironment` - Specifies the printer driver environment. ('Windows NT x86' or 'Windows x64') Optional. 
+
+#### Examples
+
+Install 'HP Color LaserJet 1600 Class Driver' driver.
+
+```ruby
+windows_printer_driver 'HP Color LaserJet 1600 Class Driver' do
+  action :install
+end
+```
+
+Delete 'HP Color LaserJet 1600 Class Driver'
+
+```ruby
+windows_printer_driver 'Dell 1130 Laser Printer' do
+  action :delete
+end
+```
+
 ### windows_printer_port
 
 Create and delete TCP/IPv4 printer ports.
