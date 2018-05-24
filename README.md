@@ -397,8 +397,8 @@ Create and delete printer drivers.
 #### Properties 
 
 - `driver_name` - Name attribute. Required. IPv4 address, e.g. '10.0.24.34'
-- `inf_path` - Specifies the path of the printer driver INF file in the driver store. Optional. 
-- `printerenvironment` - Specifies the printer driver environment. ('Windows NT x86' or 'Windows x64') Optional. 
+- `inf_path` - Specifies the path of the printer driver INF file in the driver store. Optional.
+- `printerenvironment` - Specifies the printer driver environment. ('Windows NT x86' or 'Windows x64') Optional.
 
 #### Examples
 
