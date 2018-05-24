@@ -23,7 +23,7 @@
 require 'mixlib/shellout'
 
 property :driver_name, String, name_property: true, required: true
-property :inf_path, String
+property :infpath, String
 property :printerenvironment, String, equal_to: ['Windows NT x86', 'Windows x64']
 property :exists, [true, false], desired_state: true
 
@@ -36,7 +36,7 @@ end
 
 load_current_value do |desired|
   name desired.driver_name
-  inf_path desired.inf_path
+  infpath desired.infpath
   printerenvironment desired.printerenvironment
   exists printer_driver_exists?(desired.driver_name)
 end
@@ -64,7 +64,7 @@ end
 action_class do
   def create_printer_driver
     cmd = "Add-PrinterDriver -Name \"#{new_resource.driver_name}\""
-    cmd << " -InfPath '#{new_resource.inf_path}'" if new_resource.inf_path
+    cmd << " -InfPath '#{new_resource.infpath}'" if new_resource.infpath
     cmd << " -PrinterEnvironment '#{new_resource.printerenvironment}'" if new_resource.printerenvironment
 
     powershell_script "Creating printer driver: #{new_resource.driver_name}" do
