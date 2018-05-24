@@ -25,37 +25,46 @@ require 'mixlib/shellout'
 property :driver_name, String, name_property: true, required: true
 property :inf_path, String
 property :printerenvironment, String, equal_to: ['Windows NT x86', 'Windows x64']
+property :exists, [true, false], desired_state: true
 
 # Install the printer environment driver
 def printer_driver_exists?(driver_name)
-  check = Mixlib::ShellOut.new("powershell.exe \"Get-PrinterDriver | Where Name -Like \"#{new_resource.driver_name}\"")
-  check.stdout.include? new_resource.driver_name
+  Chef::Log.debug "powershell.exe \"Get-PrinterDriver | Where Name -Like \"#{driver_name}\""
+  check = Mixlib::ShellOut.new("powershell.exe \"Get-PrinterDriver | Where Name -Like \"#{driver_name}\"")
+  check.stdout.include?(driver_name)
+end
+
+load_current_value do |desired|
+  name desired.driver_name
+  inf_path desired.inf_path
+  printerenvironment desired.printerenvironment
+  exists printer_driver_exists?(desired.driver_name)
 end
 
 action :install do
-  if @current_resource.exists
-    Chef::Log.info "#{@new_resource} already exists - nothing to do."
+  if current_resource.exists
+    Chef::Log.info "#{@current_resource} already exists - nothing to do."
   else
-    converge_by("Create ${@new_resource}") do
+    converge_by("Create #{@current_resource}") do
         create_printer_driver
     end
   end
 end
 
 action :delete do
-  if @current_resource.exists
-    converge_by("Delete ${@new_resource}") do
+  if current_resource.exists
+    converge_by("Delete #{@current_resource}") do
       delete_printer_driver
     end
   else
-    Chef::Log.info "#{@new_resource} doesn't exist - can't delete."
+    Chef::Log.info "#{@current_resource} doesn't exist - can't delete."
   end
 end
 
 action_class do
   def create_printer_driver
-    cmd = "Add-PrinterDriver"
-    cmd << " -InfPath '#{new_resource.infpath}'" if new_resource.infpath
+    cmd = "Add-PrinterDriver -Name \"#{new_resource.driver_name}\""
+    cmd << " -InfPath '#{new_resource.inf_path}'" if new_resource.inf_path
     cmd << " -PrinterEnvironment '#{new_resource.printerenvironment}'" if new_resource.printerenvironment
 
     powershell_script "Creating printer driver: #{new_resource.driver_name}" do
