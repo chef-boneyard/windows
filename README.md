@@ -413,7 +413,7 @@ end
 Delete 'HP Color LaserJet 1600 Class Driver'
 
 ```ruby
-windows_printer_driver 'Dell 1130 Laser Printer' do
+windows_printer_driver 'HP Color LaserJet 1600 Class Driver' do
   action :delete
 end
 ```
