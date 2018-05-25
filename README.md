@@ -410,7 +410,7 @@ windows_printer_driver 'HP Color LaserJet 1600 Class Driver' do
 end
 ```
 
-Delete 'HP Color LaserJet 1600 Class Driver'
+Delete 'HP Color LaserJet 1600 Class Driver' driver.
 
 ```ruby
 windows_printer_driver 'HP Color LaserJet 1600 Class Driver' do
