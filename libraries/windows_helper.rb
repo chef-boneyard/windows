@@ -1,9 +1,9 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Cookbook:: windows
-# Library:: helper
+# Library:: windows_helper
 #
-# Copyright:: 2011-2017, Chef Software, Inc.
+# Copyright:: 2011-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@
 require 'uri'
 require 'Win32API' if Chef::Platform.windows?
 require 'chef/exceptions'
+require 'win32-certstore'
+require 'openssl'
+require 'chef/mixin/powershell_out'
 
 module Windows
   module Helper
@@ -45,16 +48,6 @@ module Windows
       else
         cmd
       end
-    end
-
-    # Create a feature provider dependent value object.
-    # mainly created becasue Windows Feature names are
-    # different based on whether dism.exe or servicemanagercmd.exe
-    # is used for installation
-    def value_for_feature_provider(provider_hash)
-      p = Chef::Platform.find_provider_for_node(node, :windows_feature)
-      key = p.to_s.downcase.split('::').last
-      provider_hash[key] || provider_hash[key.to_sym]
     end
 
     # singleton instance of the Windows Version checker
@@ -103,7 +96,7 @@ module Windows
       buf.strip
     end
 
-    def is_package_installed?(package_name) # rubocop:disable Style/PredicateName
+    def is_package_installed?(package_name) # rubocop:disable Naming/PredicateName
       installed_packages.include?(package_name)
     end
 
@@ -128,6 +121,11 @@ module Windows
     def to_array(var)
       var = var.is_a?(Array) ? var : [var]
       var.reject(&:nil?)
+    end
+
+    def raw_source
+      ext = File.extname(source)
+      convert_pem(ext, source)
     end
 
     private
@@ -167,6 +165,27 @@ module Windows
       rescue ::Win32::Registry::Error
       end
       packages
+    end
+
+    def convert_pem(ext, source)
+      out = case ext
+            when '.crt', '.der'
+              powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
+            when '.cer'
+              powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
+            when '.pfx'
+              powershell_out("openssl pkcs12 -in #{source} -nodes -passin pass:#{pfx_password}").stdout
+            when '.p7b'
+              powershell_out("openssl pkcs7 -print_certs -in #{source} -outform PEM").stdout
+            end
+      out = File.read(source) if out.nil? || out.empty?
+      format_raw_out(out)
+    end
+
+    def format_raw_out(out)
+      begin_cert = '-----BEGIN CERTIFICATE-----'
+      end_cert = '-----END CERTIFICATE-----'
+      begin_cert + out[/#{begin_cert}(.*?)#{end_cert}/m, 1] + end_cert
     end
   end
 end

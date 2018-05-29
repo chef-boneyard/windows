@@ -12,6 +12,7 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 - Windows Server 2008 R2
 - Windows 8, 8.1
 - Windows Server 2012 (R1, R2)
+- Windows Server 2016
 
 ### Chef
 
@@ -21,9 +22,13 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Deprecated Resources Note
 
-As of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
+As of Chef Client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
+
+As of Chef Client 14+ the auto_run, feature, feature_dism, feature_powershell, font, pagefile, printer_port, printer, and shortcut resources are now included in the Chef Client. If you are running Chef 14+ the resources in Chef client will take precedence over the resources in this cookbook. In April 2019 we will release a new major version of this cookbook that removes these resources.
 
 ### windows_auto_run
+
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
 
 #### Actions
 
@@ -32,8 +37,8 @@ As of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included
 
 #### Properties
 
-- `name` - Name attribute. The name of the value to be stored in the registry
-- `program` - The program to be run at login
+- `program_name` - Name property. The name of the value to be stored in the registry
+- `path` - The program to be run at login. This property was previous named `program`. Cookbooks using the `program` property will continue to function, but should be updated.
 - `args` - The arguments for the program
 - `root` - The registry root key to put the entry under--`:machine` (default) or `:user`
 
@@ -117,7 +122,10 @@ Binds a certificate to an HTTP port in order to enable TLS communication.
 
 - `cert_name` - name attribute. The thumbprint(hash) or subject that identifies the certificate to be bound.
 - `name_kind` - indicates the type of cert_name. One of :subject (default) or :hash.
-- `address` - the address to bind against. Default is 0.0.0.0 (all IP addresses).
+- `address` - the address to bind against. Default is 0.0.0.0 (all IP addresses). One of:
+  - IP v4 address `1.2.3.4`
+  - IP v6 address `[::1]`
+  - Host name `www.foo.com`
 - `port` - the port to bind against. Default is 443.
 - `app_id` - the GUID that defines the application that owns the binding. Default is the values used by IIS.
 - `store_name` - the store to locate the certificate in. One of:
@@ -198,6 +206,8 @@ end
 
 ### windows_feature
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 **BREAKING CHANGE - Version 3.0.0**
 
 This resource has been moved from using LWRPs and multiple providers to using Custom Resources. To maintain functionality, you'll need to change `provider` to `install_method`.
@@ -206,7 +216,7 @@ Windows Roles and Features can be thought of as built-in operating system packag
 
 This resource allows you to manage these 'features' in an unattended, idempotent way.
 
-There are three methods for the `windows_feature` which map into Microsoft's three major tools for managing roles/features: [Deployment Image Servicing and Management (DISM)](http://msdn.microsoft.com/en-us/library/dd371719%28v=vs.85%29.aspx), [Servermanagercmd](http://technet.microsoft.com/en-us/library/ee344834%28WS.10%29.aspx) (The CLI for Server Manager), and [PowerShell](https://technet.microsoft.com/en-us/library/cc731774(v=ws.11).aspx). As Servermanagercmd is deprecated, Chef will set the default method to `:windows_feature_dism` if `dism.exe` is present on the system being configured. The default method will fall back to `:windows_feature_servermanagercmd`, and then `:windows_feature_powershell`.
+There are two underlying resources that power `windows_feature` which map to the available installation systems on supported releases of Windows: [Deployment Image Servicing and Management (DISM)](http://msdn.microsoft.com/en-us/library/dd371719%28v=vs.85%29.aspx) and [PowerShell](https://technet.microsoft.com/en-us/library/cc731774(v=ws.11).aspx). Chef will set the default method to `:windows_feature_dism` if `dism.exe` is present on the system being configured and otherwise use `:windows_feature_powershell`.
 
 For more information on Roles, Role Services and Features see the [Microsoft TechNet article on the topic](http://technet.microsoft.com/en-us/library/cc754923.aspx). For a complete list of all features that are available on a node type either of the following commands at a command prompt:
 
@@ -214,12 +224,6 @@ For Dism:
 
 ```text
 dism /online /Get-Features
-```
-
-For ServerManagerCmd:
-
-```text
-servermanagercmd -query
 ```
 
 For PowerShell:
@@ -232,15 +236,15 @@ get-windowsfeature
 
 - `:install` - install a Windows role/feature
 - `:remove` - remove a Windows role/feature
-- `:delete` - remove a Windows role/feature from the image (not supported by ServerManagerCmd)
+- `:delete` - remove a Windows role/feature from the image
 
 #### Properties
 
-- `feature_name` - name of the feature/role(s) to install. The same feature may have different names depending on the provider used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
-- `all` - Boolean. Optional. Default: false. DISM and PowerShell providers only. For DISM this is the equivalent of specifying the /All switch to dism.exe, forcing all parent dependencies to be installed. With the PowerShell install method, the `-InstallAllSubFeatures` switch is applied. Note that these two methods may not produce identical results.
-- `management_tools` - Boolean. Optional. Default: false. PowerShell provider only. Includes the `-IncludeManagementTools` switch. Installs all applicable management tools of the roles, role services, or features specified by the feature name.
-- `source` - String. Optional. DISM and PowerShell providers only. Uses local repository for feature install.
-- `timeout` - Integer. Optional. Default: 600. Specifies a timeout (in seconds) for feature install.
+- `feature_name` - name of the feature/role(s) to install. The same feature may have different names depending on the underlying resource being used (ie DHCPServer vs DHCP; DNS-Server-Full-Role vs DNS).
+- `all` - Boolean. Optional. Default: false. For DISM this is the equivalent of specifying the /All switch to dism.exe, forcing all parent dependencies to be installed. With the PowerShell install method, the `-InstallAllSubFeatures` switch is applied. Note that these two methods may not produce identical results.
+- `management_tools` - Boolean. Optional. Default: false. PowerShell only. Includes the `-IncludeManagementTools` switch. Installs all applicable management tools of the roles, role services, or features specified by the feature name.
+- `source` - String. Optional. Uses local repository for feature install.
+- `timeout` - Integer. Optional. Default: 600\. Specifies a timeout (in seconds) for feature install.
 - `install_method` - Symbol. Optional. If not supplied, Chef will determine which method to use (in the order of `:windows_feature_dism`, `:windows_feature_servercmd`, `:windows_feature_powershell`)
 
 #### Examples
@@ -303,6 +307,8 @@ end
 
 ### windows_font
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Installs font files. Sources the font by default from the cookbook, but a URI source can be specified as well.
 
 #### Actions
@@ -312,7 +318,7 @@ Installs font files. Sources the font by default from the cookbook, but a URI so
 #### Properties
 
 - `font_name` - The file name of the font file name to install. The path defaults to the files/default directory of the cookbook you're calling windows_font from. Defaults to the resource name.
-- `source` - Set an alternate path/URI to the font file.
+- `source` - A local filesystem path or URI to source the font file from..
 
 #### Examples
 
@@ -337,7 +343,7 @@ Sets the Access Control List for an http URL to grant non-admin accounts permiss
 
 - `url` - the name of the url to be created/deleted.
 - `sddl` - the DACL string configuring all permissions to URL. Mandatory for create if user is not provided. Can't be use with `user`.
-- `user` - the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create if sddl is not provided. Can't be use with `sddl`. Only one user or group can be granted permission so this replaces any previously defined entry.
+- `user` - the name (domain\user) of the user or group to be granted permission to the URL. Mandatory for create if sddl is not provided. Can't be use with `sddl`. Only one user or group can be granted permission so this replaces any previously defined entry. If you receive a parameter error your user may not exist.
 
 #### Examples
 
@@ -362,6 +368,8 @@ end
 
 ### windows_pagefile
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Configures the file that provides virtual memory for applications requiring more memory than available RAM or that are paged out to free up memory in use.
 
 #### Actions
@@ -371,13 +379,15 @@ Configures the file that provides virtual memory for applications requiring more
 
 #### Properties
 
-- `name` - the path to the pagefile, String, name_property: true
+- `path` - the path to the pagefile, String, name_property: true
 - `system_managed` - configures whether the system manages the pagefile size. [true, false]
 - `automatic_managed` - all of the settings are managed by the system. If this is set to true, other settings will be ignored. [true, false], default: false
-- `initial_size` - initial size of the pagefile in bytes. Integer
-- `maximum_size` - maximum size of the pagefile in bytes. Integer
+- `initial_size` - initial size of the pagefile in megbytes. Integer
+- `maximum_size` - maximum size of the pagefile in megbytes. Integer
 
 ### windows_printer_port
+
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Create and delete TCP/IPv4 printer ports.
 
@@ -434,6 +444,8 @@ end
 
 ### windows_printer
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Create Windows printer. Note that this doesn't currently install a printer driver. You must already have the driver installed on the system.
 
 The Windows Printer resource will automatically create a TCP/IP printer port for you using the `ipv4_address` property. If you want more granular control over the printer port, just create it using the `windows_printer_port` resource before creating the printer.
@@ -441,18 +453,18 @@ The Windows Printer resource will automatically create a TCP/IP printer port for
 #### Actions
 
 - `:create` - Create a new printer
-- `:delete` - Delete a new printer
+- `:delete` - Delete an existing printer
 
 #### Properties
 
-- `device_id` - Name attribute. Required. Printer queue name, e.g. 'HP LJ 5200 in fifth floor copy room'
+- `device_id` - Printer queue name, e.g. 'HP LJ 5200 in fifth floor copy room'. Name property.
 - `comment` - Optional string describing the printer queue.
 - `default` - Boolean. Optional. Defaults to false. Note that Windows sets the first printer defined to the default printer regardless of this setting.
 - `driver_name` - String. Required. Exact name of printer driver. Note that the printer driver must already be installed on the node.
 - `location` - Printer location, e.g. 'Fifth floor copy room', or 'US/NYC/Floor42/Room4207'
 - `shared` - Boolean. Defaults to false.
 - `share_name` - Printer share name.
-- `ipv4_address` - Printer IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP address to set it. Required.
+- `ipv4_address` - Printer's IPv4 address, e.g. '10.4.64.23'. You don't have to be able to ping the IP address to set it. Required.
 
 An error of "Set-WmiInstance : Generic failure" is most likely due to the printer driver name not matching or not being installed.
 
@@ -479,19 +491,29 @@ end
 
 Creates, modifies and removes Windows shares. All properties are idempotent.
 
+`Note`: This resource uses PowerShell cmdlets introduced in Windows 2012/8.
+
 #### Actions
 
-- :create: creates/modifies a share
-- :delete: deletes a share
+- `:create`: creates/modifies a share
+- `:delete`: deletes a share
 
 #### Properties
 
-- share_name: name attribute, the share name.
-- path: path to the directory to be shared. Required when creating. If the share already exists on a different path then it is deleted and re-created.
-- description: description to be applied to the share
-- full_users: array of users which should have "Full control" permissions
-- change_users: array of users which should have "Change" permissions
-- read_users: array of users which should have "Read" permissions
+property                 | type       | default       | description
+------------------------ | ---------- | ------------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------
+`share_name`             | String     | resource name | the share to assign to the share
+`path`                   | String     |               | The path of the location of the folder to share. Required when creating. If the share already exists on a different path then it is deleted and re-created.
+`description`            | String     |               | description to be applied to the share
+`full_users`             | Array      | []            | users which should have "Full control" permissions
+`change_users`           | Array      | []            | Users are granted modify permission to access the share.
+`read_users`             | Array      | []            | users which should have "Read" permissions
+`temporary`              | True/False | false         | The lifetime of the new SMB share. A temporary share does not persist beyond the next restart of the computer
+`scope_name`             | String     | '*'           | The scope name of the share.
+`ca_timeout`             | Integer    | 0             | The continuous availability time-out for the share.
+`continuously_available` | True/False | false         | Indicates that the share is continuously available.
+`concurrent_user_limit`  | Integer    | 0 (unlimited) | The maximum number of concurrently connected users the share can accommodate
+`encrypt_data`           | True/False | false         | Indicates that the share is encrypted.
 
 #### Examples
 
@@ -512,6 +534,8 @@ end
 
 ### windows_shortcut
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Creates and modifies Windows shortcuts.
 
 #### Actions
@@ -520,8 +544,8 @@ Creates and modifies Windows shortcuts.
 
 #### Properties
 
-- `name` - name attribute. The shortcut to create/modify.
-- `target` - what the shortcut links to
+- `shortcut_name` - The name for the shortcut if it differs from the resource name. Name property
+- `target` - Where the shortcut links to.
 - `arguments` - arguments to pass to the target when the shortcut is executed
 - `description` - description of the shortcut
 - `cwd` - Working directory to use when the target is executed
@@ -540,14 +564,6 @@ windows_shortcut "#{all_users_desktop}/Notepad.lnk" do
   description "Launch Notepad"
   iconlocation "C:\\Windows\\notepad.exe,0"
 end
-```
-
-#### Library Methods
-
-```ruby
-Registry.value_exists?('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run','BGINFO')
-Registry.key_exists?('HKLM\SOFTWARE\Microsoft')
-BgInfo = Registry.get_value('HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run','BGINFO')
 ```
 
 ### windows_path
@@ -580,6 +596,8 @@ end
 ```
 
 ### windows_task
+
+`Note`: This resource is now included in Chef 13 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Creates, deletes or runs a Windows scheduled task. Requires Windows Server 2008 due to API usage.
 
@@ -875,60 +893,6 @@ case ::Windows::VersionHelper.nt_version node
 end
 ```
 
-## Windows ChefSpec Matchers
-
-The Windows cookbook includes custom [ChefSpec](https://github.com/sethvargo/chefspec) matchers you can use to test your own cookbooks that consume Windows cookbook resources.
-
-### Example Matcher Usage
-
-```ruby
-expect(chef_run).to install_windows_package('Node.js').with(
-  source: 'http://nodejs.org/dist/v0.10.26/x64/node-v0.10.26-x64.msi')
-```
-
-### Windows Cookbook Matchers
-
-- create_windows_auto_run
-- remove_windows_auto_run
-- create_windows_certificate
-- delete_windows_certificate
-- add_acl_to_windows_certificate
-- create_windows_certificate_binding
-- delete_windows_certificate_binding
-- install_windows_feature
-- install_windows_feature_dism
-- install_windows_feature_servermanagercmd
-- install_windows_feature_powershell
-- remove_windows_feature
-- remove_windows_feature_dism
-- remove_windows_feature_servermanagercmd
-- remove_windows_feature_powershell
-- delete_windows_feature
-- delete_windows_feature_dism
-- delete_windows_feature_powershell
-- install_windows_font
-- create_windows_http_acl
-- delete_windows_http_acl
-- install_windows_package
-- remove_windows_package
-- set_windows_pagefile
-- add_windows_path
-- remove_windows_path
-- create_windows_printer
-- delete_windows_printer
-- create_windows_printer_port
-- delete_windows_printer_port
-- create_windows_shortcut
-- create_windows_shortcut
-- create_windows_task
-- disable_windows_task
-- enable_windows_task
-- delete_windows_task
-- run_windows_task
-- change_windows_task
-- unzip_windows_zipfile_to
-- zip_windows_zipfile_to
-
 ## Usage
 
 Place an explicit dependency on this cookbook (using depends in the cookbook's metadata.rb) from any cookbook where you would like to use the Windows-specific resources/providers that ship with this cookbook.
@@ -945,7 +909,7 @@ depends 'windows'
 - Author:: Doug Ireton ([doug.ireton@nordstrom.com](mailto:doug.ireton@nordstrom.com))
 
 ```text
-Copyright 2011-2016, Chef Software, Inc.
+Copyright 2011-2018, Chef Software, Inc.
 Copyright 2010, VMware, Inc.
 Copyright 2011, Business Intelligence Associates, Inc
 Copyright 2012, Nordstrom, Inc.

@@ -13,7 +13,7 @@ provisioner:
   deprecations_as_errors: true
 
 verifier:
-  name: pester
+  name: inspec
 
 platforms:
   - name: windows-8.1
@@ -28,7 +28,7 @@ platforms:
   - name: windows-2012r2
     driver_config:
       box: chef/windows-server-2012r2-standard
-  - name: windows-2016-chef-12.6
+  - name: windows-2016-chef-12.7
     driver_config:
       box: chef/windows-server-2016-standard
     provisioner:
@@ -44,15 +44,13 @@ suites:
   - name: feature
     run_list:
       - recipe[test::feature]
+    excludes: ["windows-10", "windows-8.1"]
   - name: font
     run_list:
       - recipe[test::font]
   - name: http_acl
     run_list:
       - recipe[test::http_acl]
-  - name: package
-    run_list:
-      - recipe[test::package]
   - name: pagefile
     run_list:
       - recipe[test::pagefile]
@@ -62,6 +60,7 @@ suites:
   - name: share
     run_list:
       - recipe[test::share]
+    excludes: ["windows-2008r2"]
   - name: shortcut
     run_list:
       - recipe[test::shortcut]

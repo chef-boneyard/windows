@@ -4,6 +4,7 @@
 # Resource:: certificate
 #
 # Copyright:: 2015-2017, Calastone Ltd.
+# Copyright:: 2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,29 +19,15 @@
 # limitations under the License.
 #
 
-include Windows::Helper
-
-property :source, String, name_property: true, required: true
+property :source, String, name_property: true
 property :pfx_password, String
 property :private_key_acl, Array
 property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'TrustedPublisher', 'CLIENTAUTHISSUER', 'REMOTE DESKTOP', 'ROOT', 'TRUSTEDDEVICES', 'WEBHOSTING', 'CA', 'AUTHROOT', 'TRUSTEDPEOPLE', 'MY', 'SMARTCARDROOT', 'TRUST', 'DISALLOWED']
 property :user_store, [true, false], default: false
+property :cert_path, String
 
 action :create do
-  hash = '$cert.GetCertHashString()'
-  code_script = cert_script(true) <<
-                within_store_script { |store| store + '.Add($cert)' } <<
-                acl_script(hash)
-
-  guard_script = cert_script(false) <<
-                 cert_exists_script(hash)
-
-  powershell_script "adding certificate #{new_resource.source} into #{new_resource.store_name} to #{cert_location}\\#{new_resource.store_name}" do
-    guard_interpreter :powershell_script
-    convert_boolean_return true
-    code code_script
-    not_if guard_script
-  end
+  add_cert_in_certstore
 end
 
 # acl_add is a modify-if-exists operation : not idempotent
@@ -67,34 +54,107 @@ action :acl_add do
 end
 
 action :delete do
-  # do we have a hash or a subject?
-  # TODO: It's a bit annoying to know the thumbprint of a cert you want to remove when you already
-  # have the file.  Support reading the hash directly from the file if provided.
-  search = if new_resource.source =~ /^[a-fA-F0-9]{40}$/
-             "Thumbprint -eq '#{new_resource.source}'"
-           else
-             "Subject -like '*#{new_resource.source.sub(/\*/, '`*')}*'" # escape any * in the source
-           end
-  cert_command = "Get-ChildItem Cert:\\#{cert_location}\\#{new_resource.store_name} | where { $_.#{search} }"
+  delete_cert_from_certstore
+end
 
-  code_script = within_store_script do |store|
-    <<-EOH
-foreach ($c in #{cert_command})
-{
-  #{store}.Remove($c)
-}
-EOH
-  end
-  guard_script = "@(#{cert_command}).Count -gt 0\n"
-  powershell_script "Removing certificate #{new_resource.source} from #{cert_location}\\#{new_resource.store_name}" do
-    guard_interpreter :powershell_script
-    convert_boolean_return true
-    code code_script
-    only_if guard_script
+action :fetch do
+  cert_obj = fetch_cert_from_certstore
+  if cert_obj
+    show_or_store_cert(cert_obj)
+  else
+    Chef::Log.info('Certificate not found')
   end
 end
 
+action :verify do
+  out = verify_cert_from_certstore
+  if !!out == out
+    out = out ? 'Certificate is valid' : 'Certificate not valid'
+  end
+  Chef::Log.info(out.to_s)
+end
+
 action_class do
+  include Windows::Helper
+
+  def add_cert_in_certstore
+    add_cert(openssl_cert_obj)
+  end
+
+  def delete_cert_from_certstore
+    delete_cert
+  end
+
+  def fetch_cert_from_certstore
+    fetch_cert
+  end
+
+  def verify_cert_from_certstore
+    verify_cert
+  end
+
+  def openssl_cert_obj
+    OpenSSL::X509::Certificate.new(raw_source)
+  end
+
+  def add_cert(cert_obj)
+    store = ::Win32::Certstore.open(store_name)
+    store.add(cert_obj)
+  end
+
+  def delete_cert
+    store = ::Win32::Certstore.open(store_name)
+    store.delete(source)
+  end
+
+  def fetch_cert
+    store = ::Win32::Certstore.open(store_name)
+    store.get(source)
+  end
+
+  def verify_cert
+    store = ::Win32::Certstore.open(store_name)
+    store.valid?(source)
+  end
+
+  def show_or_store_cert(cert_obj)
+    if cert_path
+      export_cert(cert_obj, cert_path)
+      if ::File.size(cert_path) > 0
+        Chef::Log.info("Certificate export in #{cert_path}")
+      else
+        ::File.delete(cert_path)
+      end
+    else
+      Chef::Log.info(cert_obj.display)
+    end
+  end
+
+  def export_cert(cert_obj, cert_path)
+    out_file = ::File.new(cert_path, 'w+')
+    case ::File.extname(cert_path)
+    when '.pem'
+      out_file.puts(cert_obj.to_pem)
+    when '.der'
+      out_file.puts(cert_obj.to_der)
+    when '.cer'
+      cert_out = powershell_out("openssl x509 -text -inform DER -in #{cert_obj.to_pem} -outform CER").stdout
+      out_file.puts(cert_out)
+    when '.crt'
+      cert_out = powershell_out("openssl x509 -text -inform DER -in #{cert_obj.to_pem} -outform CRT").stdout
+      out_file.puts(cert_out)
+    when '.pfx'
+      cert_out = powershell_out("openssl pkcs12 -export -nokeys -in #{cert_obj.to_pem} -outform PFX").stdout
+      out_file.puts(cert_out)
+    when '.p7b'
+      cert_out = powershell_out("openssl pkcs7 -export -nokeys -in #{cert_obj.to_pem} -outform P7B").stdout
+      out_file.puts(cert_out)
+    else
+      Chef::Log.info('Supported certificate format .pem, .der, .cer, .crt, .pfx and .p7b')
+    end
+    out_file.close
+  end
+
   def cert_location
     @location ||= new_resource.user_store ? 'CurrentUser' : 'LocalMachine'
   end
@@ -106,7 +166,7 @@ action_class do
     if ::File.extname(file.downcase) == '.pfx'
       cert_script << ", \"#{new_resource.pfx_password}\""
       if persist && new_resource.user_store
-        cert_script << ', [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet'
+        cert_script << ', ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet)'
       elsif persist
         cert_script << ', ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet -bor [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::MachineKeyset)'
       end

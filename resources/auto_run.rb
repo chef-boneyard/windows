@@ -3,8 +3,8 @@
 # Cookbook:: windows
 # Resource:: auto_run
 #
-# Copyright:: 2011-2017, Business Intelligence Associates, Inc.
-# Copyright:: 2017, Chef Software, Inc.
+# Copyright:: 2011-2018, Business Intelligence Associates, Inc.
+# Copyright:: 2017-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,20 +19,24 @@
 # limitations under the License.
 #
 
-property :program, String
+property :program_name, String, name_property: true
+property :path, String, coerce: proc { |x| x.tr('/', '\\') }
 property :args, String
-property :root,
-         Symbol,
+property :root, Symbol,
          equal_to: %i(machine user),
-         coerce: proc { |x| x.to_sym },
          default: :machine
 
+alias_method :program, :path
+
 action :create do
+  data = "\"#{new_resource.path}\""
+  data << " #{new_resource.args}" if new_resource.args
+
   registry_key registry_path do
     values [{
-      name: new_resource.name,
+      name: new_resource.program_name,
       type: :string,
-      data: "\"#{new_resource.program}\" #{new_resource.args}",
+      data: data,
     }]
     action :create
   end
@@ -41,7 +45,7 @@ end
 action :remove do
   registry_key registry_path do
     values [{
-      name: new_resource.name,
+      name: new_resource.program_name,
       type: :string,
       data: '',
     }]
@@ -50,6 +54,8 @@ action :remove do
 end
 
 action_class do
+  # determine the full registry path based on the root property
+  # @return [String]
   def registry_path
     { machine: 'HKLM', user: 'HKCU' }[new_resource.root] + \
       '\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run'
