@@ -15,7 +15,7 @@ platforms:
   - name: windows-2012R2
 
 verifier:
-  name: pester
+  name: inspec
 
 suites:
   - name: feature

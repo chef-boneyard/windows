@@ -13,7 +13,7 @@ provisioner:
   deprecations_as_errors: true
 
 verifier:
-  name: pester
+  name: inspec
 
 platforms:
   - name: windows-8.1
@@ -38,8 +38,6 @@ suites:
   - name: autorun
     run_list:
       - recipe[test::autorun]
-    verifier:
-      name: inspec
   - name: certificate
     run_list:
       - recipe[test::certificate]
@@ -47,13 +45,9 @@ suites:
     run_list:
       - recipe[test::feature]
     excludes: ["windows-10", "windows-8.1"]
-    verifier:
-      name: inspec
   - name: font
     run_list:
       - recipe[test::font]
-    verifier:
-      name: inspec
   - name: http_acl
     run_list:
       - recipe[test::http_acl]
