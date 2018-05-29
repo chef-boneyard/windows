@@ -70,6 +70,9 @@ suites:
   - name: zipfile
     run_list:
       - recipe[test::zipfile]
+  - name: user_privilege
+    run_list:
+      - recipe[test::user_privilege]      
   - name: everything
     run_list:
       - recipe[test::everything]
