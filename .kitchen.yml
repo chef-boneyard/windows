@@ -57,9 +57,6 @@ suites:
   - name: http_acl
     run_list:
       - recipe[test::http_acl]
-  - name: package
-    run_list:
-      - recipe[test::package]
   - name: pagefile
     run_list:
       - recipe[test::pagefile]
