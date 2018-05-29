@@ -9,3 +9,4 @@ supports         'windows'
 source_url       'https://github.com/chef-cookbooks/windows'
 issues_url       'https://github.com/chef-cookbooks/windows/issues'
 chef_version     '>= 12.7' if respond_to?(:chef_version)
+gem 'win32-certstore', '= 0.1.0'

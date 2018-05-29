@@ -25,20 +25,7 @@ property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'Tru
 property :user_store, [true, false], default: false
 
 action :create do
-  hash = '$cert.GetCertHashString()'
-  code_script = cert_script(true) <<
-                within_store_script { |store| store + '.Add($cert)' } <<
-                acl_script(hash)
-
-  guard_script = cert_script(false) <<
-                 cert_exists_script(hash)
-
-  powershell_script "adding certificate #{new_resource.source} into #{new_resource.store_name} to #{cert_location}\\#{new_resource.store_name}" do
-    guard_interpreter :powershell_script
-    convert_boolean_return true
-    code code_script
-    not_if guard_script
-  end
+  add_cert_in_certstore
 end
 
 # acl_add is a modify-if-exists operation : not idempotent
@@ -65,38 +52,36 @@ action :acl_add do
 end
 
 action :delete do
-  # do we have a hash or a subject?
-  # TODO: It's a bit annoying to know the thumbprint of a cert you want to remove when you already
-  # have the file.  Support reading the hash directly from the file if provided.
-  search = if new_resource.source =~ /^[a-fA-F0-9]{40}$/
-             "Thumbprint -eq '#{new_resource.source}'"
-           else
-             "Subject -like '*#{new_resource.source.sub(/\*/, '`*')}*'" # escape any * in the source
-           end
-  cert_command = "Get-ChildItem Cert:\\#{cert_location}\\#{new_resource.store_name} | where { $_.#{search} }"
-
-  code_script = within_store_script do |store|
-    <<-EOH
-foreach ($c in #{cert_command})
-{
-  #{store}.Remove($c)
-}
-EOH
-  end
-  guard_script = "@(#{cert_command}).Count -gt 0\n"
-  powershell_script "Removing certificate #{new_resource.source} from #{cert_location}\\#{new_resource.store_name}" do
-    guard_interpreter :powershell_script
-    convert_boolean_return true
-    code code_script
-    only_if guard_script
-  end
+  delete_cert_from_certstore
 end
 
 action_class do
   include Windows::Helper
 
+  def add_cert_in_certstore
+    add_cert(openssl_cert_obj)
+  end
+
+  def delete_cert_from_certstore
+    delete_cert
+  end
+
   def cert_location
     @location ||= new_resource.user_store ? 'CurrentUser' : 'LocalMachine'
+  end
+
+  def openssl_cert_obj
+    OpenSSL::X509::Certificate.new(raw_source)
+  end
+
+  def add_cert(cert_obj)
+    store = ::Win32::Certstore.open(store_name)
+    store.add(cert_obj)
+  end
+
+  def delete_cert
+    store = ::Win32::Certstore.open(store_name)
+    store.delete(source)
   end
 
   def cert_script(persist)
