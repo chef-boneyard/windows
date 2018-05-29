@@ -4,7 +4,7 @@
 # Resource:: user_privilege
 #
 
-property :principal, String, name_property: true, required: true
+property :principal, String, name_property: true
 property :privilege, [Array, String], required: true, coerce: proc { |v| [*v].sort }
 
 action :add do
