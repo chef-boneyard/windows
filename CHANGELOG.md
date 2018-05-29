@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.2.5 (2018-05-28)
+
+- Add quoting to Path when creating new Share
+
 ## 4.2.4 (2018-05-14)
 
 - Fix the platform version check in windows_share
