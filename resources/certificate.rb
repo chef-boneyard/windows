@@ -98,32 +98,32 @@ action_class do
   end
 
   def add_cert(cert_obj)
-    store = ::Win32::Certstore.open(store_name)
+    store = ::Win32::Certstore.open(new_resource.store_name)
     store.add(cert_obj)
   end
 
   def delete_cert
-    store = ::Win32::Certstore.open(store_name)
-    store.delete(source)
+    store = ::Win32::Certstore.open(new_resource.store_name)
+    store.delete(new_resource.source)
   end
 
   def fetch_cert
-    store = ::Win32::Certstore.open(store_name)
-    store.get(source)
+    store = ::Win32::Certstore.open(new_resource.store_name)
+    store.get(new_resource.source)
   end
 
   def verify_cert
-    store = ::Win32::Certstore.open(store_name)
-    store.valid?(source)
+    store = ::Win32::Certstore.open(new_resource.store_name)
+    store.valid?(new_resource.source)
   end
 
   def show_or_store_cert(cert_obj)
-    if cert_path
-      export_cert(cert_obj, cert_path)
-      if ::File.size(cert_path) > 0
-        Chef::Log.info("Certificate export in #{cert_path}")
+    if new_resource.cert_path
+      export_cert(cert_obj, new_resource.cert_path)
+      if ::File.size(new_resource.cert_path) > 0
+        Chef::Log.info("Certificate export in #{new_resource.cert_path}")
       else
-        ::File.delete(cert_path)
+        ::File.delete(new_resource.cert_path)
       end
     else
       Chef::Log.info(cert_obj.display)
@@ -216,5 +216,31 @@ action_class do
       set_acl_script << "$uname='#{name}'; icacls $fullpath /grant $uname`:RX\n"
     end
     set_acl_script
+  end
+
+  def raw_source
+    ext = ::File.extname(new_resource.source)
+    convert_pem(ext, new_resource.source)
+  end
+
+  def convert_pem(ext, source)
+    out = case ext
+          when '.crt', '.der'
+            powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
+          when '.cer'
+            powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
+          when '.pfx'
+            powershell_out("openssl pkcs12 -in #{source} -nodes -passin pass:#{new_resource.pfx_password}").stdout
+          when '.p7b'
+            powershell_out("openssl pkcs7 -print_certs -in #{source} -outform PEM").stdout
+          end
+    out = ::File.read(source) if out.nil? || out.empty?
+    format_raw_out(out)
+  end
+
+  def format_raw_out(out)
+    begin_cert = '-----BEGIN CERTIFICATE-----'
+    end_cert = '-----END CERTIFICATE-----'
+    begin_cert + out[/#{begin_cert}(.*?)#{end_cert}/m, 1] + end_cert
   end
 end

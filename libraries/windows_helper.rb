@@ -20,7 +20,6 @@
 require 'uri'
 require 'Win32API' if Chef::Platform.windows?
 require 'chef/exceptions'
-require 'win32-certstore'
 require 'openssl'
 require 'chef/mixin/powershell_out'
 
@@ -123,11 +122,6 @@ module Windows
       var.reject(&:nil?)
     end
 
-    def raw_source
-      ext = File.extname(source)
-      convert_pem(ext, source)
-    end
-
     private
 
     def extract_installed_packages_from_key(hkey = ::Win32::Registry::HKEY_LOCAL_MACHINE, desired = ::Win32::Registry::Constants::KEY_READ)
@@ -165,27 +159,6 @@ module Windows
       rescue ::Win32::Registry::Error
       end
       packages
-    end
-
-    def convert_pem(ext, source)
-      out = case ext
-            when '.crt', '.der'
-              powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
-            when '.cer'
-              powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
-            when '.pfx'
-              powershell_out("openssl pkcs12 -in #{source} -nodes -passin pass:#{pfx_password}").stdout
-            when '.p7b'
-              powershell_out("openssl pkcs7 -print_certs -in #{source} -outform PEM").stdout
-            end
-      out = File.read(source) if out.nil? || out.empty?
-      format_raw_out(out)
-    end
-
-    def format_raw_out(out)
-      begin_cert = '-----BEGIN CERTIFICATE-----'
-      end_cert = '-----END CERTIFICATE-----'
-      begin_cert + out[/#{begin_cert}(.*?)#{end_cert}/m, 1] + end_cert
     end
   end
 end
