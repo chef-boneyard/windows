@@ -27,6 +27,8 @@ property :user_store, [true, false], default: false
 property :cert_path, String
 
 action :create do
+  load_gem
+
   add_cert_in_certstore
 end
 
@@ -54,10 +56,14 @@ action :acl_add do
 end
 
 action :delete do
+  load_gem
+
   delete_cert_from_certstore
 end
 
 action :fetch do
+  load_gem
+
   cert_obj = fetch_cert_from_certstore
   if cert_obj
     show_or_store_cert(cert_obj)
@@ -67,6 +73,8 @@ action :fetch do
 end
 
 action :verify do
+  load_gem
+
   out = verify_cert_from_certstore
   if !!out == out
     out = out ? 'Certificate is valid' : 'Certificate not valid'
@@ -76,6 +84,19 @@ end
 
 action_class do
   include Windows::Helper
+
+  # load the gem and rescue a gem install if it fails to load
+  def load_gem
+    require 'win32-certstore' # until this is in core chef
+  rescue LoadError
+    Chef::Log.debug('Did not find win32-certstore gem installed. Installing now')
+    chef_gem 'win32-certstore' do
+      compile_time true
+      action :install
+    end
+
+    require 'win32-certstore'
+  end
 
   def add_cert_in_certstore
     add_cert(openssl_cert_obj)
