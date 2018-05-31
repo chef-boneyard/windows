@@ -1,16 +1,20 @@
+# pass feature name as a string
 windows_feature 'install SNMP' do
   feature_name 'SNMP'
 end
 
+# pass feature name as an array
 windows_feature 'remove SNMP' do
   feature_name ['SNMP']
   action :remove
 end
 
+# pass feature name as a lowercase value on 2012+
 windows_feature 'Install SNMP again' do
   feature_name node['platform_version'].to_f < 6.2 ? 'SNMP' : 'snmp' # lowercase on purpose
 end
 
+# array of feature names
 windows_feature_dism %w(TelnetClient TFTP)
 
 # Powershell in windows 2008r2 is old and awful. users need to upgrade
