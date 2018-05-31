@@ -127,11 +127,11 @@ action_class do
   end
 
   def install_feature_cmdlet
-    older_than_2012_or_8 ? 'Import-Module ServerManager; Add-WindowsFeature' : 'Install-WindowsFeature'
+    older_than_2012_or_8 ? 'Add-WindowsFeature' : 'Install-WindowsFeature'
   end
 
   def remove_feature_cmdlet
-    older_than_2012_or_8 ? 'Import-Module ServerManager; Remove-WindowsFeature' : 'Uninstall-WindowsFeature'
+    older_than_2012_or_8 ? 'Remove-WindowsFeature' : 'Uninstall-WindowsFeature'
   end
 
   # @return [Array] features the user has requested to install which need installation
