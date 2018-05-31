@@ -126,10 +126,14 @@ action_class do
     raise 'The windows_feature_powershell resource requires PowerShell 3.0 or later. Please install PowerShell 3.0+ before running this resource.' if powershell_version < 3
   end
 
+  # The appropirate cmdlet to install a windows feature based on windows release
+  # @return [String]
   def install_feature_cmdlet
     older_than_2012_or_8 ? 'Add-WindowsFeature' : 'Install-WindowsFeature'
   end
 
+  # The appropirate cmdlet to remove a windows feature based on windows release
+  # @return [String]
   def remove_feature_cmdlet
     older_than_2012_or_8 ? 'Remove-WindowsFeature' : 'Uninstall-WindowsFeature'
   end
