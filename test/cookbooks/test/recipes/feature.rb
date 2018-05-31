@@ -14,7 +14,6 @@ end
 windows_feature_dism %w(TelnetClient TFTP)
 
 # Powershell in windows 2008r2 is old and awful. users need to upgrade
-# Chef technically doesn't support 2k8r2 and neither does MS
 unless node['platform_version'].to_f < 6.2
   # This is for appveyor, which already seems to have FTP installed
   # which causes a short circuit of the "all" behavior and-breaks the test.
