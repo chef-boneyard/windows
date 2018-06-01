@@ -28,7 +28,10 @@ property :management_tools, [true, false], default: false
 
 def to_lowercase_array(x)
   x = x.split(/\s*,\s*/) if x.is_a?(String) # split multiple forms of a comma separated list
-  x.map(&:downcase)
+
+  # feature installs on windows < 2012 are case sensitive so only downcase when on 2012+
+  raise "The platform is old? #{node['platform_version'].to_f < 6.2}"
+  node['platform_version'].to_f < 6.2 ? x : x.map(&:downcase)
 end
 
 include Chef::Mixin::PowershellOut
