@@ -27,7 +27,7 @@ property :timeout, Integer, default: 600
 def to_lowercase_array(x)
   x = x.split(/\s*,\s*/) if x.is_a?(String) # split multiple forms of a comma separated list
 
-  # dism on windows < 2012 is case sensitive so only downcase when on 2012+
+  # feature installs on windows < 2012 are case sensitive so only downcase when on 2012+
   # @todo when we're really ready to remove support for Windows 2008 R2 this check can go away
   node['platform_version'].to_f < 6.2 ? x : x.map(&:downcase)
 end
