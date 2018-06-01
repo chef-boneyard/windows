@@ -217,7 +217,8 @@ action_class do
   # add the features values to the appropriate array
   # @return [void]
   def add_to_feature_mash(feature_type, feature_details)
-    node.override['powershell_features_cache'][feature_type] << feature_details.downcase # lowercase so we can compare properly
+    # add the lowercase feature name to the mash unless we're on < 2012 where they're case sensitive
+    node.override['powershell_features_cache'][feature_type] << (older_than_2012_or_8 ? feature_details : feature_details.downcase)
   end
 
   # Fail if any of the packages are in a removed state
