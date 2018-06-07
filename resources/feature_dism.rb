@@ -18,18 +18,24 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], coerce: proc { |x| to_lowercase_array(x) }, name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| to_formatted_array(x) }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 
 # @return [Array] lowercase the array unless we're on < Windows 2012
-def to_lowercase_array(x)
+def to_formatted_array(x)
   x = x.split(/\s*,\s*/) if x.is_a?(String) # split multiple forms of a comma separated list
 
   # feature installs on windows < 2012 are case sensitive so only downcase when on 2012+
   # @todo when we're really ready to remove support for Windows 2008 R2 this check can go away
-  node['platform_version'].to_f < 6.2 ? x : x.map(&:downcase)
+  older_than_2012_or_8? ? x : x.map(&:downcase)
+end
+
+# a simple helper to determine if we're on a windows release pre-2012 / 8
+# @return [Boolean] Is the system older than Windows 8 / 2012
+def older_than_2012_or_8?
+  node['platform_version'].to_f < 6.2
 end
 
 include Windows::Helper
@@ -176,7 +182,7 @@ action_class do
     # dism on windows 2012+ isn't case sensitive so it's best to compare
     # lowercase lists so the user input doesn't need to be case sensitive
     # @todo when we're ready to remove windows 2008R2 the gating here can go away
-    feature_details.downcase! unless node['platform_version'].to_f < 6.2
+    feature_details.downcase! unless older_than_2012_or_8?
     node.override['dism_features_cache'][feature_type] << feature_details
   end
 
@@ -184,7 +190,7 @@ action_class do
   # @return [void]
   def fail_if_removed
     return if new_resource.source # if someone provides a source then all is well
-    if node['platform_version'].to_f > 6.2
+    if node['platform_version'].to_f > 6.2 #2012R2 or later
       return if registry_key_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing') && registry_value_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing', name: 'LocalSourcePath') # if source is defined in the registry, still fine
     end
     removed = new_resource.feature_name & node['dism_features_cache']['removed']
@@ -194,7 +200,7 @@ action_class do
   # Fail unless we're on windows 8+ / 2012+ where deleting a feature is supported
   # @return [void]
   def raise_if_delete_unsupported
-    raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" unless node['platform_version'].to_f >= 6.2
+    raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" if older_than_2012_or_8?
   end
 
   # find dism accounting for File System Redirector
