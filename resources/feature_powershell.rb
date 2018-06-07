@@ -20,17 +20,23 @@
 
 require 'chef/json_compat'
 
-property :feature_name, [Array, String], coerce: proc { |x| to_lowercase_array(x) }, name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| to_formatted_array(x) }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 property :management_tools, [true, false], default: false
 
-def to_lowercase_array(x)
+# a simple helper to determine if we're on a windows release pre-2012 / 8
+# @return [Boolean] Is the system older than Windows 8 / 2012
+def older_than_2012_or_8?
+  node['platform_version'].to_f < 6.2
+end
+
+def to_formatted_array(x)
   x = x.split(/\s*,\s*/) if x.is_a?(String) # split multiple forms of a comma separated list
 
-  # feature installs on windows < 2012 are case sensitive so only downcase when on 2012+
-  node['platform_version'].to_f < 6.2 ? x : x.map(&:downcase)
+  # feature installs on windows < 8/2012 are case sensitive so only downcase when on 2012+
+  older_than_2012_or_8? ? x : x.map(&:downcase)
 end
 
 include Chef::Mixin::PowershellOut
@@ -47,7 +53,7 @@ action :install do
     converge_by("install Windows feature#{'s' if features_to_install.count > 1} #{features_to_install.join(',')}") do
       install_command = "#{install_feature_cmdlet} #{features_to_install.join(',')}"
       install_command << ' -IncludeAllSubFeature'  if new_resource.all
-      if older_than_2012_or_8 && (new_resource.source || new_resource.management_tools)
+      if older_than_2012_or_8? && (new_resource.source || new_resource.management_tools)
         Chef::Log.warn("The 'source' and 'management_tools' properties are only available on Windows 8/2012 or greater. Skipping these properties!")
       else
         install_command << " -Source \"#{new_resource.source}\"" if new_resource.source
@@ -100,12 +106,6 @@ action :delete do
 end
 
 action_class do
-  # a simple helper to determine if we're on a windows release pre-2012 / 8
-  # @return [Float] kernel release
-  def older_than_2012_or_8
-    node['platform_version'].to_f < 6.2
-  end
-
   # shellout to determine the actively installed version of powershell
   # we have this same data in ohai, but it doesn't get updated if powershell is installed mid run
   # @return [Integer] the powershell version or 0 for nothing
@@ -131,13 +131,13 @@ action_class do
   # The appropirate cmdlet to install a windows feature based on windows release
   # @return [String]
   def install_feature_cmdlet
-    older_than_2012_or_8 ? 'Add-WindowsFeature' : 'Install-WindowsFeature'
+    older_than_2012_or_8? ? 'Add-WindowsFeature' : 'Install-WindowsFeature'
   end
 
   # The appropirate cmdlet to remove a windows feature based on windows release
   # @return [String]
   def remove_feature_cmdlet
-    older_than_2012_or_8 ? 'Remove-WindowsFeature' : 'Uninstall-WindowsFeature'
+    older_than_2012_or_8? ? 'Remove-WindowsFeature' : 'Uninstall-WindowsFeature'
   end
 
   # @return [Array] features the user has requested to install which need installation
@@ -204,8 +204,9 @@ action_class do
   # fetch the list of available feature names and state in JSON and parse the JSON
   def parsed_feature_list
     # Grab raw feature information from dism command line
-    raw_list_of_features = if older_than_2012_or_8
-                             powershell_out!('Import-Module ServerManager; Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
+    # Windows < 2012 doesn't present a state value so we have to check if the feature is installed or not
+    raw_list_of_features = if older_than_2012_or_8?
+                             powershell_out!('Get-WindowsFeature | Select-Object -Property Name,Installed | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
                            else
                              powershell_out!('Get-WindowsFeature | Select-Object -Property Name,InstallState | ConvertTo-Json -Compress', timeout: new_resource.timeout).stdout
                            end
@@ -217,7 +218,7 @@ action_class do
   # @return [void]
   def add_to_feature_mash(feature_type, feature_details)
     # add the lowercase feature name to the mash unless we're on < 2012 where they're case sensitive
-    node.override['powershell_features_cache'][feature_type] << (older_than_2012_or_8 ? feature_details : feature_details.downcase)
+    node.override['powershell_features_cache'][feature_type] << (older_than_2012_or_8? ? feature_details : feature_details.downcase)
   end
 
   # Fail if any of the packages are in a removed state
@@ -233,6 +234,6 @@ action_class do
 
   # Fail unless we're on windows 8+ / 2012+ where deleting a feature is supported
   def raise_if_delete_unsupported
-    raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" if older_than_2012_or_8
+    raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" if older_than_2012_or_8?
   end
 end
