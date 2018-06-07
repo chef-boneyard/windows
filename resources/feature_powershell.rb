@@ -225,7 +225,7 @@ action_class do
   # @return [void]
   def fail_if_removed
     return if new_resource.source # if someone provides a source then all is well
-    if node['platform_version'].to_f > 6.2 #2012R2 or later
+    if node['platform_version'].to_f > 6.2 # 2012R2 or later
       return if registry_key_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing') && registry_value_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing', name: 'LocalSourcePath') # if source is defined in the registry, still fine
     end
     removed = new_resource.feature_name & node['powershell_features_cache']['removed']
