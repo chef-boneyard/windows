@@ -2,6 +2,17 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.3.0 (2018-06-11)
+
+- Add the windows_user_privilege resource which can grant privileges like Logon As a Service
+- Add windows_feature_powershell support for Windows 2008 R2 by not downcasing the feature names there and modifying the shell_out commands to make older output look like the 2012+ output
+- windows_certificate resource has been reworked to use the new win32-certstore gem. This gem abstracts away much of the logic and will allow us to better support certificates on Windows, especially on non-english systems.
+- Convert pester tests to InSpec for easier testing with ChefDK out of the box
+- Added additional tests for better testing in AppVeyor
+- Stop importing the servermanager module in windows_feature_powershell since we require PowerShell 3.0 and we don't need to do this there
+- Improve the error messages in Windows feature to get the Windows versions right
+- Increase readability in version logic with helpers in windows_feature resources
+
 ## 4.2.5 (2018-05-28)
 
 - Add quoting to Path when creating new Share
