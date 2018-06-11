@@ -22,9 +22,9 @@ require 'chef/json_compat'
 
 property :feature_name, [Array, String], coerce: proc { |x| to_formatted_array(x) }, name_property: true
 property :source, String
-property :all, [true, false], default: false
+property :all, [TrueClass, FalseClass], default: false
 property :timeout, Integer, default: 600
-property :management_tools, [true, false], default: false
+property :management_tools, [TrueClass, FalseClass], default: false
 
 # a simple helper to determine if we're on a windows release pre-2012 / 8
 # @return [Boolean] Is the system older than Windows 8 / 2012
