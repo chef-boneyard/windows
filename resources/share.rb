@@ -233,7 +233,7 @@ action_class do
       # set permissions for a brand new share OR
       # update permissions if the current state and desired state differ
       next unless permissions_need_update?(perm_type)
-      grant_command = "Grant-SmbShareAccess -Name '#{new_resource.share_name}' -AccountName \"#{new_resource.send("#{perm_type}_users").join(',')}\" -Force -AccessRight #{perm_type}"
+      grant_command = "Grant-SmbShareAccess -Name '#{new_resource.share_name}' -AccountName \"#{new_resource.send("#{perm_type}_users").join('","')}\" -Force -AccessRight #{perm_type}"
 
       Chef::Log.debug("Running '#{grant_command}' to update the share permissions")
       powershell_out!(grant_command)
