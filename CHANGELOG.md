@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.3.1 (2018-06-11)
+
+- Make sure to quote each individual user to grant share access to
+
 ## 4.3.0 (2018-06-11)
 
 - Add the windows_user_privilege resource which can grant privileges like Logon As a Service
