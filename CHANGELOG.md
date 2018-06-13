@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.3.2 (2018-06-13)
+
+- Don't error in windows_feature_dism when providing a source
+
 ## 4.3.1 (2018-06-11)
 
 - Make sure to quote each individual user to grant share access to
