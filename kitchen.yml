@@ -11,25 +11,28 @@ transport:
 provisioner:
   name: chef_zero
   deprecations_as_errors: true
+  product_name: chef
+  product_version: 13.1
+  require_omnibus: true
 
 verifier:
   name: inspec
 
 platforms:
   - name: windows-8.1
-    driver_config:
+    driver:
       box: chef/windows-8.1-enterprise
   - name: windows-10
-    driver_config:
+    driver:
       box: chef/windows-10-enterprise
   - name: windows-2008r2
-    driver_config:
+    driver:
       box: tas50/windows_2008r2_updated
   - name: windows-2012r2
-    driver_config:
+    driver:
       box: tas50/windows_2012r2
   - name: windows-2016
-    driver_config:
+    driver:
       box: chef/windows-server-2016-standard
 
 suites:
