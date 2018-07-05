@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.3.3 (2018-07-05)
+
+- Fix failures on PS 3.0 in windows_feature_powershell
+
 ## 4.3.2 (2018-06-13)
 
 - Don't error in windows_feature_dism when providing a source
