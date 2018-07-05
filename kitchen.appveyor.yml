@@ -10,6 +10,9 @@ driver:
 provisioner:
   name: chef_zero
   deprecations_as_errors: true
+  product_name: chef
+  product_version: 13.1
+  require_omnibus: true
 
 platforms:
   - name: windows-2012R2
