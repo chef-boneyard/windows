@@ -688,6 +688,7 @@ Adds the `principal` (User/Group) to the specified privileges (such as `Logon as
 #### Actions
 
 - `:add` - add the specified privileges to the `principal`
+- `:remove` - remove the specified privilege of the `principal`
 
 #### Properties
 
@@ -701,6 +702,15 @@ Grant the Administrator user the `Logon as a batch job` and `Logon as a service`
 ```ruby
 windows_user_privilege 'Administrator' do
   privilege %w(SeBatchLogonRight SeServiceLogonRight)
+end
+```
+
+Remove `Logon as a batch job` privilege of Administrator.
+
+```ruby
+windows_user_privilege 'Administrator' do
+  privilege %w(SeBatchLogonRight)
+  action :remove
 end
 ```
 

@@ -15,7 +15,21 @@ action :add do
   end
 end
 
-# Remove cannot be implemented until https://github.com/chef/chef/issues/6716
+action :remove do
+  curr_res_privilege = current_resource.privilege
+  new_res_privilege = new_resource.privilege
+  missing_res_privileges = (new_res_privilege - curr_res_privilege)
+
+  if missing_res_privileges
+    Chef::Log.info("Privilege: #{missing_res_privileges.join(', ')} not present. Unable to delete")
+  end
+
+  (new_res_privilege - missing_res_privileges).each do |user_right|
+    converge_by("removing user privilege #{user_right}") do
+      Chef::ReservedNames::Win32::Security.remove_account_right(new_resource.principal, user_right)
+    end
+  end
+end
 
 load_current_value do |desired|
   privilege Chef::ReservedNames::Win32::Security.get_account_right(desired.principal)
