@@ -87,6 +87,7 @@ action_class do
 
   # load the gem and rescue a gem install if it fails to load
   def load_gem
+    gem 'win32-certstore', '>= 0.1.7'
     require 'win32-certstore' # until this is in core chef
   rescue LoadError
     Chef::Log.debug('Did not find win32-certstore gem installed. Installing now')
