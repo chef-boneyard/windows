@@ -16,13 +16,11 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Chef
 
-- Chef 12.7+
+- Chef 13.4+
 
 ## Resources
 
 ### Deprecated Resources Note
-
-As of Chef Client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
 
 As of Chef Client 14+ the auto_run, feature, feature_dism, feature_powershell, font, pagefile, printer_port, printer, and shortcut resources are now included in the Chef Client. If you are running Chef 14+ the resources in Chef client will take precedence over the resources in this cookbook. In April 2019 we will release a new major version of this cookbook that removes these resources.
 
