@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.0.0 (2018-07-24)
+
+### Breaking Changes
+
+This release removes the windows_task and windows_path resources from this cookbook. This resources shipped in Chef 13.0 and 13.4 This raises the required version of chef-client for this cookbook to 13.4 or later.
+
 ## 4.3.4 (2018-07-18)
 
 - Fix error message typo in windows_feature_powershell
