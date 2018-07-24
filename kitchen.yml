@@ -10,10 +10,10 @@ transport:
 
 provisioner:
   name: chef_zero
-  deprecations_as_errors: true
+  deprecations_as_errors: false
   product_name: chef
-  product_version: 13.1
   require_omnibus: true
+  channel: current # Can be removed when Chef 14.4 is released
 
 verifier:
   name: inspec
