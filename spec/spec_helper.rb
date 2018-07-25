@@ -1,5 +1,6 @@
 require 'chefspec'
 require 'chefspec/berkshelf'
+require 'win32-certstore'
 
 RSpec.configure do |config|
   config.color = true               # Use color in STDOUT

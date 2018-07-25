@@ -2,6 +2,44 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.0.0 (2018-07-24)
+
+### Breaking Changes
+
+This release removes the windows_task and windows_path resources from this cookbook. This resources shipped in Chef 13.0 and 13.4 This raises the required version of chef-client for this cookbook to 13.4 or later.
+
+## 4.3.4 (2018-07-18)
+
+- Fix error message typo in windows_feature_powershell
+- Use win32-certstore 0.1.7 for bugfixes
+
+## 4.3.3 (2018-07-05)
+
+- Fix failures on PS 3.0 in windows_feature_powershell
+
+## 4.3.2 (2018-06-13)
+
+- Don't error in windows_feature_dism when providing a source
+
+## 4.3.1 (2018-06-11)
+
+- Make sure to quote each individual user to grant share access to
+
+## 4.3.0 (2018-06-11)
+
+- Add the windows_user_privilege resource which can grant privileges like Logon As a Service
+- Add windows_feature_powershell support for Windows 2008 R2 by not downcasing the feature names there and modifying the shell_out commands to make older output look like the 2012+ output
+- windows_certificate resource has been reworked to use the new win32-certstore gem. This gem abstracts away much of the logic and will allow us to better support certificates on Windows, especially on non-english systems.
+- Convert pester tests to InSpec for easier testing with ChefDK out of the box
+- Added additional tests for better testing in AppVeyor
+- Stop importing the servermanager module in windows_feature_powershell since we require PowerShell 3.0 and we don't need to do this there
+- Improve the error messages in Windows feature to get the Windows versions right
+- Increase readability in version logic with helpers in windows_feature resources
+
+## 4.2.5 (2018-05-28)
+
+- Add quoting to Path when creating new Share
+
 ## 4.2.4 (2018-05-14)
 
 - Fix the platform version check in windows_share

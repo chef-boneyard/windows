@@ -20,6 +20,8 @@
 require 'uri'
 require 'Win32API' if Chef::Platform.windows?
 require 'chef/exceptions'
+require 'openssl'
+require 'chef/mixin/powershell_out'
 
 module Windows
   module Helper

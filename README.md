@@ -16,13 +16,11 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Chef
 
-- Chef 12.7+
+- Chef 13.4+
 
 ## Resources
 
 ### Deprecated Resources Note
-
-As of Chef Client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
 
 As of Chef Client 14+ the auto_run, feature, feature_dism, feature_powershell, font, pagefile, printer_port, printer, and shortcut resources are now included in the Chef Client. If you are running Chef 14+ the resources in Chef client will take precedence over the resources in this cookbook. In April 2019 we will release a new major version of this cookbook that removes these resources.
 
@@ -712,6 +710,89 @@ Disable a task named `ProgramDataUpdater` with TaskPath `\Microsoft\Windows\Appl
 windows_task '\Microsoft\Windows\Application Experience\ProgramDataUpdater' do
   action :disable
 end
+```
+
+### windows_user_privilege
+
+Adds the `principal` (User/Group) to the specified privileges (such as `Logon as a batch job` or `Logon as a Service`).
+
+#### Actions
+
+- `:add` - add the specified privileges to the `principal`
+- `:remove` - remove the specified privilege of the `principal`
+
+#### Properties
+
+- `principal` - Name attribute, Required, String. The user or group to be granted privileges.
+- `privilege` - Required, String/Array. The privilege(s) to be granted.
+
+#### Examples
+
+Grant the Administrator user the `Logon as a batch job` and `Logon as a service` privilege.
+
+```ruby
+windows_user_privilege 'Administrator' do
+  privilege %w(SeBatchLogonRight SeServiceLogonRight)
+end
+```
+
+Remove `Logon as a batch job` privilege of Administrator.
+
+```ruby
+windows_user_privilege 'Administrator' do
+  privilege %w(SeBatchLogonRight)
+  action :remove
+end
+```
+
+#### Available Privileges
+
+```
+SeTrustedCredManAccessPrivilege      Access Credential Manager as a trusted caller
+SeNetworkLogonRight                  Access this computer from the network
+SeTcbPrivilege                       Act as part of the operating system
+SeMachineAccountPrivilege            Add workstations to domain
+SeIncreaseQuotaPrivilege             Adjust memory quotas for a process
+SeInteractiveLogonRight              Allow log on locally
+SeRemoteInteractiveLogonRight        Allow log on through Remote Desktop Services
+SeBackupPrivilege                    Back up files and directories
+SeChangeNotifyPrivilege              Bypass traverse checking
+SeSystemtimePrivilege                Change the system time
+SeTimeZonePrivilege                  Change the time zone
+SeCreatePagefilePrivilege            Create a pagefile
+SeCreateTokenPrivilege               Create a token object
+SeCreateGlobalPrivilege              Create global objects
+SeCreatePermanentPrivilege           Create permanent shared objects
+SeCreateSymbolicLinkPrivilege        Create symbolic links
+SeDebugPrivilege                     Debug programs
+SeDenyNetworkLogonRight              Deny access this computer from the network
+SeDenyBatchLogonRight                Deny log on as a batch job
+SeDenyServiceLogonRight              Deny log on as a service
+SeDenyInteractiveLogonRight          Deny log on locally
+SeDenyRemoteInteractiveLogonRight    Deny log on through Remote Desktop Services
+SeEnableDelegationPrivilege          Enable computer and user accounts to be trusted for delegation
+SeRemoteShutdownPrivilege            Force shutdown from a remote system
+SeAuditPrivilege                     Generate security audits
+SeImpersonatePrivilege               Impersonate a client after authentication
+SeIncreaseWorkingSetPrivilege        Increase a process working set
+SeIncreaseBasePriorityPrivilege      Increase scheduling priority
+SeLoadDriverPrivilege                Load and unload device drivers
+SeLockMemoryPrivilege                Lock pages in memory
+SeBatchLogonRight                    Log on as a batch job
+SeServiceLogonRight                  Log on as a service
+SeSecurityPrivilege                  Manage auditing and security log
+SeRelabelPrivilege                   Modify an object label
+SeSystemEnvironmentPrivilege         Modify firmware environment values
+SeManageVolumePrivilege              Perform volume maintenance tasks
+SeProfileSingleProcessPrivilege      Profile single process
+SeSystemProfilePrivilege             Profile system performance
+SeUnsolicitedInputPrivilege          "Read unsolicited input from a terminal device"
+SeUndockPrivilege                    Remove computer from docking station
+SeAssignPrimaryTokenPrivilege        Replace a process level token
+SeRestorePrivilege                   Restore files and directories
+SeShutdownPrivilege                  Shut down the system
+SeSyncAgentPrivilege                 Synchronize directory service data
+SeTakeOwnershipPrivilege             Take ownership of files or other objects
 ```
 
 ### windows_zipfile

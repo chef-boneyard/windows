@@ -9,13 +9,16 @@ driver:
 
 provisioner:
   name: chef_zero
-  deprecations_as_errors: true
+  deprecations_as_errors: false
+  product_name: chef
+  require_omnibus: true
+  channel: current # Can be removed when Chef 14.4 is released
 
 platforms:
   - name: windows-2012R2
 
 verifier:
-  name: pester
+  name: inspec
 
 suites:
   - name: feature
@@ -30,3 +33,6 @@ suites:
   - name: pagefile
     run_list:
       - recipe[test::pagefile]
+  - name: user_privilege
+    run_list:
+      - recipe[test::user_privilege]

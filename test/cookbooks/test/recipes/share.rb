@@ -1,3 +1,6 @@
+user 'bob'
+user 'jane'
+
 # create directory for sharing with full access for all users
 directory 'c:/test_share' do
   rights  :full_control, 'BUILTIN\\Users'
@@ -10,7 +13,7 @@ end
 windows_share 'read_only' do
   path 'C:/test_share'
   description 'a test share'
-  read_users ['BUILTIN\\Users']
+  read_users ['BUILTIN\\Users', 'bob', 'jane']
 end
 
 windows_share 'change' do
@@ -20,7 +23,7 @@ end
 
 windows_share 'full' do
   path 'C:/test_share'
-  full_users ['BUILTIN\\Users']
+  full_users ['BUILTIN\\Users', 'jane']
 end
 
 # create then delete the share
