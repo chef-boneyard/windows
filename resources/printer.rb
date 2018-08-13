@@ -22,7 +22,7 @@
 
 require 'resolv'
 
-chef_version_for_provides "< 14.0" if defined?(:chef_version_for_provides)
+chef_version_for_provides '< 14.0' if defined?(:chef_version_for_provides)
 resource_name :windows_printer
 
 property :device_id, String, name_property: true

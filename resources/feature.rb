@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-chef_version_for_provides "< 14.0" if defined?(:chef_version_for_provides)
+chef_version_for_provides '< 14.0' if defined?(:chef_version_for_provides)
 resource_name :windows_feature
 
 property :feature_name, [Array, String], name_property: true
