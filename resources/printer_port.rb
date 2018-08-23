@@ -22,7 +22,7 @@
 
 require 'resolv'
 
-chef_version_for_provides '< 14.0' if defined?(:chef_version_for_provides)
+chef_version_for_provides '< 14.0' if respond_to?(:chef_version_for_provides)
 resource_name :windows_printer_port
 
 property :ipv4_address, String, name_property: true, regex: Resolv::IPv4::Regex
