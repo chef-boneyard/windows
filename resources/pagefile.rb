@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-chef_version_for_provides '< 14.0' if defined?(:chef_version_for_provides)
+chef_version_for_provides '< 14.0' if respond_to?(:chef_version_for_provides)
 resource_name :windows_pagefile
 
 property :path, String, coerce: proc { |x| x.tr('/', '\\') }, name_property: true

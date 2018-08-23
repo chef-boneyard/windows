@@ -21,7 +21,7 @@
 
 require 'chef/util/path_helper'
 
-chef_version_for_provides '< 14.0' if defined?(:chef_version_for_provides)
+chef_version_for_provides '< 14.0' if respond_to?(:chef_version_for_provides)
 resource_name :windows_font
 
 property :font_name, String, name_property: true

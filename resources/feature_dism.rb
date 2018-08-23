@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-chef_version_for_provides '< 14.0' if defined?(:chef_version_for_provides)
+chef_version_for_provides '< 14.0' if respond_to?(:chef_version_for_provides)
 resource_name :windows_feature_name
 
 property :feature_name, [Array, String], coerce: proc { |x| to_formatted_array(x) }, name_property: true
