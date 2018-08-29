@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.1.0 (2018-08-29)
+
+- Add an action to windows_user_privilege to remove a privilege
+- Fix failing appveyor tests
+- Require win32-certstore 0.1.8 which resolves several issues with the windows_certificate resource
+- Avoid deprecation warnings with Chef 14.3+ by not loading resources that are now built into Chef
+
 ## 5.0.0 (2018-07-24)
 
 ### Breaking Changes
