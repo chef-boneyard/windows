@@ -15,8 +15,7 @@ provisioner:
   name: chef_zero
   deprecations_as_errors: true
   product_name: chef
-  product_version: 14.4
-  require_omnibus: true
+  channel: current
 
 platforms:
   - name: windows-2012R2
