@@ -29,7 +29,7 @@ property :cert_path, String
 action :create do
   load_gem
 
-  add_cert_in_certstore
+  add_cert(OpenSSL::X509::Certificate.new(raw_source))
 end
 
 # acl_add is a modify-if-exists operation : not idempotent
@@ -58,13 +58,13 @@ end
 action :delete do
   load_gem
 
-  delete_cert_from_certstore
+  delete_cert
 end
 
 action :fetch do
   load_gem
 
-  cert_obj = fetch_cert_from_certstore
+  cert_obj = fetch_cert
   if cert_obj
     show_or_store_cert(cert_obj)
   else
@@ -75,7 +75,7 @@ end
 action :verify do
   load_gem
 
-  out = verify_cert_from_certstore
+  out = verify_cert
   if !!out == out
     out = out ? 'Certificate is valid' : 'Certificate not valid'
   end
@@ -83,6 +83,7 @@ action :verify do
 end
 
 action_class do
+  require 'openssl'
   include Windows::Helper
 
   # load the gem and rescue a gem install if it fails to load
@@ -97,26 +98,6 @@ action_class do
     end
 
     require 'win32-certstore'
-  end
-
-  def add_cert_in_certstore
-    add_cert(openssl_cert_obj)
-  end
-
-  def delete_cert_from_certstore
-    delete_cert
-  end
-
-  def fetch_cert_from_certstore
-    fetch_cert
-  end
-
-  def verify_cert_from_certstore
-    verify_cert
-  end
-
-  def openssl_cert_obj
-    OpenSSL::X509::Certificate.new(raw_source)
   end
 
   def add_cert(cert_obj)
