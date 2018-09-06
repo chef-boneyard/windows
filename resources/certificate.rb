@@ -93,7 +93,7 @@ action_class do
     Chef::Log.debug('Did not find win32-certstore >= 0.1.8 gem installed. Installing now')
     chef_gem 'win32-certstore' do
       compile_time true
-      action :install
+      action :upgrade
     end
 
     require 'win32-certstore'
