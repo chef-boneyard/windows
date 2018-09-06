@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.1.1 (2018-09-06)
+
+- Require the win32-certstore gem and upgrade the gem as the resource runs so we get the most up to date version
+- Remove redundant helper methods from the windows_certificate resource
+
 ## 5.1.0 (2018-08-29)
 
 - Add an action to windows_user_privilege to remove a privilege
