@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.1.2 (2018-10-08)
+
+- Fix typo in windows_feature_dism resource name
+
 ## 5.1.1 (2018-09-06)
 
 - Require the win32-certstore gem and upgrade the gem as the resource runs so we get the most up to date version
