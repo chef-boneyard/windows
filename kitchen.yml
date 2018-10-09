@@ -64,9 +64,6 @@ suites:
   - name: shortcut
     run_list:
       - recipe[test::shortcut]
-  - name: tasks
-    run_list:
-      - recipe[test::tasks]
   - name: zipfile
     run_list:
       - recipe[test::zipfile]
