@@ -102,7 +102,7 @@ load_current_value do |desired|
 
   # we raise here instead of warning like above because we'd only get here if the above Get-SmbShare
   # command was successful and that continuing would leave us with 1/2 known state
-  raise "Could not determine #{desired.share_name} share permissions by running '#{perm_cmd}'" if ps_perm_results.error?
+  raise "Could not determine #{desired.share_name} share permissions by running '#{perm_state_cmd}'" if ps_perm_results.error?
 
   Chef::Log.debug("The Get-SmbShareAccess results were #{ps_perm_results.stdout}")
 
