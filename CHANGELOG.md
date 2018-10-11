@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.1.3 (2018-10-11)
+
+- Remove docs and test suite for windows tasks
+- Changed variable name in log message for retrieving SMB share access
+- Don't load the windows helper in windows_certificate
+
 ## 5.1.2 (2018-10-08)
 
 - Fix typo in windows_feature_dism resource name
