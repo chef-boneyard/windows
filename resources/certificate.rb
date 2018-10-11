@@ -84,7 +84,6 @@ end
 
 action_class do
   require 'openssl'
-  include Windows::Helper
 
   # load the gem and rescue a gem install if it fails to load
   def load_gem
