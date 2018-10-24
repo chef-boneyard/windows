@@ -19,14 +19,16 @@
 # limitations under the License.
 #
 
-property :source, String, name_property: true
-property :pfx_password, String
-property :private_key_acl, Array
+property :source, String, name_property: true,
+        description: "name attribute. The source file (for create and acl_add), thumbprint (for delete and acl_add) or subject (for delete)."
+property :pfx_password, String, description: "the password to access the source if it is a pfx file."
+property :private_key_acl, Array, description: "array of 'domain\account' entries to be granted read-only access to the certificate's private key. This is not idempotent."
 property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'TrustedPublisher', 'CLIENTAUTHISSUER', 'REMOTE DESKTOP', 'ROOT', 'TRUSTEDDEVICES', 'WEBHOSTING', 'CA', 'AUTHROOT', 'TRUSTEDPEOPLE', 'MY', 'SMARTCARDROOT', 'TRUST', 'DISALLOWED']
-property :user_store, [true, false], default: false
+property :user_store, [true, false], default: false, description: "if false (default) then use the local machine store; if true then use the current user's store."
 property :cert_path, String
 
 action :create do
+  description "creates or updates a certificate."
   load_gem
 
   add_cert(OpenSSL::X509::Certificate.new(raw_source))
@@ -34,6 +36,7 @@ end
 
 # acl_add is a modify-if-exists operation : not idempotent
 action :acl_add do
+  description "adds read-only entries to a certificate's private key ACL." 
   if ::File.exist?(new_resource.source)
     hash = '$cert.GetCertHashString()'
     code_script = cert_script(false)
@@ -56,6 +59,7 @@ action :acl_add do
 end
 
 action :delete do
+  description "deletes a certificate."
   load_gem
 
   delete_cert
@@ -73,6 +77,7 @@ action :fetch do
 end
 
 action :verify do
+  description "logs whether or not a certificate is valid."
   load_gem
 
   out = verify_cert
