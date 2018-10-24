@@ -61,6 +61,7 @@ Installs a certificate into the Windows certificate store from a file, and grant
 - `:create` - creates or updates a certificate.
 - `:delete` - deletes a certificate.
 - `:acl_add` - adds read-only entries to a certificate's private key ACL.
+- `:verify` - logs whether or not a certificate is valid
 
 #### Properties
 
