@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-property :source, String, 
+property :source, String,
         name_property: true,
         description: 'name attribute. The source file (for create and acl_add), thumbprint (for delete and acl_add) or subject (for delete).'
 property :pfx_password, String, description: 'the password to access the source if it is a pfx file.'
