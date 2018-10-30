@@ -25,6 +25,7 @@ property :private_key_acl, Array
 property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'TrustedPublisher', 'CLIENTAUTHISSUER', 'REMOTE DESKTOP', 'ROOT', 'TRUSTEDDEVICES', 'WEBHOSTING', 'CA', 'AUTHROOT', 'TRUSTEDPEOPLE', 'MY', 'SMARTCARDROOT', 'TRUST', 'DISALLOWED']
 property :user_store, [true, false], default: false
 property :cert_path, String
+property :sensitive, [ TrueClass, FalseClass ], default: lazy { |r| r.pfx_password ? true : false }
 
 action :create do
   load_gem
@@ -52,6 +53,7 @@ action :acl_add do
     convert_boolean_return true
     code code_script
     only_if guard_script
+    sensitive if new_resource.sensitive
   end
 end
 
