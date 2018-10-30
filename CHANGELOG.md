@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.1.4 (2018-10-30)
+
+- Note the :verify action for windows_certificate in the readme
+- certificate resource: auto set sensitive is passing password
+
 ## 5.1.3 (2018-10-11)
 
 - Remove docs and test suite for windows tasks
