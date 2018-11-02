@@ -1,3 +1,9 @@
+---
+name: Feature request
+about: Suggest an idea for this project
+
+---
+
 ### Scenario:
 [What you are trying to achieve and you can't?]
 
