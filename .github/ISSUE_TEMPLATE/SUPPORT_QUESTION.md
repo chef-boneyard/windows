@@ -4,4 +4,10 @@ about: If you have a question 💬, please check out our Slack!
 
 ---
 
-We primarily use GitHub as an issue tracker; for usage and support questions, please come and chat with us on the Chef Community Slack at http://community-slack.chef.io/. Support issues opened here will be closed and redirected to Slack.
+We use GitHub issues to track bugs and feature requests in the product. If you need help please post to our Mailing List or join the Chef Community Slack.
+
+ * Chef Community Slack at http://community-slack.chef.io/.
+ * Chef Mailing List https://discourse.chef.io/
+
+
+ Support issues opened here will be closed and redirected to Slack or Discourse.
