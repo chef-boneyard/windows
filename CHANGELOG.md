@@ -2,6 +2,33 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.1.4 (2018-10-30)
+
+- Note the :verify action for windows_certificate in the readme
+- certificate resource: auto set sensitive is passing password
+
+## 5.1.3 (2018-10-11)
+
+- Remove docs and test suite for windows tasks
+- Changed variable name in log message for retrieving SMB share access
+- Don't load the windows helper in windows_certificate
+
+## 5.1.2 (2018-10-08)
+
+- Fix typo in windows_feature_dism resource name
+
+## 5.1.1 (2018-09-06)
+
+- Require the win32-certstore gem and upgrade the gem as the resource runs so we get the most up to date version
+- Remove redundant helper methods from the windows_certificate resource
+
+## 5.1.0 (2018-08-29)
+
+- Add an action to windows_user_privilege to remove a privilege
+- Fix failing appveyor tests
+- Require win32-certstore 0.1.8 which resolves several issues with the windows_certificate resource
+- Avoid deprecation warnings with Chef 14.3+ by not loading resources that are now built into Chef
+
 ## 5.0.0 (2018-07-24)
 
 ### Breaking Changes

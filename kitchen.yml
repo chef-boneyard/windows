@@ -10,10 +10,9 @@ transport:
 
 provisioner:
   name: chef_zero
-  deprecations_as_errors: false
+  deprecations_as_errors: true
   product_name: chef
-  require_omnibus: true
-  channel: current # Can be removed when Chef 14.4 is released
+  channel: current
 
 verifier:
   name: inspec
@@ -65,9 +64,6 @@ suites:
   - name: shortcut
     run_list:
       - recipe[test::shortcut]
-  - name: tasks
-    run_list:
-      - recipe[test::tasks]
   - name: zipfile
     run_list:
       - recipe[test::zipfile]

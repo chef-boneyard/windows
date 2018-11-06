@@ -19,17 +19,21 @@
 # limitations under the License.
 #
 
+chef_version_for_provides '< 14.6' if respond_to?(:chef_version_for_provides)
+resource_name :windows_certificate
+
 property :source, String, name_property: true
 property :pfx_password, String
 property :private_key_acl, Array
 property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'TrustedPublisher', 'CLIENTAUTHISSUER', 'REMOTE DESKTOP', 'ROOT', 'TRUSTEDDEVICES', 'WEBHOSTING', 'CA', 'AUTHROOT', 'TRUSTEDPEOPLE', 'MY', 'SMARTCARDROOT', 'TRUST', 'DISALLOWED']
 property :user_store, [true, false], default: false
 property :cert_path, String
+property :sensitive, [ TrueClass, FalseClass ], default: lazy { |r| r.pfx_password ? true : false }
 
 action :create do
   load_gem
 
-  add_cert_in_certstore
+  add_cert(OpenSSL::X509::Certificate.new(raw_source))
 end
 
 # acl_add is a modify-if-exists operation : not idempotent
@@ -52,19 +56,20 @@ action :acl_add do
     convert_boolean_return true
     code code_script
     only_if guard_script
+    sensitive if new_resource.sensitive
   end
 end
 
 action :delete do
   load_gem
 
-  delete_cert_from_certstore
+  delete_cert
 end
 
 action :fetch do
   load_gem
 
-  cert_obj = fetch_cert_from_certstore
+  cert_obj = fetch_cert
   if cert_obj
     show_or_store_cert(cert_obj)
   else
@@ -75,7 +80,7 @@ end
 action :verify do
   load_gem
 
-  out = verify_cert_from_certstore
+  out = verify_cert
   if !!out == out
     out = out ? 'Certificate is valid' : 'Certificate not valid'
   end
@@ -83,40 +88,20 @@ action :verify do
 end
 
 action_class do
-  include Windows::Helper
+  require 'openssl'
 
   # load the gem and rescue a gem install if it fails to load
   def load_gem
-    gem 'win32-certstore', '>= 0.1.7'
+    gem 'win32-certstore', '>= 0.1.8'
     require 'win32-certstore' # until this is in core chef
   rescue LoadError
-    Chef::Log.debug('Did not find win32-certstore gem installed. Installing now')
+    Chef::Log.debug('Did not find win32-certstore >= 0.1.8 gem installed. Installing now')
     chef_gem 'win32-certstore' do
       compile_time true
-      action :install
+      action :upgrade
     end
 
     require 'win32-certstore'
-  end
-
-  def add_cert_in_certstore
-    add_cert(openssl_cert_obj)
-  end
-
-  def delete_cert_from_certstore
-    delete_cert
-  end
-
-  def fetch_cert_from_certstore
-    fetch_cert
-  end
-
-  def verify_cert_from_certstore
-    verify_cert
-  end
-
-  def openssl_cert_obj
-    OpenSSL::X509::Certificate.new(raw_source)
   end
 
   def add_cert(cert_obj)

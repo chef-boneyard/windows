@@ -1,4 +1,4 @@
-describe file('C:\pagefile.sys') do
+describe file('c:/pagefile.sys') do
   it { should exist }
 end
 
