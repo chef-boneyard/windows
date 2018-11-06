@@ -21,6 +21,9 @@
 # limitations under the License.
 #
 
+chef_version_for_provides '< 14.6' if respond_to?(:chef_version_for_provides)
+resource_name :windows_share
+
 require 'chef/json_compat'
 
 # Specifies a name for the SMB share. The name may be composed of any valid file name characters, but must be less than 80 characters long. The names pipe and mailslot are reserved for use by the computer.

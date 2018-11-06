@@ -19,6 +19,9 @@
 # limitations under the License.
 #
 
+chef_version_for_provides '< 14.6' if respond_to?(:chef_version_for_provides)
+resource_name :windows_certificate
+
 property :source, String, name_property: true
 property :pfx_password, String
 property :private_key_acl, Array
