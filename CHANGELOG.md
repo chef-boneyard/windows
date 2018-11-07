@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.1.5 (2018-11-07)
+
+- Avoid deprecation warnings in windows_share and windows_certificate on Chef 14.7+ as these are now included in the chef-client itself.
+
 ## 5.1.4 (2018-10-30)
 
 - Note the :verify action for windows_certificate in the readme
