@@ -22,7 +22,9 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Deprecated Resources Note
 
-As of Chef Client 14+ the auto_run, feature, feature_dism, feature_powershell, font, pagefile, printer_port, printer, and shortcut resources are now included in the Chef Client. If you are running Chef 14+ the resources in Chef client will take precedence over the resources in this cookbook. In April 2019 we will release a new major version of this cookbook that removes these resources.
+As of Chef Client 14.0+ the auto_run, feature, feature_dism, feature_powershell, font, pagefile, printer_port, printer, and shortcut resources are now included in the Chef Client. If you are running Chef 14+ the resources in Chef client will take precedence over the resources in this cookbook. In April 2019 we will release a new major version of this cookbook that removes these resources.
+
+As of Chef 14.7+ the windows_share and windows_certificate resources are now included in the Chef Client. If you are running Chef 14.7+ the resources in Chef client will take precedence over the resources in this cookbook. In November 2019 we will release a new major version of this cookbook that removes these resources.
 
 ### windows_auto_run
 
@@ -53,6 +55,8 @@ end
 ```
 
 ### windows_certificate
+
+`Note`: This resource is now included in Chef 14.7 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts. Due to current limitations in WinRM, installing certificated remotely may not work if the operation requires a user profile. Operations on the local machine store should still work.
 
@@ -487,6 +491,8 @@ end
 ```
 
 ### windows_share
+
+`Note`: This resource is now included in Chef 14.7 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Creates, modifies and removes Windows shares. All properties are idempotent.
 
