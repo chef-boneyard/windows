@@ -46,3 +46,7 @@ unless node['platform_version'].to_f < 6.2
     install_method :windows_feature_powershell
   end
 end
+
+windows_feature 'NetFx3' do
+  install_method :windows_feature_dism
+end
