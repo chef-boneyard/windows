@@ -21,6 +21,8 @@
 # limitations under the License.
 #
 
+require 'chef/util/path_helper'
+
 property :path, String, name_property: true
 property :source, String
 property :overwrite, [true, false], default: false
@@ -46,7 +48,7 @@ action :unzip do
                       new_resource.source
                     end
 
-  cache_file_path = win_friendly_path(cache_file_path)
+  cache_file_path = Chef::Util::PathHelper.cleanpath(cache_file_path)
 
   converge_by("unzip #{new_resource.source}") do
     ruby_block 'Unzipping' do
