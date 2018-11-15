@@ -48,5 +48,9 @@ unless node['platform_version'].to_f < 6.2
 end
 
 windows_feature 'NetFx3' do
-  install_method :windows_feature_dism
+  action :delete
+end
+
+windows_feature 'NetFx3' do
+  all true
 end
