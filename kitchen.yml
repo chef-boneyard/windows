@@ -12,7 +12,7 @@ provisioner:
   name: chef_zero
   deprecations_as_errors: true
   product_name: chef
-  channel: current
+  product_version: 13
 
 verifier:
   name: inspec
