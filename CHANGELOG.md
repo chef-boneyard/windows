@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.2.0 (2018-11-14)
+
+- Support installing deleted features in windows_feature_dism
+
 ## 5.1.6 (2018-11-13)
 
 - Add a warning to the readme regarding windows_share and windows_certificate now being included in Chef 14.7
