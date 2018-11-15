@@ -46,7 +46,6 @@ include Windows::Helper
 action :install do
   reload_cached_dism_data unless node['dism_features_cache']
   fail_if_unavailable # fail if the features don't exist
-  fail_if_removed # fail if the features are in removed state
 
   Chef::Log.debug("Windows features needing installation: #{features_to_install.empty? ? 'none' : features_to_install.join(',')}")
   unless features_to_install.empty?
@@ -56,8 +55,12 @@ action :install do
       install_command << " /LimitAccess /Source:\"#{new_resource.source}\"" if new_resource.source
       install_command << ' /All' if new_resource.all
 
-      shell_out!(install_command, returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
-
+      begin
+        shell_out!(install_command, returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
+      rescue Mixlib::ShellOut::ShellCommandFailed => e
+        raise "Error 50 returned by DISM related to parent features, try setting the 'all' property to 'true' on the 'windows_feature_dism' resource." if required_parent_feature?(e.inspect)
+        raise e.message
+      end
       reload_cached_dism_data # Reload cached dism feature state
     end
   end
@@ -103,10 +106,10 @@ action_class do
       # disabled features are always available to install
       available_for_install = node['dism_features_cache']['disabled'].dup
 
-      # if the user passes a source then removed features are also available for installation
-      available_for_install.concat(node['dism_features_cache']['removed']) if new_resource.source
+      # removed features are also available for installation
+      available_for_install.concat(node['dism_features_cache']['removed'])
 
-      # the intersection of the features to install & disabled/removed(if passing source) features are what needs installing
+      # the intersection of the features to install & disabled/removed features are what needs installing
       new_resource.feature_name & available_for_install
     end
   end
@@ -189,21 +192,14 @@ action_class do
     node.override['dism_features_cache'][feature_type] << feature_details
   end
 
-  # Fail if any of the packages are in a removed state
-  # @return [void]
-  def fail_if_removed
-    return if new_resource.source # if someone provides a source then all is well
-    if node['platform_version'].to_f > 6.2 # 2012R2 or later
-      return if registry_key_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing') && registry_value_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing', name: 'LocalSourcePath') # if source is defined in the registry, still fine
-    end
-    removed = new_resource.feature_name & node['dism_features_cache']['removed']
-    raise "The Windows feature#{'s' if removed.count > 1} #{removed.join(',')} #{removed.count > 1 ? 'are' : 'is'} have been removed from the host and cannot be installed." unless removed.empty?
-  end
-
   # Fail unless we're on windows 8+ / 2012+ where deleting a feature is supported
   # @return [void]
   def raise_if_delete_unsupported
     raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" if older_than_2012_or_8?
+  end
+
+  def required_parent_feature?(error_message)
+    error_message.include?('Error: 50') && error_message.include?('required parent feature')
   end
 
   # find dism accounting for File System Redirector
