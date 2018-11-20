@@ -46,3 +46,11 @@ unless node['platform_version'].to_f < 6.2
     install_method :windows_feature_powershell
   end
 end
+
+windows_feature 'NetFx3' do
+  action :delete
+end
+
+windows_feature 'NetFx3' do
+  all true
+end

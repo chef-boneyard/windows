@@ -2,6 +2,23 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.2.1 (2018-11-19)
+
+- windows_share: Fix idempotency by not adding everyone by default
+
+## 5.2.0 (2018-11-14)
+
+- Support installing deleted features in windows_feature_dism
+
+## 5.1.6 (2018-11-13)
+
+- Add a warning to the readme regarding windows_share and windows_certificate now being included in Chef 14.7
+- Deprecated win_friendly_path helper in favor of built-in helpers
+
+## 5.1.5 (2018-11-07)
+
+- Avoid deprecation warnings in windows_share and windows_certificate on Chef 14.7+ as these are now included in the chef-client itself.
+
 ## 5.1.4 (2018-10-30)
 
 - Note the :verify action for windows_certificate in the readme
