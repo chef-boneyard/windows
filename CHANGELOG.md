@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.2.2 (2018-11-20)
+
+- windows_share: Accounts to be revoked should be provided as an individually quoted string array
+
 ## 5.2.1 (2018-11-19)
 
 - windows_share: Fix idempotency by not adding everyone by default
