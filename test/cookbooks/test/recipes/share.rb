@@ -16,6 +16,13 @@ windows_share 'read_only' do
   read_users ['BUILTIN\\Users', 'bob', 'jane']
 end
 
+windows_share 'create read_only again (should not update)' do
+  share_name 'read_only'
+  path 'C:/test_share'
+  description 'a test share'
+  read_users ['BUILTIN\\Users', 'bob', 'jane']
+end
+
 windows_share 'change' do
   path 'C:/test_share'
   change_users ['BUILTIN\\Users']
