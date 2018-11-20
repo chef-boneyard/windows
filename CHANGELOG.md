@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.2.1 (2018-11-19)
+
+- windows_share: Fix idempotency by not adding everyone by default
+
 ## 5.2.0 (2018-11-14)
 
 - Support installing deleted features in windows_feature_dism
