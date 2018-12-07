@@ -9,3 +9,5 @@ supports         'windows'
 source_url       'https://github.com/chef-cookbooks/windows'
 issues_url       'https://github.com/chef-cookbooks/windows/issues'
 chef_version     '>= 13.4'
+
+gem              'ttfunk'

@@ -20,6 +20,7 @@
 #
 
 require 'chef/util/path_helper'
+require 'ttfunk'
 
 chef_version_for_provides '< 14.0' if respond_to?(:chef_version_for_provides)
 resource_name :windows_font
@@ -28,19 +29,22 @@ property :font_name, String, name_property: true
 property :source, String, required: false, coerce: proc { |x| x =~ /^.:.*/ ? x.tr('\\', '/').gsub('//', '/') : x }
 
 action :install do
+  retrieve_cookbook_font
+
   if font_exists?
-    Chef::Log.debug("Not installing font: #{new_resource.font_name} as font already installed.")
-  else
-    retrieve_cookbook_font
     install_font
-    del_cookbook_font
+  else
+    Chef::Log.debug("Not installing font: #{new_resource.font_name} as font already installed.")
   end
+
+  del_cookbook_font
 end
 
 action_class do
   # if a source is specified fetch using remote_file. If not use cookbook_file
   def retrieve_cookbook_font
     font_file = new_resource.font_name
+
     if new_resource.source
       remote_file font_file do
         action :nothing
@@ -77,10 +81,20 @@ action_class do
   #
   # @return [Boolean] Is the font is installed?
   def font_exists?
-    require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    font_file = new_resource.font_name
+    font_path = Chef::Util::PathHelper.join(ENV['TEMP'], font_file)
+
+    installed_fonts.include? font_name(font_path)
+  end
+
+  def installed_fonts
     fonts_dir = Chef::Util::PathHelper.join(ENV['windir'], 'fonts')
-    Chef::Log.debug("Seeing if the font at #{Chef::Util::PathHelper.join(fonts_dir, new_resource.font_name)} exists")
-    ::File.exist?(Chef::Util::PathHelper.join(fonts_dir, new_resource.font_name))
+    fonts_glob = Chef::Util::PathHelper.join(fonts_dir, '*').tr('\\', '/')
+    Dir.glob(fonts_glob).map { |path| font_name(path) }
+  end
+
+  def font_name(path)
+    ::File.open(path) { |f| TTFunk::File.open(f).name.font_name.first }
   end
 
   # Parse out the schema provided to us to see if it's one we support via remote_file.
