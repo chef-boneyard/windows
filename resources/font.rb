@@ -29,15 +29,13 @@ property :font_name, String, name_property: true
 property :source, String, required: false, coerce: proc { |x| x =~ /^.:.*/ ? x.tr('\\', '/').gsub('//', '/') : x }
 
 action :install do
-  retrieve_cookbook_font
-
-  if font_exists?
-    install_font
-  else
+  if font_file_exists?
     Chef::Log.debug("Not installing font: #{new_resource.font_name} as font already installed.")
+  else
+    retrieve_cookbook_font
+    install_font unless font_name_exists?
+    del_cookbook_font
   end
-
-  del_cookbook_font
 end
 
 action_class do
@@ -75,10 +73,16 @@ action_class do
     end
   end
 
-  # Check to see if the font is installed in the fonts dir
+  def font_file_exists?
+    fonts_dir = Chef::Util::PathHelper.join(ENV['windir'], 'fonts')
+    Chef::Log.debug("Seeing if the font at #{Chef::Util::PathHelper.join(fonts_dir, new_resource.font_name)} exists")
+    ::File.exist?(Chef::Util::PathHelper.join(fonts_dir, font_file))
+  end
+
+  # Check to see if the font file is present in the fonts dir
   #
-  # @return [Boolean] Is the font is installed?
-  def font_exists?
+  # @return [Boolean] Is the font is present?
+  def font_name_exists?
     installed_fonts.include? font_name(font_path)
   end
 
