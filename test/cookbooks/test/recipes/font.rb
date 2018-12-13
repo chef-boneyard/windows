@@ -1,4 +1,5 @@
 windows_font 'CodeNewRoman.otf'
+windows_font 'CodeNewRomanDuplicate.otf'
 
 cookbook_file 'C:/Asimov.otf' do
   source 'Asimov.otf'
