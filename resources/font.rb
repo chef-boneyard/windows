@@ -83,12 +83,12 @@ action_class do
   #
   # @return [Boolean] Is the font is present?
   def font_name_exists?
-    installed_fonts.include? font_name(font_path)
+    installed_fonts(::File.extname(font_path)).include? font_name(font_path)
   end
 
-  def installed_fonts
+  def installed_fonts(ext)
     fonts_dir = Chef::Util::PathHelper.join(ENV['windir'], 'fonts')
-    fonts_glob = Chef::Util::PathHelper.join(fonts_dir, '*').tr('\\', '/')
+    fonts_glob = Chef::Util::PathHelper.join(fonts_dir, "*#{ext}").tr('\\', '/')
     Dir.glob(fonts_glob).map { |path| font_name(path) }
   end
 
