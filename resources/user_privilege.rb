@@ -16,17 +16,21 @@ action :add do
 end
 
 action :remove do
-  curr_res_privilege = current_resource.privilege
-  new_res_privilege = new_resource.privilege
-  missing_res_privileges = (new_res_privilege - curr_res_privilege)
+  if Gem::Version.new(Chef::VERSION) < Gem::Version.new('14.4.10')
+    Chef::Log.warn('Chef 14.4.10 is required to use windows_privilege remove action')
+  else
+    curr_res_privilege = current_resource.privilege
+    new_res_privilege = new_resource.privilege
+    missing_res_privileges = (new_res_privilege - curr_res_privilege)
 
-  if missing_res_privileges
-    Chef::Log.info("Privilege: #{missing_res_privileges.join(', ')} not present. Unable to delete")
-  end
+    if missing_res_privileges
+      Chef::Log.info("Privilege: #{missing_res_privileges.join(', ')} not present. Unable to delete")
+    end
 
-  (new_res_privilege - missing_res_privileges).each do |user_right|
-    converge_by("removing user privilege #{user_right}") do
-      Chef::ReservedNames::Win32::Security.remove_account_right(new_resource.principal, user_right)
+    (new_res_privilege - missing_res_privileges).each do |user_right|
+      converge_by("removing user privilege #{user_right}") do
+        Chef::ReservedNames::Win32::Security.remove_account_right(new_resource.principal, user_right)
+      end
     end
   end
 end
