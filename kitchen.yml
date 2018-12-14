@@ -41,6 +41,10 @@ suites:
   - name: certificate
     run_list:
       - recipe[test::certificate]
+  - name: dfs
+    run_list:
+      - recipe[test::dfs]
+    excludes: ["windows-10", "windows-8.1", "windows-2008r2"]
   - name: feature
     run_list:
       - recipe[test::feature]

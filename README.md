@@ -207,6 +207,71 @@ windows_dns "myservice.chef.test" do
 end
 ```
 
+## dfs
+Sets the server configuration for dfs
+
+#### Actions
+
+- `configure` : Configures dfs with the specified settings
+
+### Properties
+
+- `use_fqdn` : Indicates whether a DFS namespace server uses FQDNs in referrals. If this parameter has a value of true, the server uses FQDNs in referrals. If this parameter has a value of false, the server uses NetBIOS names. Defaults to false
+
+## dfs_folder
+
+Creates a folder within dfs as many levels deep as required
+
+#### Actions
+
+- `:install` : Creates the folder in dfs namespace
+- `:remove` : Deletes the folder in the dfs namespace
+
+#### Properties
+
+- `name` : This is the name of the folder to create, it can contain sub folders
+- `namespace_name` : The namespace this should be created within
+- `target_path` : The target that this path will connect you to
+
+### Example
+
+```ruby
+windows_dfs_folder "Some\\Nested\\Path" do
+      description "Link to MyServer share MyShare"
+      namespace_name 'prodshare'
+      target_path "\\\\server\\target_share\\Some\\Nested\\Path"
+      action :install
+end
+```
+
+```ruby
+windows_dfs_folder "Some\\Nested\\Path" do
+      namespace_name 'prodshare'
+      action :remove
+end
+```
+
+## dfs_namespace
+
+Creates a dfs namespace on the local server, permissions are set the same as a windows share.
+
+#### Actions
+
+- `:install` : Creates the dfs namespace on the server
+
+#### Properties
+
+- `name` : The name of the namespace to create
+- `full_users` : Which users should have full access to the share
+- `description` : Friendly description for windows to show
+
+```ruby
+windows_dfs_namespace 'prodshare' do
+  description 'Used to easily access shares on other servers'
+  action :install
+  full_users 'localhost\\users'
+```
+
 ### windows_feature
 
 `Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
