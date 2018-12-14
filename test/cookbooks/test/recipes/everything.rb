@@ -1,5 +1,6 @@
 include_recipe '::autorun'
 include_recipe '::certificate'
+include_recipe '::clone_registry_key'
 include_recipe '::feature'
 include_recipe '::font'
 include_recipe '::http_acl'

@@ -41,6 +41,9 @@ suites:
   - name: certificate
     run_list:
       - recipe[test::certificate]
+  - name: clone_registry_key
+    run_list:
+      - recipe[test::clone_registry_key]
   - name: feature
     run_list:
       - recipe[test::feature]

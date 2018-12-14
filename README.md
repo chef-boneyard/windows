@@ -163,6 +163,32 @@ windows_certificate_binding "me.acme.com" do
 end
 ```
 
+### windows_clone_registry_key
+
+Sets a registry key to the value of another. The value of the source key is evaluated at execution time rather than compile time
+
+#### Actions
+
+- `create` : Creates the target key
+
+#### Properties
+
+- `target_key_path` : the path to the target key
+- `target_key` : the target key
+- `source_key_path` : the path to the source key
+- `source_key` : the source key
+
+#### Examples
+
+```ruby
+windows_clone_registry_key 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\.NETFramework\\v4.0.30319' do
+  target_key 'SchUseStrongCrypto'
+  source_key_path 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\.NETFramework\\v4.0.30319'
+  source_key 'SchUseStrongCrypto'
+end
+
+```
+
 ### windows_dns
 
 Configures A and CNAME records in Windows DNS. This requires the DNSCMD to be installed, which is done by adding the DNS role to the server or installing the Remote Server Admin Tools.
