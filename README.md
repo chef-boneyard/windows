@@ -207,6 +207,66 @@ windows_dns "myservice.chef.test" do
 end
 ```
 
+
+## windows_dns_record
+
+Creates a DNS record for the given domain
+
+
+#### Actions
+
+- :create: creates/updates the DNS entry
+- :delete: deletes the DNS entry
+
+#### Properties
+
+- `name` : The name of the record to create, eg: calaserver01
+- `zone` : The zone to create the record in, eg: dst.calastone.com
+- `target` : The target for the record
+- `record_type` : The type of record to create, can be either ARecord, CNAME or PTR
+
+#### Examples
+
+```ruby
+# Create CNAME record
+windows_dns_record 'cnamerecord' do
+  record_type 'cname'
+  zone        'chef.local'
+  target      'arecord.chef.local'
+end
+```
+
+## windows_dns_zone
+
+Creates an Active Directory Integrated DNS Zone on the local server
+
+#### Actions
+
+- :create: creates/updates the DNS Zone
+- :delete: deletes the DNS Zone
+
+#### Properties
+
+- `name` : The name of the zone to create, eg: calastone.com
+- `replication_scope` : The replication scope for the zone, defaults to Domain, required for server_type Domain
+- `server_type` : The type of DNS server, Domain or Standalone
+
+#### Examples
+
+```ruby
+# Create DNS Zone
+windows_dns_record 'cnamerecord' do
+  record_type 'cname'
+  zone        'chef.local'
+  target      'arecord.chef.local'
+end
+```
+
+## dsc_module
+
+Installs a DSC module
+
+
 ### windows_feature
 
 `Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
