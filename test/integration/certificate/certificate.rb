@@ -1,8 +1,8 @@
-def thumbprint_script(thumbprint:, location: 'My', store: 'LocalMachine') 
+def thumbprint_script(thumbprint:, location: 'My', store: 'LocalMachine')
   "if (gci Cert:\\#{store}\\#{location}\ -Recurse | where-object { $_.Thumbprint -eq '#{thumbprint}' }) {$true} else {$false}"
 end
 
-def private_key_script(thumbprint:, location: 'My', store: 'LocalMachine') 
+def private_key_script(thumbprint:, location: 'My', store: 'LocalMachine')
   "(gci Cert:\\#{store}\\#{location}\ -Recurse | where-object { $_.Thumbprint -eq '#{thumbprint}' })[0].HasPrivateKey"
 end
 
