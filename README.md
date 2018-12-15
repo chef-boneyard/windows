@@ -266,7 +266,6 @@ end
 
 Installs a DSC module
 
-
 ### windows_feature
 
 `Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
