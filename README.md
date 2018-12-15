@@ -246,7 +246,7 @@ Creates an Active Directory Integrated DNS Zone on the local server
 
 #### Properties
 
-- `name` : The name of the zone to create, eg: calastone.com
+- `zone_name` : The name of the zone to create, eg: calastone.com
 - `replication_scope` : The replication scope for the zone, defaults to Domain, required for server_type Domain
 - `server_type` : The type of DNS server, Domain or Standalone
 
