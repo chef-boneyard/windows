@@ -219,7 +219,7 @@ Creates a DNS record for the given domain
 
 #### Properties
 
-- `name` : The name of the record to create, eg: calaserver01
+- `record_name` : The name of the record to create, eg: calaserver01
 - `zone` : The zone to create the record in, eg: dst.calastone.com
 - `target` : The target for the record
 - `record_type` : The type of record to create, can be either ARecord, CNAME or PTR
