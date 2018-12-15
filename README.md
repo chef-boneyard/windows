@@ -212,7 +212,6 @@ end
 
 Creates a DNS record for the given domain
 
-
 #### Actions
 
 - :create: creates/updates the DNS entry
