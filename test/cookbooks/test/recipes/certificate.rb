@@ -27,6 +27,10 @@ cookbook_file 'C:/certs/test-cert.pfx' do
   source 'test-cert.pfx'
 end
 
+cookbook_file 'C:/certs/test-pfx-certificate.pfx' do
+  source 'test-pfx-certificate.pfx'
+end
+
 cookbook_file 'C:/certs/test_p7b.p7b' do
   source 'test_p7b.p7b'
 end
@@ -89,6 +93,13 @@ windows_certificate 'C:/certs/test-cert.pfx' do
   action :create
   pfx_password 'chef123'
   store_name 'CA'
+end
+
+# Add (.PFX) format certificate with password including special character( e.g. @, $)
+windows_certificate 'C:/certs/test-pfx-certificate.pfx' do
+  action :create
+  pfx_password 'chef$123'
+  store_name 'MY'
 end
 
 # delete certificate by thumbprint from CA certificate store
