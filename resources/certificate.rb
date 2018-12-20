@@ -65,7 +65,12 @@ end
 action :delete do
   load_gem
 
-  delete_cert
+  cert_obj = fetch_cert
+  if cert_obj
+    converge_by("Deleting certificate #{new_resource.source} from Store #{new_resource.store_name}") do
+      delete_cert
+    end
+  end
 end
 
 action :fetch do
