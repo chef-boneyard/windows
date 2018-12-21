@@ -65,7 +65,12 @@ end
 action :delete do
   load_gem
 
-  delete_cert
+  cert_obj = fetch_cert
+  if cert_obj
+    converge_by("Deleting certificate #{new_resource.source} from Store #{new_resource.store_name}") do
+      delete_cert
+    end
+  end
 end
 
 action :fetch do
@@ -239,7 +244,7 @@ action_class do
           when '.cer'
             powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
           when '.pfx'
-            powershell_out("openssl pkcs12 -in #{source} -nodes -passin pass:#{new_resource.pfx_password}").stdout
+            powershell_out("openssl pkcs12 -in #{source} -nodes -passin pass:'#{new_resource.pfx_password}'").stdout
           when '.p7b'
             powershell_out("openssl pkcs7 -print_certs -in #{source} -outform PEM").stdout
           end
