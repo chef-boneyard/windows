@@ -32,7 +32,10 @@ platforms:
       box: tas50/windows_2012r2
   - name: windows-2016
     driver:
-      box: chef/windows-server-2016-standard
+      box: tas50/windows_2016
+  - name: windows-2019
+    driver:
+      box: tas50/windows_2019
 
 suites:
   - name: autorun
