@@ -192,7 +192,7 @@ action_class do
     <<-EOH
   $hash = #{hash}
   Test-Path "Cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
-  EOH
+    EOH
   end
 
   def within_store_script
@@ -202,7 +202,7 @@ action_class do
   $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
   #{inner_script}
   $store.Close()
-  EOH
+    EOH
   end
 
   def acl_script(hash)
@@ -225,7 +225,7 @@ action_class do
     $userSID = $currentUser.Translate([System.Security.Principal.SecurityIdentifier]).Value
     $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\$userSID\\$keyname"
   }
-  EOH
+    EOH
     new_resource.private_key_acl.each do |name|
       set_acl_script << "$uname='#{name}'; icacls $fullpath /grant $uname`:RX\n"
     end
