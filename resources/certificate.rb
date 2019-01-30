@@ -4,7 +4,7 @@
 # Resource:: certificate
 #
 # Copyright:: 2015-2017, Calastone Ltd.
-# Copyright:: 2018, Chef Software, Inc.
+# Copyright:: 2018-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,14 +28,25 @@ property :source, String, name_property: true
 property :pfx_password, String
 property :private_key_acl, Array
 property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'TrustedPublisher', 'CLIENTAUTHISSUER', 'REMOTE DESKTOP', 'ROOT', 'TRUSTEDDEVICES', 'WEBHOSTING', 'CA', 'AUTHROOT', 'TRUSTEDPEOPLE', 'MY', 'SMARTCARDROOT', 'TRUST', 'DISALLOWED']
-property :user_store, [true, false], default: false
+property :user_store, [TrueClass, FalseClass], default: false
 property :cert_path, String
 property :sensitive, [ TrueClass, FalseClass ], default: lazy { |r| r.pfx_password ? true : false }
 
 action :create do
   load_gem
 
-  add_cert(OpenSSL::X509::Certificate.new(raw_source))
+  cert_obj = OpenSSL::X509::Certificate.new(raw_source) # A certificate object in memory
+  thumbprint = OpenSSL::Digest::SHA1.new(cert_obj.to_der).to_s # Fetch its thumbprint
+
+  # Need to check if return value is Boolean:true
+  # If not then the given certificate should be added in certstore
+  if verify_cert(thumbprint) == true
+    Chef::Log.debug('Certificate is already present')
+  else
+    converge_by("Adding certificate #{new_resource.source} into Store #{new_resource.store_name}") do
+      add_cert(cert_obj)
+    end
+  end
 end
 
 # acl_add is a modify-if-exists operation : not idempotent
@@ -70,6 +81,8 @@ action :delete do
     converge_by("Deleting certificate #{new_resource.source} from Store #{new_resource.store_name}") do
       delete_cert
     end
+  else
+    Chef::Log.debug('Certificate not found')
   end
 end
 
@@ -80,7 +93,7 @@ action :fetch do
   if cert_obj
     show_or_store_cert(cert_obj)
   else
-    Chef::Log.info('Certificate not found')
+    Chef::Log.debug('Certificate not found')
   end
 end
 
@@ -99,10 +112,10 @@ action_class do
 
   # load the gem and rescue a gem install if it fails to load
   def load_gem
-    gem 'win32-certstore', '>= 0.1.8'
+    gem 'win32-certstore', '>= 0.2.3'
     require 'win32-certstore' # until this is in core chef
   rescue LoadError
-    Chef::Log.debug('Did not find win32-certstore >= 0.1.8 gem installed. Installing now')
+    Chef::Log.debug('Did not find win32-certstore >= 0.2.3 gem installed. Installing now')
     chef_gem 'win32-certstore' do
       compile_time true
       action :upgrade
@@ -126,9 +139,14 @@ action_class do
     store.get(new_resource.source)
   end
 
-  def verify_cert
+  # Checks whether a certificate with the given thumbprint
+  # is already present and valid in certificate store
+  # If the certificate is not present, verify_cert returns a String: "Certificate not found"
+  # But if it is present but expired, it returns a Boolean: false
+  # Otherwise, it returns a Boolean: true
+  def verify_cert(thumbprint = new_resource.source)
     store = ::Win32::Certstore.open(new_resource.store_name)
-    store.valid?(new_resource.source)
+    store.valid?(thumbprint)
   end
 
   def show_or_store_cert(cert_obj)
@@ -232,11 +250,15 @@ action_class do
     set_acl_script
   end
 
+  # Returns the certificate string of the given
+  # input certificate in PEM format
   def raw_source
     ext = ::File.extname(new_resource.source)
     convert_pem(ext, new_resource.source)
   end
 
+  # Uses powershell command to convert crt/der/cer/pfx & p7b certificates
+  # In PEM format and returns its certificate content
   def convert_pem(ext, source)
     out = case ext
           when '.crt', '.der'
@@ -252,6 +274,7 @@ action_class do
     format_raw_out(out)
   end
 
+  # Returns the certificate content
   def format_raw_out(out)
     begin_cert = '-----BEGIN CERTIFICATE-----'
     end_cert = '-----END CERTIFICATE-----'
