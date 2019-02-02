@@ -35,7 +35,7 @@ load_current_value do |desired|
     exists true
     url desired.url
     # Checks first for sddl, because it generates user(s)
-    sddl_match = cmd_out.match(/SDDL:\s*(?<sddl>.+)/)
+    sddl_match = cmd_out.match(/SDDL:\s*(?<sddl>\S+)/)
     if sddl_match
       sddl sddl_match['sddl']
     else
