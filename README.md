@@ -125,11 +125,6 @@ Binds a certificate to an HTTP port in order to enable TLS communication.
 
 - `cert_name` - name attribute. The thumbprint(hash) or subject that identifies the certificate to be bound.
 - `name_kind` - indicates the type of cert_name. One of :subject (default) or :hash.
-- `name_search` - when using name_kind of :subject this will control the search behaviour, if no valid cert is found the most recent expired will be used. Options are:
-  - firstCreatedValid - oldest created certificate that is valid
-  - lastCreatedValid  (*default*)- newest created certificate that is valid
-  - firstExpiryValid - first certificate to expire that is valid
-  - lastExpiryValid - last certificate to expire that is valid
 - `address` - the address to bind against. Default is 0.0.0.0 (all IP addresses). One of:
   - IP v4 address `1.2.3.4`
   - IP v6 address `[::1]`
