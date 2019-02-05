@@ -24,7 +24,6 @@ include Windows::Helper
 
 property :cert_name, String, name_property: true
 property :name_kind, Symbol, equal_to: [:hash, :subject], default: :subject
-property :name_search, Symbol, equal_to: [:firstCreatedValid, :lastCreatedValid, :firstExpiryValid, :lastExpiryValid], default: :lastCreatedValid
 property :address, String, default: '0.0.0.0'
 property :port, Integer, default: 443
 property :app_id, String, default: '{4dc3e181-e14b-4a21-b022-59fc669b0914}'
@@ -117,25 +116,7 @@ action_class do
   def hash_from_subject
     # escape wildcard subject name (*.acme.com)
     subject = new_resource.cert_name.sub(/\*/, '`*')
-    case new_resource.name_search
-    when :firstCreatedValid
-      sort_command = 'NotBefore'
-    when :lastCreatedValid
-      sort_command = 'NotBefore -Descending'
-    when :firstExpiryValid
-      sort_command = 'NotAfter'
-    when :lastExpiryValid
-      sort_command = 'NotAfter -Descending'
-    end
-    ps_script = "& {
-      $datetime = get-date
-      $certs = gci cert:\\localmachine\\#{new_resource.store_name} | where { $_.subject -like '*#{subject}*' }
-      $res = $certs | ? {$_.NotAfter -ge $datetime -and $_.NotBefore -le $datetime} | Sort-Object -Property #{sort_command}
-      if ($res.count -eq 0) {
-      $res = $certs | Sort-Object -Property NotAfter -Descending
-      }
-      return $res | select -expandproperty Thumbprint -First 1
-    }"
+    ps_script = "& { gci cert:\\localmachine\\#{new_resource.store_name} | where { $_.subject -like '*#{subject}*' } | select -first 1 -expandproperty Thumbprint }"
 
     Chef::Log.debug "Running PS script #{ps_script}"
     p = powershell_out!(ps_script)
