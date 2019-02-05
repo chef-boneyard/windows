@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.3.3 (2019-01-30)
+
+- Updated windows_certificate code to match that in Chef 14.10. This increases the requirement of the win32_certstore gem to the latest and resolves multiple issues with the previous implementation.
+
 ## 5.2.2 (2018-11-20)
 
 - windows_share: Accounts to be revoked should be provided as an individually quoted string array
