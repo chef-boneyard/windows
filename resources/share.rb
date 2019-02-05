@@ -160,7 +160,7 @@ action :create do
       delete_share
       create_share
     elsif current_resource.nil?
-    # powershell cmdlet for create is different than updates
+      # powershell cmdlet for create is different than updates
       Chef::Log.debug('The current resource is nil so we will create a new share')
       create_share
     else
