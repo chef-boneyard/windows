@@ -47,7 +47,7 @@ describe powershell(private_key_script(thumbprint: '5081f667f1ef005d0ec39fa3e30a
 end
 
 # Add (.CRT) format certificate for validation tests exists
-describe powershell(thumbprint_script(thumbprint: '9E848F52575C6B1A69D6AB62E0288BFAD4A5564E')) do
+describe powershell(thumbprint_script(thumbprint: '4DEEA7060D80BABF1643B4E0F0104C82995075B7')) do
   its('strip') { should eq 'True' }
 end
 

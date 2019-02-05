@@ -135,7 +135,7 @@ windows_certificate 'add .crt certificate' do
 end
 
 # Validate certificate by thumbprint
-windows_certificate '9E848F52575C6B1A69D6AB62E0288BFAD4A5564E' do
+windows_certificate '4DEEA7060D80BABF1643B4E0F0104C82995075B7' do
   action :verify
 end
 

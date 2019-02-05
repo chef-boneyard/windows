@@ -15,7 +15,7 @@ provisioner:
   name: chef_zero
   deprecations_as_errors: true
   product_name: chef
-  product_version: 14
+  product_version: 13
 
 platforms:
   - name: windows-2012R2
