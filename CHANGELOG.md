@@ -2,9 +2,10 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
-## Unreleased
+## 5.2.4 (2019-02-28)
 
-- Updated windows_share to create share if the share is deleted, and to sanitize paths using Chef::Util::PathHelper.cleanpath
+- Fix http_acl regex to properly capture SDDL - [@Annih](https://github.com/Annih)
+- Updated windows_share to create share if the share is deleted, and to sanitize paths using Chef::Util::PathHelper.cleanpath (#607) - [@Xorima](https://github.com/Xorima)
 
 ## 5.3.3 (2019-01-30)
 
