@@ -35,6 +35,10 @@ property :sensitive, [ TrueClass, FalseClass ], default: lazy { |r| r.pfx_passwo
 action :create do
   load_gem
 
+  # Extension of the certificate
+  ext = ::File.extname(new_resource.source)
+  raw_source = convert_pem(ext)
+
   cert_obj = OpenSSL::X509::Certificate.new(raw_source) # A certificate object in memory
   thumbprint = OpenSSL::Digest::SHA1.new(cert_obj.to_der).to_s # Fetch its thumbprint
 
@@ -44,7 +48,11 @@ action :create do
     Chef::Log.debug('Certificate is already present')
   else
     converge_by("Adding certificate #{new_resource.source} into Store #{new_resource.store_name}") do
-      add_cert(cert_obj)
+      if ext == '.pfx'
+        add_pfx_cert
+      else
+        add_cert(cert_obj)
+      end
     end
   end
 end
@@ -112,10 +120,10 @@ action_class do
 
   # load the gem and rescue a gem install if it fails to load
   def load_gem
-    gem 'win32-certstore', '>= 0.2.3'
+    gem 'win32-certstore', '>= 0.2.4'
     require 'win32-certstore' # until this is in core chef
   rescue LoadError
-    Chef::Log.debug('Did not find win32-certstore >= 0.2.3 gem installed. Installing now')
+    Chef::Log.debug('Did not find win32-certstore >= 0.2.4 gem installed. Installing now')
     chef_gem 'win32-certstore' do
       compile_time true
       action :upgrade
@@ -127,6 +135,11 @@ action_class do
   def add_cert(cert_obj)
     store = ::Win32::Certstore.open(new_resource.store_name)
     store.add(cert_obj)
+  end
+
+  def add_pfx_cert
+    store = ::Win32::Certstore.open(new_resource.store_name)
+    store.add_pfx(new_resource.source, new_resource.pfx_password)
   end
 
   def delete_cert
@@ -250,28 +263,27 @@ action_class do
     set_acl_script
   end
 
-  # Returns the certificate string of the given
-  # input certificate in PEM format
-  def raw_source
-    ext = ::File.extname(new_resource.source)
-    convert_pem(ext, new_resource.source)
-  end
-
   # Uses powershell command to convert crt/der/cer/pfx & p7b certificates
   # In PEM format and returns its certificate content
-  def convert_pem(ext, source)
+  def convert_pem(ext)
     out = case ext
-          when '.crt', '.der'
-            powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
-          when '.cer'
-            powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
+          when '.crt', '.cer', '.der'
+            command = "openssl x509 -text -in #{new_resource.source} -outform PEM"
+            command += ' -inform DER' if binary_cert?
+            powershell_out(command)
           when '.pfx'
-            powershell_out("openssl pkcs12 -in #{source} -nodes -passin pass:'#{new_resource.pfx_password}'").stdout
+            powershell_out("openssl pkcs12 -in #{new_resource.source} -nodes -passin pass:'#{new_resource.pfx_password}'")
           when '.p7b'
-            powershell_out("openssl pkcs7 -print_certs -in #{source} -outform PEM").stdout
+            powershell_out("openssl pkcs7 -print_certs -in #{new_resource.source} -outform PEM")
+          else
+            powershell_out("openssl x509 -text -inform #{ext.delete('.')} -in #{new_resource.source} -outform PEM")
           end
-    out = ::File.read(source) if out.nil? || out.empty?
-    format_raw_out(out)
+
+    if out.exitstatus == 0
+      format_raw_out(out.stdout)
+    else
+      raise out.stderr
+    end
   end
 
   # Returns the certificate content
@@ -279,5 +291,10 @@ action_class do
     begin_cert = '-----BEGIN CERTIFICATE-----'
     end_cert = '-----END CERTIFICATE-----'
     begin_cert + out[/#{begin_cert}(.*?)#{end_cert}/m, 1] + end_cert
+  end
+
+  # Checks if the certificate is binary encoded or not
+  def binary_cert?
+    powershell_out("file -b --mime-encoding #{new_resource.source}").stdout.strip == 'binary'
   end
 end
