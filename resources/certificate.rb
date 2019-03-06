@@ -37,9 +37,7 @@ action :create do
 
   # Extension of the certificate
   ext = ::File.extname(new_resource.source)
-  raw_source = convert_pem(ext)
-
-  cert_obj = OpenSSL::X509::Certificate.new(raw_source) # A certificate object in memory
+  cert_obj = fetch_cert_object(ext) # Fetch OpenSSL::X509::Certificate object
   thumbprint = OpenSSL::Digest::SHA1.new(cert_obj.to_der).to_s # Fetch its thumbprint
 
   # Need to check if return value is Boolean:true
@@ -221,41 +219,42 @@ action_class do
 
   def cert_exists_script(hash)
     <<-EOH
-  $hash = #{hash}
-  Test-Path "Cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
+$hash = #{hash}
+Test-Path "Cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
     EOH
   end
 
   def within_store_script
     inner_script = yield '$store'
     <<-EOH
-  $store = New-Object System.Security.Cryptography.X509Certificates.X509Store "#{new_resource.store_name}", ([System.Security.Cryptography.X509Certificates.StoreLocation]::#{cert_location})
-  $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
-  #{inner_script}
-  $store.Close()
+$store = New-Object System.Security.Cryptography.X509Certificates.X509Store "#{new_resource.store_name}", ([System.Security.Cryptography.X509Certificates.StoreLocation]::#{cert_location})
+$store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+#{inner_script}
+$store.Close()
     EOH
   end
 
   def acl_script(hash)
     return '' if new_resource.private_key_acl.nil? || new_resource.private_key_acl.empty?
+
     # this PS came from http://blogs.technet.com/b/operationsguy/archive/2010/11/29/provide-access-to-private-keys-commandline-vs-powershell.aspx
     # and from https://msdn.microsoft.com/en-us/library/windows/desktop/bb204778(v=vs.85).aspx
     set_acl_script = <<-EOH
-  $hash = #{hash}
-  $storeCert = Get-ChildItem "cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
-  if ($storeCert -eq $null) { throw 'no key exists.' }
-  $keyname = $storeCert.PrivateKey.CspKeyContainerInfo.UniqueKeyContainerName
-  if ($keyname -eq $null) { throw 'no private key exists.' }
-  if ($storeCert.PrivateKey.CspKeyContainerInfo.MachineKeyStore)
-  {
-    $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys\\$keyname"
-  }
-  else
-  {
-    $currentUser = New-Object System.Security.Principal.NTAccount($Env:UserDomain, $Env:UserName)
-    $userSID = $currentUser.Translate([System.Security.Principal.SecurityIdentifier]).Value
-    $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\$userSID\\$keyname"
-  }
+$hash = #{hash}
+$storeCert = Get-ChildItem "cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
+if ($storeCert -eq $null) { throw 'no key exists.' }
+$keyname = $storeCert.PrivateKey.CspKeyContainerInfo.UniqueKeyContainerName
+if ($keyname -eq $null) { throw 'no private key exists.' }
+if ($storeCert.PrivateKey.CspKeyContainerInfo.MachineKeyStore)
+{
+  $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys\\$keyname"
+}
+else
+{
+  $currentUser = New-Object System.Security.Principal.NTAccount($Env:UserDomain, $Env:UserName)
+  $userSID = $currentUser.Translate([System.Security.Principal.SecurityIdentifier]).Value
+  $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\$userSID\\$keyname"
+}
     EOH
     new_resource.private_key_acl.each do |name|
       set_acl_script << "$uname='#{name}'; icacls $fullpath /grant $uname`:RX\n"
@@ -263,38 +262,40 @@ action_class do
     set_acl_script
   end
 
-  # Uses powershell command to convert crt/der/cer/pfx & p7b certificates
-  # In PEM format and returns its certificate content
-  def convert_pem(ext)
-    out = case ext
-          when '.crt', '.cer', '.der'
-            command = "openssl x509 -text -in #{new_resource.source} -outform PEM"
-            command += ' -inform DER' if binary_cert?
-            powershell_out(command)
-          when '.pfx'
-            powershell_out("openssl pkcs12 -in #{new_resource.source} -nodes -passin pass:'#{new_resource.pfx_password}'")
-          when '.p7b'
-            powershell_out("openssl pkcs7 -print_certs -in #{new_resource.source} -outform PEM")
-          else
-            powershell_out("openssl x509 -text -inform #{ext.delete('.')} -in #{new_resource.source} -outform PEM")
-          end
+  # Method returns an OpenSSL::X509::Certificate object
+  #
+  # Based on its extension, the certificate contents are used to initialize
+  # PKCS12 (PFX), PKCS7 (P7B) objects which contains OpenSSL::X509::Certificate.
+  #
+  # @note Other then PEM, all the certificates are usually in binary format, and hence
+  #       their contents are loaded by using File.binread
+  #
+  # @param ext [String] Extension of the certificate
+  #
+  # @return [OpenSSL::X509::Certificate] Object containing certificate's attributes
+  #
+  # @raise [OpenSSL::PKCS12::PKCS12Error] When incorrect password is provided for PFX certificate
+  #
+  def fetch_cert_object(ext)
+    contents = if binary_cert?
+                 ::File.binread(new_resource.source)
+               else
+                 ::File.read(new_resource.source)
+               end
 
-    if out.exitstatus == 0
-      format_raw_out(out.stdout)
+    case ext
+    when '.pfx'
+      OpenSSL::PKCS12.new(contents, new_resource.pfx_password).certificate
+    when '.p7b'
+      OpenSSL::PKCS7.new(contents).certificates.first
     else
-      raise out.stderr
+      OpenSSL::X509::Certificate.new(contents)
     end
   end
 
-  # Returns the certificate content
-  def format_raw_out(out)
-    begin_cert = '-----BEGIN CERTIFICATE-----'
-    end_cert = '-----END CERTIFICATE-----'
-    begin_cert + out[/#{begin_cert}(.*?)#{end_cert}/m, 1] + end_cert
-  end
-
-  # Checks if the certificate is binary encoded or not
+  # @return [Boolean] Whether the certificate file is binary encoded or not
+  #
   def binary_cert?
-    powershell_out("file -b --mime-encoding #{new_resource.source}").stdout.strip == 'binary'
+    powershell_out!("file -b --mime-encoding #{new_resource.source}").stdout.strip == 'binary'
   end
 end
