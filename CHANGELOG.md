@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.3.0 (2019-03-06)
+
+- Expanded certificate testing to cover more scenarios - [@Xorima](https://github.com/Xorima)
+- Updated windows_share to better compare the current and desired path in order to prevent converging on each Chef run  - [@Xorima](https://github.com/Xorima)
+- Backported all windows_certificate fixes from Chef 14.8 - 14.11 including improvements to importing the types of certificates that can be imported, suppport for nested certs, and support for importing private keys with certs.
+
 ## 5.2.4 (2019-02-28)
 
 - Fix http_acl regex to properly capture SDDL - [@Annih](https://github.com/Annih)
