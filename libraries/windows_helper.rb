@@ -18,17 +18,20 @@
 # limitations under the License.
 
 require 'uri'
-require 'Win32API' if Chef::Platform.windows?
 require 'chef/exceptions'
 require 'openssl'
 require 'chef/mixin/powershell_out'
 require 'chef/util/path_helper'
+if Chef::Platform.windows?
+  require 'win32/api'
+  include Win32
+end
 
 module Windows
   module Helper
     AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'.freeze unless defined?(AUTO_RUN_KEY)
     ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'.freeze unless defined?(ENV_KEY)
-    ExpandEnvironmentStrings = Win32API.new('kernel32', 'ExpandEnvironmentStrings', %w(P P L), 'L') if Chef::Platform.windows? && !defined?(ExpandEnvironmentStrings)
+    ExpandEnvironmentStrings = API.new('kernel32', 'ExpandEnvironmentStrings', %w(P P L), 'L') if Chef::Platform.windows? && !defined?(ExpandEnvironmentStrings)
 
     # returns windows friendly version of the provided path,
     # ensures backslashes are used everywhere

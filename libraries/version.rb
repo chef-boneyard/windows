@@ -20,7 +20,8 @@
 
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
   require_relative 'wmi_helper'
-  require 'Win32API'
+  require 'win32/api'
+  include Win32
 end
 
 module Windows
@@ -147,9 +148,9 @@ module Windows
       'Windows Server 2008 R2' => { major: 6, minor: 1, callable: -> { @product_type != VER_NT_WORKSTATION } },
       'Windows Server 2008' => { major: 6, minor: 0, callable: -> { @product_type != VER_NT_WORKSTATION } },
       'Windows Vista' => { major: 6, minor: 0, callable: -> { @product_type == VER_NT_WORKSTATION } },
-      'Windows Server 2003 R2' => { major: 5, minor: 2, callable: -> { Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) != 0 } },
+      'Windows Server 2003 R2' => { major: 5, minor: 2, callable: -> { API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) != 0 } },
       'Windows Home Server' => { major: 5, minor: 2, callable: -> { (@product_suite & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER } },
-      'Windows Server 2003' => { major: 5, minor: 2, callable: -> { Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) == 0 } },
+      'Windows Server 2003' => { major: 5, minor: 2, callable: -> { API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) == 0 } },
       'Windows XP' => { major: 5, minor: 1 },
       'Windows 2000' => { major: 5, minor: 0 },
     }.freeze unless defined?(WIN_VERSIONS)
@@ -186,10 +187,10 @@ module Windows
 
     private
 
-    # Win32API call to GetSystemMetrics(SM_SERVERR2)
+    # win32/api call to GetSystemMetrics(SM_SERVERR2)
     # returns: The build number if the system is Windows Server 2003 R2; otherwise, 0.
     def sm_serverr2
-      @sm_serverr2 ||= Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2)
+      @sm_serverr2 ||= API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2)
     end
 
     # query WMI Win32_OperatingSystem for required OS info
