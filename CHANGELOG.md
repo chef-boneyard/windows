@@ -2,6 +2,20 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 6.0.0 (2019-04-25)
+
+### Breaking Changes
+
+- This cookbook now requires Chef 14 or later. As of April 2019 Chef 13 is EOL. If you are still running Chef 13 we highly suggest you begin your migration. Chef 14 provides a greatly improved Windows experience with built in resources for Windows clients.
+- Resources that are built into Chef 14 and later have been removed from this cookbook:
+  - windows_auto_run
+  - windows_feature
+  - windows_font
+  - windows_pagefile
+  - windows_printer_port
+  - windows_printer
+  - windows_shortcut
+
 ## 5.3.1 (2019-04-25)
 
 - Resolved failures on Chef 14.11 or later
