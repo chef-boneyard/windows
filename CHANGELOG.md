@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.3.1 (2019-04-25)
+
+- Resolved failures on Chef 14.11 or later
+- Removed OS detectio support in the helpers for Windows 2003
+
 ## 5.3.0 (2019-03-06)
 
 - Expanded certificate testing to cover more scenarios - [@Xorima](https://github.com/Xorima)
