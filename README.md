@@ -16,7 +16,7 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Chef
 
-- Chef 13.4+
+- Chef 14+
 
 ## Resources
 
