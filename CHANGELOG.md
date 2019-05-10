@@ -2,6 +2,36 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 6.0.0 (2019-04-25)
+
+### Breaking Changes
+
+- This cookbook now requires Chef 14 or later. As of April 2019 Chef 13 is EOL. If you are still running Chef 13 we highly suggest you begin your migration. Chef 14 provides a greatly improved Windows experience with built in resources for Windows clients.
+- Resources that are built into Chef 14 and later have been removed from this cookbook:
+  - windows_auto_run
+  - windows_feature
+  - windows_font
+  - windows_pagefile
+  - windows_printer_port
+  - windows_printer
+  - windows_shortcut
+
+## 5.3.1 (2019-04-25)
+
+- Resolved failures on Chef 14.11 or later
+- Removed OS detectio support in the helpers for Windows 2003
+
+## 5.3.0 (2019-03-06)
+
+- Expanded certificate testing to cover more scenarios - [@Xorima](https://github.com/Xorima)
+- Updated windows_share to better compare the current and desired path in order to prevent converging on each Chef run  - [@Xorima](https://github.com/Xorima)
+- Backported all windows_certificate fixes from Chef 14.8 - 14.11 including improvements to importing the types of certificates that can be imported, suppport for nested certs, and support for importing private keys with certs.
+
+## 5.2.4 (2019-02-28)
+
+- Fix http_acl regex to properly capture SDDL - [@Annih](https://github.com/Annih)
+- Updated windows_share to create share if the share is deleted, and to sanitize paths using Chef::Util::PathHelper.cleanpath (#607) - [@Xorima](https://github.com/Xorima)
+
 ## 5.3.3 (2019-01-30)
 
 - Updated windows_certificate code to match that in Chef 14.10. This increases the requirement of the win32_certstore gem to the latest and resolves multiple issues with the previous implementation.

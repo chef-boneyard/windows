@@ -38,35 +38,16 @@ platforms:
       box: tas50/windows_2019
 
 suites:
-  - name: autorun
-    run_list:
-      - recipe[test::autorun]
   - name: certificate
     run_list:
       - recipe[test::certificate]
-  - name: feature
-    run_list:
-      - recipe[test::feature]
-    excludes: ["windows-10", "windows-8.1"]
-  - name: font
-    run_list:
-      - recipe[test::font]
   - name: http_acl
     run_list:
       - recipe[test::http_acl]
-  - name: pagefile
-    run_list:
-      - recipe[test::pagefile]
-  - name: path
-    run_list:
-      - recipe[test::path]
   - name: share
     run_list:
       - recipe[test::share]
     excludes: ["windows-2008r2"]
-  - name: shortcut
-    run_list:
-      - recipe[test::shortcut]
   - name: zipfile
     run_list:
       - recipe[test::zipfile]

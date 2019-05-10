@@ -35,7 +35,9 @@ property :sensitive, [ TrueClass, FalseClass ], default: lazy { |r| r.pfx_passwo
 action :create do
   load_gem
 
-  cert_obj = OpenSSL::X509::Certificate.new(raw_source) # A certificate object in memory
+  # Extension of the certificate
+  ext = ::File.extname(new_resource.source)
+  cert_obj = fetch_cert_object(ext) # Fetch OpenSSL::X509::Certificate object
   thumbprint = OpenSSL::Digest::SHA1.new(cert_obj.to_der).to_s # Fetch its thumbprint
 
   # Need to check if return value is Boolean:true
@@ -44,7 +46,11 @@ action :create do
     Chef::Log.debug('Certificate is already present')
   else
     converge_by("Adding certificate #{new_resource.source} into Store #{new_resource.store_name}") do
-      add_cert(cert_obj)
+      if ext == '.pfx'
+        add_pfx_cert
+      else
+        add_cert(cert_obj)
+      end
     end
   end
 end
@@ -112,10 +118,10 @@ action_class do
 
   # load the gem and rescue a gem install if it fails to load
   def load_gem
-    gem 'win32-certstore', '>= 0.2.3'
+    gem 'win32-certstore', '>= 0.2.4'
     require 'win32-certstore' # until this is in core chef
   rescue LoadError
-    Chef::Log.debug('Did not find win32-certstore >= 0.2.3 gem installed. Installing now')
+    Chef::Log.debug('Did not find win32-certstore >= 0.2.4 gem installed. Installing now')
     chef_gem 'win32-certstore' do
       compile_time true
       action :upgrade
@@ -127,6 +133,11 @@ action_class do
   def add_cert(cert_obj)
     store = ::Win32::Certstore.open(new_resource.store_name)
     store.add(cert_obj)
+  end
+
+  def add_pfx_cert
+    store = ::Win32::Certstore.open(new_resource.store_name)
+    store.add_pfx(new_resource.source, new_resource.pfx_password)
   end
 
   def delete_cert
@@ -208,41 +219,42 @@ action_class do
 
   def cert_exists_script(hash)
     <<-EOH
-  $hash = #{hash}
-  Test-Path "Cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
+$hash = #{hash}
+Test-Path "Cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
     EOH
   end
 
   def within_store_script
     inner_script = yield '$store'
     <<-EOH
-  $store = New-Object System.Security.Cryptography.X509Certificates.X509Store "#{new_resource.store_name}", ([System.Security.Cryptography.X509Certificates.StoreLocation]::#{cert_location})
-  $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
-  #{inner_script}
-  $store.Close()
+$store = New-Object System.Security.Cryptography.X509Certificates.X509Store "#{new_resource.store_name}", ([System.Security.Cryptography.X509Certificates.StoreLocation]::#{cert_location})
+$store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+#{inner_script}
+$store.Close()
     EOH
   end
 
   def acl_script(hash)
     return '' if new_resource.private_key_acl.nil? || new_resource.private_key_acl.empty?
+
     # this PS came from http://blogs.technet.com/b/operationsguy/archive/2010/11/29/provide-access-to-private-keys-commandline-vs-powershell.aspx
     # and from https://msdn.microsoft.com/en-us/library/windows/desktop/bb204778(v=vs.85).aspx
     set_acl_script = <<-EOH
-  $hash = #{hash}
-  $storeCert = Get-ChildItem "cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
-  if ($storeCert -eq $null) { throw 'no key exists.' }
-  $keyname = $storeCert.PrivateKey.CspKeyContainerInfo.UniqueKeyContainerName
-  if ($keyname -eq $null) { throw 'no private key exists.' }
-  if ($storeCert.PrivateKey.CspKeyContainerInfo.MachineKeyStore)
-  {
-    $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys\\$keyname"
-  }
-  else
-  {
-    $currentUser = New-Object System.Security.Principal.NTAccount($Env:UserDomain, $Env:UserName)
-    $userSID = $currentUser.Translate([System.Security.Principal.SecurityIdentifier]).Value
-    $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\$userSID\\$keyname"
-  }
+$hash = #{hash}
+$storeCert = Get-ChildItem "cert:\\#{cert_location}\\#{new_resource.store_name}\\$hash"
+if ($storeCert -eq $null) { throw 'no key exists.' }
+$keyname = $storeCert.PrivateKey.CspKeyContainerInfo.UniqueKeyContainerName
+if ($keyname -eq $null) { throw 'no private key exists.' }
+if ($storeCert.PrivateKey.CspKeyContainerInfo.MachineKeyStore)
+{
+  $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\MachineKeys\\$keyname"
+}
+else
+{
+  $currentUser = New-Object System.Security.Principal.NTAccount($Env:UserDomain, $Env:UserName)
+  $userSID = $currentUser.Translate([System.Security.Principal.SecurityIdentifier]).Value
+  $fullpath = "$Env:ProgramData\\Microsoft\\Crypto\\RSA\\$userSID\\$keyname"
+}
     EOH
     new_resource.private_key_acl.each do |name|
       set_acl_script << "$uname='#{name}'; icacls $fullpath /grant $uname`:RX\n"
@@ -250,34 +262,40 @@ action_class do
     set_acl_script
   end
 
-  # Returns the certificate string of the given
-  # input certificate in PEM format
-  def raw_source
-    ext = ::File.extname(new_resource.source)
-    convert_pem(ext, new_resource.source)
+  # Method returns an OpenSSL::X509::Certificate object
+  #
+  # Based on its extension, the certificate contents are used to initialize
+  # PKCS12 (PFX), PKCS7 (P7B) objects which contains OpenSSL::X509::Certificate.
+  #
+  # @note Other then PEM, all the certificates are usually in binary format, and hence
+  #       their contents are loaded by using File.binread
+  #
+  # @param ext [String] Extension of the certificate
+  #
+  # @return [OpenSSL::X509::Certificate] Object containing certificate's attributes
+  #
+  # @raise [OpenSSL::PKCS12::PKCS12Error] When incorrect password is provided for PFX certificate
+  #
+  def fetch_cert_object(ext)
+    contents = if binary_cert?
+                 ::File.binread(new_resource.source)
+               else
+                 ::File.read(new_resource.source)
+               end
+
+    case ext
+    when '.pfx'
+      OpenSSL::PKCS12.new(contents, new_resource.pfx_password).certificate
+    when '.p7b'
+      OpenSSL::PKCS7.new(contents).certificates.first
+    else
+      OpenSSL::X509::Certificate.new(contents)
+    end
   end
 
-  # Uses powershell command to convert crt/der/cer/pfx & p7b certificates
-  # In PEM format and returns its certificate content
-  def convert_pem(ext, source)
-    out = case ext
-          when '.crt', '.der'
-            powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
-          when '.cer'
-            powershell_out("openssl x509 -text -inform DER -in #{source} -outform PEM").stdout
-          when '.pfx'
-            powershell_out("openssl pkcs12 -in #{source} -nodes -passin pass:'#{new_resource.pfx_password}'").stdout
-          when '.p7b'
-            powershell_out("openssl pkcs7 -print_certs -in #{source} -outform PEM").stdout
-          end
-    out = ::File.read(source) if out.nil? || out.empty?
-    format_raw_out(out)
-  end
-
-  # Returns the certificate content
-  def format_raw_out(out)
-    begin_cert = '-----BEGIN CERTIFICATE-----'
-    end_cert = '-----END CERTIFICATE-----'
-    begin_cert + out[/#{begin_cert}(.*?)#{end_cert}/m, 1] + end_cert
+  # @return [Boolean] Whether the certificate file is binary encoded or not
+  #
+  def binary_cert?
+    powershell_out!("file -b --mime-encoding #{new_resource.source}").stdout.strip == 'binary'
   end
 end

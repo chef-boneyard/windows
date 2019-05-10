@@ -20,7 +20,6 @@
 
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
   require_relative 'wmi_helper'
-  require 'Win32API'
 end
 
 module Windows
@@ -30,10 +29,6 @@ module Windows
     # Suite Masks
     # Microsoft BackOffice components are installed.
     VER_SUITE_BACKOFFICE = 0x00000004 unless defined?(VER_SUITE_BACKOFFICE)
-    # Windows Server 2003, Web Edition is installed.
-    VER_SUITE_BLADE = 0x00000400 unless defined?(VER_SUITE_BLADE)
-    # Windows Server 2003, Compute Cluster Edition is installed.
-    VER_SUITE_COMPUTE_SERVER = 0x00004000 unless defined?(VER_SUITE_COMPUTE_SERVER)
     # Windows Server 2008 Datacenter, Windows Server 2003, Datacenter Edition, or Windows 2000 Datacenter Server is installed.
     VER_SUITE_DATACENTER = 0x00000080 unless defined?(VER_SUITE_DATACENTER)
     # Windows Server 2008 Enterprise, Windows Server 2003, Enterprise Edition, or Windows 2000 Advanced Server is installed. Refer to the Remarks section for more information about this bit flag.
@@ -48,8 +43,6 @@ module Windows
     VER_SUITE_SMALLBUSINESS = 0x00000001 unless defined?(VER_SUITE_SMALLBUSINESS)
     # Microsoft Small Business Server is installed with the restrictive client license in force. Refer to the Remarks section for more information about this bit flag.
     VER_SUITE_SMALLBUSINESS_RESTRICTED = 0x00000020 unless defined?(VER_SUITE_SMALLBUSINESS_RESTRICTED)
-    # Windows Storage Server 2003 R2 or Windows Storage Server 2003is installed.
-    VER_SUITE_STORAGE_SERVER = 0x00002000 unless defined?(VER_SUITE_STORAGE_SERVER)
     # Terminal Services is installed. This value is always set.
     # If VER_SUITE_TERMINAL is set but VER_SUITE_SINGLEUSERTS is not set, the system is running in application server mode.
     VER_SUITE_TERMINAL = 0x00000010 unless defined?(VER_SUITE_TERMINAL)
@@ -64,10 +57,6 @@ module Windows
     VER_NT_SERVER = 0x0000003 unless defined?(VER_NT_SERVER)
     # The operating system is Windows 7, Windows Vista, Windows XP Professional, Windows XP Home Edition, or Windows 2000 Professional.
     VER_NT_WORKSTATION = 0x0000001 unless defined?(VER_NT_WORKSTATION)
-
-    # GetSystemMetrics
-    # The build number if the system is Windows Server 2003 R2; otherwise, 0.
-    SM_SERVERR2 = 89 unless defined?(SM_SERVERR2)
 
     # http://msdn.microsoft.com/en-us/library/ms724358(v=vs.85).aspx
     SKU = {
@@ -147,9 +136,7 @@ module Windows
       'Windows Server 2008 R2' => { major: 6, minor: 1, callable: -> { @product_type != VER_NT_WORKSTATION } },
       'Windows Server 2008' => { major: 6, minor: 0, callable: -> { @product_type != VER_NT_WORKSTATION } },
       'Windows Vista' => { major: 6, minor: 0, callable: -> { @product_type == VER_NT_WORKSTATION } },
-      'Windows Server 2003 R2' => { major: 5, minor: 2, callable: -> { Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) != 0 } },
       'Windows Home Server' => { major: 5, minor: 2, callable: -> { (@product_suite & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER } },
-      'Windows Server 2003' => { major: 5, minor: 2, callable: -> { Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2) == 0 } },
       'Windows XP' => { major: 5, minor: 1 },
       'Windows 2000' => { major: 5, minor: 0 },
     }.freeze unless defined?(WIN_VERSIONS)
@@ -185,12 +172,6 @@ module Windows
     end
 
     private
-
-    # Win32API call to GetSystemMetrics(SM_SERVERR2)
-    # returns: The build number if the system is Windows Server 2003 R2; otherwise, 0.
-    def sm_serverr2
-      @sm_serverr2 ||= Win32API.new('user32', 'GetSystemMetrics', 'I', 'I').call(SM_SERVERR2)
-    end
 
     # query WMI Win32_OperatingSystem for required OS info
     def get_os_info
