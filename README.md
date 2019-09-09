@@ -135,6 +135,8 @@ end
 
 ### windows_dns
 
+`Note`: This resource is now included in Chef 15 and later. If you are using newer versions of [windows](https://devblogs.microsoft.com/powershell/configuration-in-a-devops-world-windows-powershell-desired-state-configuration/) then should use the core [resource](https://github.com/chef/chef/blob/master/RELEASE_NOTES.md#windows_dns_record-resource) instead of windows_dns.
+
 Configures A and CNAME records in Windows DNS. This requires the DNSCMD to be installed, which is done by adding the DNS role to the server or installing the Remote Server Admin Tools.
 
 #### Actions
