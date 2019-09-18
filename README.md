@@ -22,7 +22,7 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Deprecated Resources Note
 
-As of Chef 14.7+ the windows_share and windows_certificate resources are now included in the Chef Client. Also the windows_zipfile resource is now included in the Chef 15.0.293+. If you are running Chef 14.7+ the resources in Chef client will take precedence over the resources in this cookbook. In November 2019 we will release a new major version of this cookbook that removes these resources.
+As of Chef 14.7+ the windows_share and windows_certificate resources are now included in the Chef Client. Also the windows_zipfile resource is replaced by the new archive_file resource in Chef 15.0.293+. If you are running Chef 14.7+ the resources in Chef client will take precedence over the resources in this cookbook. In November 2019 we will release a new major version of this cookbook that removes these resources.
 
 ### windows_certificate
 
