@@ -3,7 +3,6 @@ maintainer       'Chef Software, Inc.'
 maintainer_email 'cookbooks@chef.io'
 license          'Apache-2.0'
 description      'Provides a set of useful Windows-specific primitives.'
-
 version          '6.0.0'
 supports         'windows'
 source_url       'https://github.com/chef-cookbooks/windows'
