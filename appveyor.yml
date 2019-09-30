@@ -2,6 +2,7 @@ environment:
   machine_user: vagrant
   machine_pass: vagrant
   KITCHEN_YAML: kitchen.appveyor.yml
+  CHEF_LICENSE: accept
 
 branches:
   only:
