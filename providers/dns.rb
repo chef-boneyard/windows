@@ -24,9 +24,6 @@
 include Windows::Helper
 
 # Support whyrun
-def whyrun_supported?
-  true
-end
 
 action :create do
   if @current_resource.exists

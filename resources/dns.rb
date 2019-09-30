@@ -1,6 +1,6 @@
 #
 # Author:: Richard Lavey (richard.lavey@calastone.com)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: dns
 #
 # Copyright:: 2015, Calastone Ltd.
