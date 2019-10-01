@@ -23,11 +23,6 @@
 
 include Windows::Helper
 
-# Support whyrun
-def whyrun_supported?
-  true
-end
-
 action :create do
   if @current_resource.exists
     needs_change = (@new_resource.record_type != @current_resource.record_type) ||
