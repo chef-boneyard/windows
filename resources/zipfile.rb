@@ -116,6 +116,7 @@ action_class do
 
   def ensure_rubyzip_gem_installed
     require 'zip'
+    Chef::Log.warn('The windows_zipfile resource has been deprecated as Chef Infra Client 15.0 shipped with a new archive_file resource, which natively handles multiple archive formats. Please update any cookbooks using this resource to instead use the `archive_file` resource: https://docs.chef.io/resource_archive_file.html')
   rescue LoadError
     Chef::Log.info("Missing gem 'rubyzip'...installing now.")
     chef_gem 'rubyzip' do

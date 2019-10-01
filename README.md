@@ -22,7 +22,7 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Deprecated Resources Note
 
-As of Chef 14.7+ the windows_share and windows_certificate resources are now included in the Chef Client. If you are running Chef 14.7+ the resources in Chef client will take precedence over the resources in this cookbook. In November 2019 we will release a new major version of this cookbook that removes these resources.
+As of Chef 14.7+ the windows_share and windows_certificate resources are now included in the Chef Client. Also the windows_zipfile resource is replaced by the new archive_file resource in Chef 15.0.293+. If you are running Chef 14.7+ the resources in Chef client will take precedence over the resources in this cookbook. In November 2019 we will release a new major version of this cookbook that removes these resources.
 
 ### windows_certificate
 
@@ -346,6 +346,8 @@ SeTakeOwnershipPrivilege             Take ownership of files or other objects
 ```
 
 ### windows_zipfile
+
+`Note`: This resource has been deprecated as Chef Infra Client 15.0 shipped with a new archive_file resource, which natively handles multiple archive formats. Please update any cookbooks using this resource to instead use the `archive_file` resource: https://docs.chef.io/resource_archive_file.html
 
 Most version of Windows do not ship with native cli utility for managing compressed files. This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
 
