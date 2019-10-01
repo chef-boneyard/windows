@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 6.0.1 (2019-10-01)
+
+- Update README.md for Windows cookbook suggesting core dns resources (#616) - [@NAshwini](https://github.com/NAshwini)
+- Add a warning when using windows_zipfile resource as users should migrate to archive_file (#617) - [@NAshwini](https://github.com/NAshwini)
+
 ## 6.0.0 (2019-04-25)
 
 ### Breaking Changes
