@@ -347,7 +347,7 @@ SeTakeOwnershipPrivilege             Take ownership of files or other objects
 
 ### windows_zipfile
 
-`Note`: This resource is now included in Chef 15.0.293 and later. There is no need to depend on the Windows cookbook for this resource.
+`Note`: This resource has been deprecated as Chef Infra Client 15.0 shipped with a new archive_file resource, which natively handles multiple archive formats. Please update any cookbooks using this resource to instead use the `archive_file` resource: https://docs.chef.io/resource_archive_file.html
 
 Most version of Windows do not ship with native cli utility for managing compressed files. This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
 
