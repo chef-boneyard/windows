@@ -33,6 +33,9 @@ suites:
   - name: certificate
     run_list:
       - recipe[test::certificate]
+  - name: schannel
+    run_list:
+      - recipe[test::schannel]
   - name: share
     run_list:
       - recipe[test::share]

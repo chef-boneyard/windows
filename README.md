@@ -215,6 +215,20 @@ windows_http_acl 'http://+:50051/' do
 end
 ```
 
+### windows_schannel
+
+Used to configure the schannel security settings in windows, this is used by dotnet apps and powershell to be able to speak to tls 1.2 endpoints
+
+#### Actions
+
+- `configure`: Configures the setting
+
+#### Properties
+
+property                 | type       | default       | description
+------------------------ | ---------- | ------------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------
+`use_strong_crypto`             | True, False     | true | Enables or disables the setting
+
 ### windows_share
 
 `Note`: This resource is now included in Chef 14.7 and later. There is no need to depend on the Windows cookbook for this resource.
