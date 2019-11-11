@@ -71,7 +71,6 @@ action :acl_add do
   guard_script << cert_exists_script(hash)
 
   powershell_script "setting the acls on #{new_resource.source} in #{cert_location}\\#{new_resource.store_name}" do
-    guard_interpreter :powershell_script
     convert_boolean_return true
     code code_script
     only_if guard_script
