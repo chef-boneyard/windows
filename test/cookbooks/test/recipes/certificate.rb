@@ -1,4 +1,4 @@
-# We don't support reading the source from the cookbook yet.  So manually point us to
+# We don't support reading the source from the cookbook yet. So manually point us to
 # the correct place in the chef file cache.
 
 directory 'C:/certs'

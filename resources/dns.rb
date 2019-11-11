@@ -18,7 +18,6 @@
 # limitations under the License.
 #
 
-actions :create, :delete
 default_action :create
 
 attribute :host_name, kind_of: String, name_property: true, required: true
