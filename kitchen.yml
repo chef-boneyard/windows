@@ -44,6 +44,9 @@ suites:
   - name: http_acl
     run_list:
       - recipe[test::http_acl]
+  - name: schannel
+    run_list:
+      - recipe[test::schannel]
   - name: share
     run_list:
       - recipe[test::share]
