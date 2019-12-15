@@ -25,7 +25,7 @@ require 'chef/util/path_helper'
 
 property :path, String, name_property: true
 property :source, String
-property :overwrite, [true, false], default: false
+property :overwrite, [TrueClass, FalseClass], default: false
 property :checksum, String
 
 action :unzip do
