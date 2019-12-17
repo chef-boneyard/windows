@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-property :use_strong_crypto, [TrueClass, FalseClass], default: true
+property :use_strong_crypto, [true, false], default: true
 
 action :configure do
   registry_key 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\.NETFramework\\v4.0.30319' do

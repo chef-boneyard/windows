@@ -28,9 +28,9 @@ property :source, String, name_property: true
 property :pfx_password, String
 property :private_key_acl, Array
 property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'TrustedPublisher', 'CLIENTAUTHISSUER', 'REMOTE DESKTOP', 'ROOT', 'TRUSTEDDEVICES', 'WEBHOSTING', 'CA', 'AUTHROOT', 'TRUSTEDPEOPLE', 'MY', 'SMARTCARDROOT', 'TRUST', 'DISALLOWED']
-property :user_store, [TrueClass, FalseClass], default: false
+property :user_store, [true, false], default: false
 property :cert_path, String
-property :sensitive, [ TrueClass, FalseClass ], default: lazy { |r| r.pfx_password ? true : false }
+property :sensitive, [true, false], default: lazy { |r| r.pfx_password ? true : false }
 
 action :create do
   load_gem
