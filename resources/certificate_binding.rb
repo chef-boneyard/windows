@@ -19,7 +19,6 @@
 # limitations under the License.
 #
 
-include Chef::Mixin::PowershellOut
 include Windows::Helper
 
 property :cert_name, String, name_property: true
