@@ -2,6 +2,21 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 7.0.0 (2020-03-26)
+
+### Breaking Changes
+
+- This cookbook now requires Chef Infra Client 14.7 and later as it no longer includes the `windows_share` and `windows_certificate` resources that are now built into Chef Infra Client.
+
+### Other Changes
+
+- Remove list of actions in the dns resource - [@tas50](https://github.com/tas50)
+- Don't set the guard_interpreter in powershell_script - [@tas50](https://github.com/tas50)
+- Add windows_schannel resource (#619) - [@Xorima](https://github.com/Xorima)
+- Remove desired_state: true from resources - [@tas50](https://github.com/tas50)
+- The host_name property in the dns resource doesn't need to be a name property - [@tas50](https://github.com/tas50)
+- Remove unnecessary include of the powershell mixin - [@tas50](https://github.com/tas50)
+
 ## Unreleased
 
 - Added windows_schannel to configure schannel (tls settings for dotnet apps and powershell)

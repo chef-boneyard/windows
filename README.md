@@ -16,13 +16,13 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Chef
 
-- Chef 14+
+- Chef 14.7+
 
 ## Resources
 
 ### windows_certificate_binding
 
-Binds a certificate to an HTTP port in order to enable TLS communication.
+Binds a certificate to an HTTP port to enable TLS communication.
 
 #### Actions
 
@@ -155,7 +155,7 @@ end
 
 ### windows_schannel
 
-Used to configure the schannel security settings in windows, this is used by dotnet apps and powershell to be able to speak to tls 1.2 endpoints
+Used to configure the schannel security settings in windows, this is used by dotnet apps and PowerShell to be able to speak to tls 1.2 endpoints
 
 #### Actions
 
@@ -254,7 +254,7 @@ SeTakeOwnershipPrivilege             Take ownership of files or other objects
 
 `Note`: This resource has been deprecated as Chef Infra Client 15.0 shipped with a new archive_file resource, which natively handles multiple archive formats. Please update any cookbooks using this resource to instead use the `archive_file` resource: https://docs.chef.io/resource_archive_file.html
 
-Most version of Windows do not ship with native cli utility for managing compressed files. This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
+Most versions of Windows do not ship with native cli utility for managing compressed files. This resource provides a pure-ruby implementation for managing zip files. Be sure to use the `not_if` or `only_if` meta parameters to guard the resource for idempotence or action will be taken every Chef run.
 
 #### Actions
 
@@ -345,11 +345,11 @@ end
 
 ### Windows::VersionHelper
 
-Helper that allows you to get information of the windows version running on your node. It leverages windows ohai from kernel.os_info, easy to mock and to use even on linux.
+Helper that allows you to get information on the windows version running on your node. It leverages windows ohai from kernel.os_info, easy to mock and to use even on Linux.
 
 #### core_version?
 
-Determines whether given node is running on a windows Core.
+Determines whether the given node is running on a Windows Core.
 
 ```ruby
 if ::Windows::VersionHelper.core_version? node
@@ -359,7 +359,7 @@ end
 
 #### workstation_version?
 
-Determines whether given node is a windows workstation version (XP, Vista, 7, 8, 8.1, 10)
+Determines whether the given node is a windows workstation version (XP, Vista, 7, 8, 8.1, 10)
 
 ```ruby
 if ::Windows::VersionHelper.workstation_version? node
@@ -369,7 +369,7 @@ end
 
 #### server_version?
 
-Determines whether given node is a windows server version (Server 2003, Server 2008, Server 2012, Server 2016)
+Determines whether the given node is a windows server version (Server 2003, Server 2008, Server 2012, Server 2016)
 
 ```ruby
 if ::Windows::VersionHelper.server_version? node
