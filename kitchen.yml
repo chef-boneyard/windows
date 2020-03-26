@@ -24,9 +24,6 @@ platforms:
   - name: windows-10
     driver:
       box: chef/windows-10-enterprise
-  - name: windows-2008r2
-    driver:
-      box: tas50/windows_2008r2
   - name: windows-2012r2
     driver:
       box: tas50/windows_2012r2
@@ -44,7 +41,6 @@ suites:
   - name: schannel
     run_list:
       - recipe[test::schannel]
-    excludes: ["windows-2008r2"]
   - name: zipfile
     run_list:
       - recipe[test::zipfile]

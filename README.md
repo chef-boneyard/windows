@@ -8,8 +8,8 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Platforms
 
-- Windows 7
-- Windows Server 2008 R2
+- Windows 7 (EOL)
+- Windows Server 2008 R2 (EOL)
 - Windows 8, 8.1
 - Windows Server 2012 (R1, R2)
 - Windows Server 2016
