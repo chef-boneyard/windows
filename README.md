@@ -20,68 +20,6 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ## Resources
 
-### Deprecated Resources Note
-
-As of Chef 14.7+ the windows_share and windows_certificate resources are now included in the Chef Client. Also the windows_zipfile resource is replaced by the new archive_file resource in Chef 15.0.293+. If you are running Chef 14.7+ the resources in Chef client will take precedence over the resources in this cookbook. In November 2019 we will release a new major version of this cookbook that removes these resources.
-
-### windows_certificate
-
-`Note`: This resource is now included in Chef 14.7 and later. There is no need to depend on the Windows cookbook for this resource.
-
-Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts. Due to current limitations in WinRM, installing certificated remotely may not work if the operation requires a user profile. Operations on the local machine store should still work.
-
-#### Actions
-
-- `:create` - creates or updates a certificate.
-- `:delete` - deletes a certificate.
-- `:acl_add` - adds read-only entries to a certificate's private key ACL.
-- `:verify` - logs whether or not a certificate is valid
-
-#### Properties
-
-- `source` - name attribute. The source file (for create and acl_add), thumbprint (for delete and acl_add) or subject (for delete).
-- `pfx_password` - the password to access the source if it is a pfx file.
-- `private_key_acl` - array of 'domain\account' entries to be granted read-only access to the certificate's private key. This is not idempotent.
-- `store_name` - the certificate store to manipulate. One of:
-  - MY (Personal)
-  - CA (Intermediate Certification Authorities)
-  - ROOT (Trusted Root Certification Authorities)
-  - TRUSTEDPUBLISHER (Trusted Publishers)
-  - CLIENTAUTHISSUER (Client Authentication Issuers)
-  - REMOTE DESKTOP (Remote Desktop)
-  - TRUSTEDDEVICES (Trusted Devices)
-  - WEBHOSTING (Web Hosting)
-  - AUTHROOT (Third-Party Root Certification Authorities)
-  - TRUSTEDPEOPLE (Trusted People)
-  - SMARTCARDROOT (Smart Card Trusted Roots)
-  - TRUST (Enterprise Trust)
-  - DISALLOWED (Untrusted Certificates)
-- `user_store` - if false (default) then use the local machine store; if true then use the current user's store.
-
-#### Examples
-
-```ruby
-# Add PFX cert to local machine personal store and grant accounts read-only access to private key
-windows_certificate "c:/test/mycert.pfx" do
-    pfx_password    "password"
-    private_key_acl    ["acme\fred", "pc\jane"]
-end
-```
-
-```ruby
-# Add cert to trusted intermediate store
-windows_certificate "c:/test/mycert.cer" do
-    store_name    "CA"
-end
-```
-
-```ruby
-# Remove all certificates matching the subject
-windows_certificate "me.acme.com" do
-    action :delete
-end
-```
-
 ### windows_certificate_binding
 
 Binds a certificate to an HTTP port in order to enable TLS communication.
@@ -228,53 +166,6 @@ Used to configure the schannel security settings in windows, this is used by dot
 property                 | type       | default       | description
 ------------------------ | ---------- | ------------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------
 `use_strong_crypto`             | True, False     | true | Enables or disables the setting
-
-### windows_share
-
-`Note`: This resource is now included in Chef 14.7 and later. There is no need to depend on the Windows cookbook for this resource.
-
-Creates, modifies and removes Windows shares. All properties are idempotent.
-
-`Note`: This resource uses PowerShell cmdlets introduced in Windows 2012/8.
-
-#### Actions
-
-- `:create`: creates/modifies a share
-- `:delete`: deletes a share
-
-#### Properties
-
-property                 | type       | default       | description
------------------------- | ---------- | ------------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------
-`share_name`             | String     | resource name | the share to assign to the share
-`path`                   | String     |               | The path of the location of the folder to share. Required when creating. If the share already exists on a different path then it is deleted and re-created.
-`description`            | String     |               | description to be applied to the share
-`full_users`             | Array      | []            | users which should have "Full control" permissions
-`change_users`           | Array      | []            | Users are granted modify permission to access the share.
-`read_users`             | Array      | []            | users which should have "Read" permissions
-`temporary`              | True/False | false         | The lifetime of the new SMB share. A temporary share does not persist beyond the next restart of the computer
-`scope_name`             | String     | '*'           | The scope name of the share.
-`ca_timeout`             | Integer    | 0             | The continuous availability time-out for the share.
-`continuously_available` | True/False | false         | Indicates that the share is continuously available.
-`concurrent_user_limit`  | Integer    | 0 (unlimited) | The maximum number of concurrently connected users the share can accommodate
-`encrypt_data`           | True/False | false         | Indicates that the share is encrypted.
-
-#### Examples
-
-```ruby
-windows_share "foo" do
-  action :create
-  path "C:\\foo"
-  full_users ["DOMAIN_A\\some_user", "DOMAIN_B\\some_other_user"]
-  read_users ["DOMAIN_C\\Domain users"]
-end
-```
-
-```ruby
-windows_share "foo" do
-  action :delete
-end
-```
 
 ### windows_user_privilege
 

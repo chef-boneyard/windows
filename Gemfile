@@ -7,4 +7,3 @@
 source 'https://rubygems.org'
 
 gem 'community_cookbook_releaser'
-gem 'win32-certstore', '>= 0.2.4'
