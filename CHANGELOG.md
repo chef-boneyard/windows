@@ -2,6 +2,18 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## Unreleased
+
+- resolved cookstyle error: libraries/registry_helper.rb:69:9 refactor: `ChefCorrectness/ChefApplicationFatal`
+- resolved cookstyle error: libraries/registry_helper.rb:232:9 convention: `Style/RedundantReturn`
+- resolved cookstyle error: libraries/registry_helper.rb:234:9 convention: `Style/RedundantReturn`
+- resolved cookstyle error: libraries/registry_helper.rb:244:9 convention: `Style/RedundantReturn`
+- resolved cookstyle error: libraries/registry_helper.rb:245:7 convention: `Style/EmptyElse`
+- resolved cookstyle error: libraries/registry_helper.rb:246:9 convention: `Style/RedundantReturn`
+- resolved cookstyle error: libraries/registry_helper.rb:272:9 convention: `Style/RedundantReturn`
+- resolved cookstyle error: libraries/registry_helper.rb:274:9 convention: `Style/RedundantReturn`
+- resolved cookstyle error: libraries/windows_helper.rb:165:14 warning: `Lint/SendWithMixinArgument`
+
 ## 7.0.0 (2020-03-26)
 
 ### Breaking Changes

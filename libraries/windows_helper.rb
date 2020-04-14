@@ -162,4 +162,4 @@ module Windows
   end
 end
 
-Chef::Recipe.send(:include, Windows::Helper)
+Chef::Recipe.include Windows::Helper
