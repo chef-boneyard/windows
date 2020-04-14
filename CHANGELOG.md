@@ -17,10 +17,6 @@ This file is used to list changes made in each version of the windows cookbook.
 - The host_name property in the dns resource doesn't need to be a name property - [@tas50](https://github.com/tas50)
 - Remove unnecessary include of the powershell mixin - [@tas50](https://github.com/tas50)
 
-## Unreleased
-
-- Added windows_schannel to configure schannel (tls settings for dotnet apps and powershell)
-
 ## 6.0.1 (2019-10-01)
 
 - Update README.md for Windows cookbook suggesting core dns resources (#616) - [@NAshwini](https://github.com/NAshwini)
