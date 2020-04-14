@@ -66,7 +66,7 @@ module Windows
       }[hkey]
 
       unless hive
-        Chef::Application.fatal!("Unsupported registry hive '#{hive_name}'")
+        raise("Unsupported registry hive '#{hive_name}'")
       end
 
       Chef::Log.debug("Registry hive resolved to #{hkey}")
@@ -229,9 +229,9 @@ module Windows
 
       begin
         hive.open(key, ::Win32::Registry::Constants::KEY_READ | @@native_registry_constant)
-        return true
+        true
       rescue
-        return false
+        false
       ensure
         ensure_hive_unloaded(hive_loaded)
       end
@@ -241,9 +241,7 @@ module Windows
       reg_key = "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList\\#{sid}"
       Chef::Log.debug("Looking for profile at #{reg_key}")
       if key_exists?(reg_key)
-        return get_value(reg_key, 'ProfileImagePath')
-      else
-        return nil
+        get_value(reg_key, 'ProfileImagePath')
       end
     end
 
@@ -269,9 +267,9 @@ module Windows
       user_hive = path[0]
 
       if user_hive?(hive)
-        return key_exists?("#{hive_name}\\#{user_hive}")
+        key_exists?("#{hive_name}\\#{user_hive}")
       else
-        return true
+        true
       end
     end
 
