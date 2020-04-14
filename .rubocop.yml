@@ -1,6 +1,6 @@
 # rubocop todo
 
-Lint/HandleExceptions:
+Lint/SuppressedException:
   Exclude:
     - 'libraries/registry_helper.rb'
     - 'libraries/windows_helper.rb'
