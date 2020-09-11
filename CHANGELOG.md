@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 7.0.2 (2020-09-10)
+
+- Resolve a typo in the user_privilege resource - [@tas50](https://github.com/tas50)
+- Don't run delivery in Appveyor - [@tas50](https://github.com/tas50)
+
 ## 7.0.1 (2020-09-10)
 
 - Remove testing of Windows 2008 R2 - [@tas50](https://github.com/tas50)
