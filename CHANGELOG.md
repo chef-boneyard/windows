@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 7.0.1 (2020-09-10)
+
+- Remove testing of Windows 2008 R2 - [@tas50](https://github.com/tas50)
+- Cookstyle 6.2.9 Fixes - [@xorimabot](https://github.com/xorimabot)
+- Avoid deprcation warnings when using user_privilege resource on Chef >= - [@tas50](https://github.com/tas50)
+
 ## Unreleased
 
 - resolved cookstyle error: libraries/registry_helper.rb:69:9 refactor: `ChefCorrectness/ChefApplicationFatal`
