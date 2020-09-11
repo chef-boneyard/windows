@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 ChefModernize/WindowsZipfileUsage:
   Enabled: false
 
@@ -10,10 +8,6 @@ Lint/ShadowingOuterLocalVariable:
 Lint/UselessAssignment:
   Exclude:
     - 'libraries/registry_helper.rb'
-
-Lint/Void:
-  Exclude:
-    - 'resources/user_privilege.rb'
 
 Style/ClassVars:
   Exclude:
