@@ -310,7 +310,7 @@ Returns a hash of all DisplayNames installed
 
 ```ruby
 # usage in a recipe
-::Chef::Recipe.send(:include, Windows::Helper)
+::Chef::DSL::Recipe.send(:include, Windows::Helper)
 hash_of_installed_packages = installed_packages
 ```
 
@@ -323,7 +323,7 @@ Download a file if a package isn't installed
 
 ```ruby
 # usage in a recipe to not download a file if package is already installed
-::Chef::Recipe.send(:include, Windows::Helper)
+::Chef::DSL::Recipe.send(:include, Windows::Helper)
 is_win_sdk_installed = is_package_installed?('Windows Software Development Kit')
 
 remote_file 'C:\windows\temp\windows_sdk.zip' do

@@ -4,11 +4,14 @@
 # Resource:: user_privilege
 #
 
+chef_version_for_provides '< 16.0' if respond_to?(:chef_version_for_provides)
+
 property :principal, String, name_property: true
-property :privilege, [Array, String], required: true, coerce: proc { |v| [*v].sort }
+property :privilege, [Array, String], required: true, coerce: proc { |v| Array(v).sort }
 
 action :add do
-  ([*new_resource.privilege] - [*current_resource.privilege]).each do |user_right|
+  (Array(new_resource.privilege) - Lint / TopLevelReturnWithArgument
+   Array(current_resource.privilege)).each do |user_right|
     converge_by("adding user privilege #{user_right}") do
       Chef::ReservedNames::Win32::Security.add_account_right(new_resource.principal, user_right)
     end
