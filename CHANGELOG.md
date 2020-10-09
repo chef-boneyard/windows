@@ -15,6 +15,19 @@ This file is used to list changes made in each version of the windows cookbook.
 
 ## Unreleased
 
+- resolved cookstyle error: libraries/windows_helper.rb:102:29 convention: `Layout/TrailingWhitespace`
+- resolved cookstyle error: libraries/windows_helper.rb:102:30 convention: `Style/RedundantBegin`
+- resolved cookstyle error: libraries/windows_helper.rb:104:9 convention: `Layout/CommentIndentation`
+- resolved cookstyle error: libraries/windows_helper.rb:105:9 convention: `Layout/IndentationConsistency`
+- resolved cookstyle error: libraries/windows_helper.rb:107:9 convention: `Layout/CommentIndentation`
+- resolved cookstyle error: libraries/windows_helper.rb:108:9 convention: `Layout/IndentationConsistency`
+- resolved cookstyle error: libraries/windows_helper.rb:110:9 convention: `Layout/CommentIndentation`
+- resolved cookstyle error: libraries/windows_helper.rb:111:9 convention: `Layout/IndentationConsistency`
+- resolved cookstyle error: libraries/windows_helper.rb:112:9 convention: `Layout/CommentIndentation`
+- resolved cookstyle error: libraries/windows_helper.rb:113:9 convention: `Layout/IndentationConsistency`
+- resolved cookstyle error: libraries/windows_helper.rb:114:9 convention: `Layout/IndentationConsistency`
+- resolved cookstyle error: libraries/windows_helper.rb:115:1 convention: `Layout/EmptyLinesAroundMethodBody`
+- resolved cookstyle error: libraries/windows_helper.rb:115:1 convention: `Layout/TrailingWhitespace`
 - resolved cookstyle error: libraries/registry_helper.rb:69:9 refactor: `ChefCorrectness/ChefApplicationFatal`
 - resolved cookstyle error: libraries/registry_helper.rb:232:9 convention: `Style/RedundantReturn`
 - resolved cookstyle error: libraries/registry_helper.rb:234:9 convention: `Style/RedundantReturn`
