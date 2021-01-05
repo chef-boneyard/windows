@@ -4,6 +4,10 @@
 
 Provides a set of Windows-specific resources to aid in the creation of cookbooks/recipes targeting the Windows platform.
 
+## EOL Notice
+
+This cookbook is no longer required for managing Windows nodes with Chef Infra. The necessary resources and helpers are now built into Chef Infra Client itself. These built-in resources are more feature rich and execute faster.
+
 ## Requirements
 
 ### Platforms
