@@ -104,7 +104,7 @@ action_class do
     mode = address_mode(current_resource.address)
     cmd << " #{mode}=#{current_resource.address}:#{current_resource.port}"
     cmd << " certhash=#{hash}"
-    cmd << " appid=#{current_resource.app_id}"
+    cmd << " appid=\"#{current_resource.app_id}\""
     cmd << " certstorename=#{current_resource.store_name}"
     check_hash hash
 
