@@ -21,6 +21,8 @@
 # limitations under the License.
 #
 
+unified_mode true if respond_to?(:unified_mode)
+
 require 'chef/util/path_helper'
 
 property :path, String, name_property: true

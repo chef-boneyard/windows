@@ -18,6 +18,8 @@
 # limitations under the License.
 #
 
+unified_mode true if respond_to?(:unified_mode)
+
 default_action :create
 
 attribute :host_name, kind_of: String, required: true

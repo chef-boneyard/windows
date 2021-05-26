@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-include Windows::Helper
+unified_mode true if respond_to?(:unified_mode)
 
 property :cert_name, String, name_property: true
 property :name_kind, Symbol, equal_to: [:hash, :subject], default: :subject

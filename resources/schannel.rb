@@ -18,6 +18,8 @@
 # limitations under the License.
 #
 
+unified_mode true if respond_to?(:unified_mode)
+
 property :use_strong_crypto, [true, false], default: true
 
 action :configure do
