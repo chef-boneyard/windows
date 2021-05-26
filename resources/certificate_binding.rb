@@ -30,8 +30,7 @@ property :store_name, String, default: 'MY', equal_to: ['TRUSTEDPUBLISHER', 'CLI
 property :exists, [true, false]
 
 load_current_value do |desired|
-  mode = desired.address.match(/(\d+\.){3}\d+|\[.+\]/).nil? ? 'hostnameport' : 'ipport'
-  cmd = shell_out("#{locate_sysnative_cmd('netsh.exe')} http show sslcert #{mode}=#{desired.address}:#{desired.port}")
+  cmd = shell_out("#{netsh_command} http show sslcert #{address_mode(desired.address)}=#{desired.address}:#{desired.port}")
   Chef::Log.debug "netsh reports: #{cmd.stdout}"
 
   address desired.address
@@ -48,6 +47,10 @@ load_current_value do |desired|
   else
     exists false
   end
+end
+
+def address_mode(address)
+  address.match(/(\d+\.){3}\d+|\[.+\]/).nil? ? 'hostnameport' : 'ipport'
 end
 
 action :create do
@@ -126,9 +129,5 @@ action_class do
     # seem to get a UTF-8 string with BOM returned sometimes! Strip any such BOM
     hash = p.stdout.strip
     hash[0].ord == 239 ? hash.force_encoding('UTF-8').delete!("\xEF\xBB\xBF".force_encoding('UTF-8')) : hash
-  end
-
-  def address_mode(address)
-    address.match(/(\d+\.){3}\d+|\[.+\]/).nil? ? 'hostnameport' : 'ipport'
   end
 end
