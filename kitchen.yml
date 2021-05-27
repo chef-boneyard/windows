@@ -50,3 +50,9 @@ suites:
   - name: everything
     run_list:
       - recipe[test::everything]
+  - name: adv_audit_policy
+    run_list:
+      - recipe[test::adv_audit_policy]
+    verifier:
+      inspec_tests:
+        - test/integration/adv_audit_policy

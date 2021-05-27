@@ -302,6 +302,58 @@ windows_zipfile 'c:/foo/baz/the_codez.zip' do
 end
 ```
 
+### adv_audit_policy
+
+Sets Windows advanced security audit policy settings.
+
+#### Actions
+
+- `manage` - The only action for this resource. Sets the inputted audit policy to the inputted value.
+
+#### Properties
+
+- `subcategory` - Audit Policy to be modified
+
+- `policy_state` - Value to be configured in the Audit Policy. Must be one of the following: ['Success and Failure', 'Success', 'Failure', 'No Auditing']
+
+#### Examples
+
+Sets `Credential Validation` to `Success and Failure`
+
+```ruby
+adv_audit_policy 'Set Account Logon\\Audit Credential Validation audit policy to "Success and Failure"' do
+  subcategory 'Credential Validation'
+  policy_state 'success and failure'
+end
+```
+
+Sets `Kerberos Authentication Service` to `Success`
+
+```ruby
+adv_audit_policy 'Set Account Logon\\Audit Kerberos Authentication Service audit policy to "Success"' do
+  subcategory 'Kerberos Authentication Service'
+  policy_state 'success'
+end
+```
+
+Sets `Audit Kerberos Service Ticket Operations` to `Failure`
+
+```ruby
+adv_audit_policy 'Set Account Logon\\Audit Kerberos Service Ticket Operations audit policy to "Failure"' do
+  subcategory 'Kerberos Service Ticket Operations'
+  policy_state 'failure'
+end
+```
+
+Sets `Audit Other Account Logon Events` to `No Auditing`
+
+```ruby
+adv_audit_policy 'Set Account Logon\\Audit Other Account Logon Events audit policy to "No Auditing"' do
+  subcategory 'Other Account Logon Events'
+  policy_state 'no auditing'
+end
+```
+
 ## Libraries
 
 ### WindowsHelper
