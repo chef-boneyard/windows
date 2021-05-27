@@ -133,7 +133,7 @@ action_class do
     Chef::Log.debug "Running PS script #{ps_script}"
     p = powershell_out!(ps_script)
 
-    raise "#{ps_script} failed with #{p.stderr}" if !p.stderr.nil? && !p.stderr.empty?
+    raise "#{ps_script} failed with #{p.stderr}" if p.error?
     raise "Couldn't find thumbprint for subject #{new_resource.cert_name}" if p.stdout.nil? || p.stdout.empty?
 
     # seem to get a UTF-8 string with BOM returned sometimes! Strip any such BOM
